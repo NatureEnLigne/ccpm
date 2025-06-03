@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { ResponsiveLine } from '@nivo/line'
 import { useAppStore } from '../../store/useAppStore'
+import { useChartInteractions } from '../../hooks/useChartInteractions'
 
 interface PhenoLineProps {
   codeInsee: string
@@ -20,11 +21,12 @@ const MONTH_NAMES = [
 ]
 
 export default function PhenoLine({ codeInsee, selectedRegne }: PhenoLineProps) {
-  const { communeData } = useAppStore()
+  const { communeData, speciesData } = useAppStore()
+  const { handleChartClick, handleChartHover, isFiltered, filters } = useChartInteractions()
   const [data, setData] = useState<LineData[]>([])
 
   useEffect(() => {
-    if (communeData && codeInsee) {
+    if (communeData && speciesData && codeInsee) {
       const commune = communeData.get(codeInsee)
       if (!commune) return
 
@@ -34,10 +36,37 @@ export default function PhenoLine({ codeInsee, selectedRegne }: PhenoLineProps) 
         monthlyData.set(i, 0)
       }
 
-      // Compter les données par mois
-      // Note: Pour l'instant, on n'a pas le règne dans les données phénologiques
-      // donc on affiche toutes les données
+      // Compter les données par mois en appliquant les filtres
       commune.phenologie.forEach(pheno => {
+        const cdRef = pheno['CD REF (pheno!mois!insee)']
+        const species = speciesData?.get(cdRef)
+        
+        // Filtrer par règne si spécifié
+        if (selectedRegne !== 'Tous' && species && species.regne !== selectedRegne) {
+          return
+        }
+        
+        // Appliquer les filtres du store global
+        if (species) {
+          if (filters.selectedGroupe && species.groupe !== filters.selectedGroupe) {
+            return
+          }
+          
+          if (filters.selectedRedListCategory) {
+            if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) {
+              return
+            }
+          }
+          
+          if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) {
+            return
+          }
+          
+          if (filters.selectedFamille && species.famille !== filters.selectedFamille) {
+            return
+          }
+        }
+        
         const mois = pheno['Mois Obs']
         const current = monthlyData.get(mois) || 0
         monthlyData.set(mois, current + pheno['Nb Donnees'])
@@ -53,9 +82,9 @@ export default function PhenoLine({ codeInsee, selectedRegne }: PhenoLineProps) 
       }]
 
       setData(lineData)
-      console.log('📅 Données phénologie pour', codeInsee, 'règne:', selectedRegne, ':', lineData)
+      console.log('📅 Données phénologie pour', codeInsee, 'règne:', selectedRegne, 'filtres appliqués:', filters, ':', lineData)
     }
-  }, [communeData, codeInsee, selectedRegne])
+  }, [communeData, speciesData, codeInsee, selectedRegne, filters])
 
   if (data.length === 0 || data[0].data.every(d => d.y === 0)) {
     return (
@@ -109,14 +138,48 @@ export default function PhenoLine({ codeInsee, selectedRegne }: PhenoLineProps) 
       colors={{ scheme: 'category10' }}
       animate={true}
       motionConfig="gentle"
-      tooltip={({ point }) => (
-        <div className="glass rounded-lg p-3 text-sm">
-          <div className="font-medium">{point.data.xFormatted}</div>
-          <div className="text-gray-600">
-            {point.data.yFormatted} observations
+      onClick={(point) => {
+        const monthIndex = MONTH_NAMES.indexOf(point.data.x as string) + 1
+        handleChartClick({
+          chartType: 'line',
+          dataKey: 'month',
+          value: monthIndex,
+          action: 'click'
+        })
+      }}
+      onMouseEnter={(point) => {
+        const monthIndex = MONTH_NAMES.indexOf(point.data.x as string) + 1
+        handleChartHover({
+          chartType: 'line',
+          dataKey: 'month',
+          value: monthIndex,
+          action: 'hover'
+        })
+      }}
+      onMouseLeave={() => {
+        handleChartHover(null)
+      }}
+      tooltip={({ point }) => {
+        const monthIndex = MONTH_NAMES.indexOf(point.data.x as string) + 1
+        const isCurrentFiltered = isFiltered('line', 'month', monthIndex)
+        
+        return (
+          <div className="glass rounded-lg p-3 text-sm">
+            <div className="font-medium flex items-center gap-2">
+              {point.data.xFormatted}
+              {isCurrentFiltered && (
+                <span className="text-blue-600 text-xs">• Filtré</span>
+              )}
+            </div>
+            <div className="text-gray-600">
+              {point.data.yFormatted} observations
+            </div>
+            <div className="text-xs text-gray-500 mt-1">
+              Cliquez pour filtrer par mois
+            </div>
           </div>
-        </div>
-      )}
+        )
+      }}
     />
   )
 } 

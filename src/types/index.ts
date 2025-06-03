@@ -89,6 +89,12 @@ export interface FilterState {
   selectedGroupe: string | null
   selectedMois: number | null
   selectedStatut: string | null
+  selectedRegne: string | null
+  selectedOrdre: string | null
+  selectedFamille: string | null
+  selectedAnnee: number | null
+  selectedRedListCategory: string | null
+  activeFilters: string[] // Liste des filtres actifs pour l'affichage
 }
 
 // Types pour les graphiques
@@ -119,4 +125,24 @@ export interface TreemapData {
   label: string
   value: number
   children?: TreemapData[]
+}
+
+// Types pour les interactions croisées
+export interface ChartInteraction {
+  chartType: 'bubble' | 'line' | 'bar' | 'treemap'
+  dataKey: string
+  value: string | number
+  action: 'click' | 'hover' | 'filter'
+}
+
+export interface FilterEvent {
+  filterKey: keyof FilterState
+  value: string | number | null
+  source: string // Quel composant a déclenché le filtre
+}
+
+export interface HoverState {
+  chartType: string | null
+  dataKey: string | null
+  value: string | number | null
 } 

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { ResponsiveCirclePacking } from '@nivo/circle-packing'
 import { useAppStore } from '../../store/useAppStore'
+import { useChartInteractions } from '../../hooks/useChartInteractions'
 
 interface GroupBubbleProps {
   codeInsee: string
@@ -17,6 +18,7 @@ interface BubbleData {
 
 export default function GroupBubble({ codeInsee, selectedRegne }: GroupBubbleProps) {
   const { communeData, speciesData } = useAppStore()
+  const { handleChartClick, handleChartHover, isFiltered, isHovered, filters } = useChartInteractions()
   const [data, setData] = useState<BubbleData | null>(null)
 
   useEffect(() => {
@@ -33,11 +35,32 @@ export default function GroupBubble({ codeInsee, selectedRegne }: GroupBubblePro
         
         if (species) {
           // Filtrer par règne si nécessaire
-          if (selectedRegne !== 'Tous') {
-            // Utiliser le vrai règne de l'espèce
-            if (species.regne !== selectedRegne) {
-              return // Ignorer cette espèce
+          if (selectedRegne !== 'Tous' && species.regne !== selectedRegne) {
+            return // Ignorer cette espèce
+          }
+          
+          // Appliquer les filtres du store global
+          if (filters.selectedMois) {
+            // Vérifier si cette observation a des données pour le mois sélectionné
+            const hasMonthData = commune.phenologie.some(pheno => 
+              pheno['CD REF (pheno!mois!insee)'] === cdRef && 
+              pheno['Mois Obs'] === filters.selectedMois
+            )
+            if (!hasMonthData) return
+          }
+          
+          if (filters.selectedRedListCategory) {
+            if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) {
+              return
             }
+          }
+          
+          if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) {
+            return
+          }
+          
+          if (filters.selectedFamille && species.famille !== filters.selectedFamille) {
+            return
           }
           
           const groupe = species.groupe || 'Inconnu'
@@ -62,9 +85,9 @@ export default function GroupBubble({ codeInsee, selectedRegne }: GroupBubblePro
       }
 
       setData(bubbleData)
-      console.log('🦋 Données bubble pour', codeInsee, 'règne:', selectedRegne, ':', bubbleData)
+      console.log('🦋 Données bubble pour', codeInsee, 'règne:', selectedRegne, 'filtres appliqués:', filters, ':', bubbleData)
     }
-  }, [communeData, speciesData, codeInsee, selectedRegne])
+  }, [communeData, speciesData, codeInsee, selectedRegne, filters])
 
   if (!data || !data.children || data.children.length === 0) {
     return (
@@ -102,6 +125,29 @@ export default function GroupBubble({ codeInsee, selectedRegne }: GroupBubblePro
       }}
       animate={true}
       motionConfig="gentle"
+      onClick={(node) => {
+        if (node.id !== 'root') {
+          handleChartClick({
+            chartType: 'bubble',
+            dataKey: 'group',
+            value: node.id as string,
+            action: 'click'
+          })
+        }
+      }}
+      onMouseEnter={(node) => {
+        if (node.id !== 'root') {
+          handleChartHover({
+            chartType: 'bubble',
+            dataKey: 'group',
+            value: node.id as string,
+            action: 'hover'
+          })
+        }
+      }}
+      onMouseLeave={() => {
+        handleChartHover(null)
+      }}
       tooltip={({ id, value, color }) => (
         <div className="glass rounded-lg p-3 text-sm">
           <div className="flex items-center space-x-2">
@@ -110,9 +156,15 @@ export default function GroupBubble({ codeInsee, selectedRegne }: GroupBubblePro
               style={{ backgroundColor: color }}
             ></div>
             <span className="font-medium">{id}</span>
+            {isFiltered('bubble', 'group', id) && (
+              <span className="text-blue-600 text-xs">• Filtré</span>
+            )}
           </div>
           <div className="text-gray-600 mt-1">
             {value.toLocaleString()} observations
+          </div>
+          <div className="text-xs text-gray-500 mt-1">
+            Cliquez pour filtrer
           </div>
         </div>
       )}

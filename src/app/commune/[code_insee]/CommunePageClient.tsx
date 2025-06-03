@@ -19,6 +19,7 @@ import RedListBar from '../../../components/dashboards/RedListBar'
 import StatusTreemap from '../../../components/dashboards/StatusTreemap'
 import FilterBar from '../../../components/FilterBar'
 import SpeciesTable from '../../../components/SpeciesTable'
+import ActiveFilters from '../../../components/ActiveFilters'
 import type { SyntheseInsee, PhenoMoisInsee, Taxonomie, ListeRouge, Statut } from '../../../types'
 
 interface CommunePageClientProps {
@@ -200,11 +201,14 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
       <main className="container mx-auto px-6 py-8">
         
         {/* Barre de filtres */}
-        <FilterBar 
+        <FilterBar
           selectedRegne={selectedRegne}
           onRegneChange={setSelectedRegne}
         />
-        
+
+        {/* Filtres actifs */}
+        <ActiveFilters />
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           
           {/* Groupes taxonomiques - Bubble chart */}

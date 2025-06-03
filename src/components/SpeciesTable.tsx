@@ -21,7 +21,7 @@ interface SpeciesTableRow {
 }
 
 export default function SpeciesTable({ codeInsee, selectedRegne = '' }: SpeciesTableProps) {
-  const { speciesData, communeData } = useAppStore()
+  const { speciesData, communeData, filters } = useAppStore()
   const [sortField, setSortField] = useState<keyof SpeciesTableRow>('nombreObservations')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
   const [currentPage, setCurrentPage] = useState(1)
@@ -60,16 +60,24 @@ export default function SpeciesTable({ codeInsee, selectedRegne = '' }: SpeciesT
     // Pour chaque espèce dans cette commune
     communeCdRefs.forEach(cdRef => {
       const species = speciesData.get(cdRef)
-      if (!species) {
-        console.log('📋 SpeciesTable - Espèce non trouvée pour CD REF:', cdRef)
-        return
-      }
+      if (!species) return
 
       // Filtrer par règne si spécifié (mais pas si c'est "Tous")
-      if (selectedRegne && selectedRegne !== 'Tous' && species.regne !== selectedRegne) {
-        console.log('📋 SpeciesTable - Espèce filtrée par règne:', { cdRef, speciesRegne: species.regne, selectedRegne })
-        return
+      if (selectedRegne && selectedRegne !== 'Tous' && species.regne !== selectedRegne) return
+
+      // Appliquer les filtres du store global
+      if (filters?.selectedGroupe && species.groupe !== filters.selectedGroupe) return
+      if (filters?.selectedMois) {
+        // Vérifier si cette espèce a des données pour le mois sélectionné
+        const hasMonthData = currentCommune.phenologie.some(pheno => 
+          pheno['CD REF (pheno!mois!insee)'] === cdRef && 
+          pheno['Mois Obs'] === filters.selectedMois
+        )
+        if (!hasMonthData) return
       }
+      if (filters?.selectedRedListCategory && species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
+      if (filters?.selectedOrdre && species.ordre !== filters.selectedOrdre) return
+      if (filters?.selectedFamille && species.famille !== filters.selectedFamille) return
 
       // Calculer le nombre total d'observations pour cette espèce dans cette commune
       // Utiliser directement les observations de la commune pour cette espèce
@@ -77,32 +85,28 @@ export default function SpeciesTable({ codeInsee, selectedRegne = '' }: SpeciesT
         .filter(obs => obs['Cd Ref'] === cdRef)
         .reduce((sum, obs) => sum + obs['Nb Obs'], 0)
 
-      console.log('📋 SpeciesTable - Espèce ajoutée:', { 
-        cdRef, 
-        nom: species.nomValide,
-        regne: species.regne,
-        totalObs 
-      })
-
-      // Récupérer les informations taxonomiques détaillées
-      rows.push({
-        cdRef,
-        group1Inpn: species.groupe || '',
-        group2Inpn: species.group2 || '',
-        nomComplet: species.nomComplet || species.nomValide || '',
-        nomVern: species.nomVern || '',
-        urlInpn: species.urlInpn || `https://inpn.mnhn.fr/espece/cd_nom/${cdRef}`,
-        nombreObservations: totalObs
-      })
+      if (totalObs > 0) {
+        // Récupérer les informations taxonomiques détaillées
+        rows.push({
+          cdRef,
+          group1Inpn: species.groupe || '',
+          group2Inpn: species.group2 || '',
+          nomComplet: species.nomComplet || species.nomValide || '',
+          nomVern: species.nomVern || '',
+          urlInpn: species.urlInpn || `https://inpn.mnhn.fr/espece/cd_nom/${cdRef}`,
+          nombreObservations: totalObs
+        })
+      }
     })
 
-    console.log('📋 SpeciesTable - Tableau final:', {
-      rowsCount: rows.length,
-      totalObservations: rows.reduce((sum, row) => sum + row.nombreObservations, 0)
+    console.log('📋 SpeciesTable - Lignes générées:', {
+      totalRows: rows.length,
+      firstRow: rows[0],
+      filtersApplied: filters
     })
 
     return rows
-  }, [speciesData, currentCommune, codeInsee, selectedRegne])
+  }, [speciesData, currentCommune, selectedRegne, codeInsee, filters])
 
   // Tri des données
   const sortedData = useMemo(() => {

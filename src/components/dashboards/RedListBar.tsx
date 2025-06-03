@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { ResponsiveBar } from '@nivo/bar'
 import { useAppStore } from '../../store/useAppStore'
+import { useChartInteractions } from '../../hooks/useChartInteractions'
 
 interface RedListBarProps {
   codeInsee: string
@@ -12,11 +13,12 @@ interface RedListBarProps {
 interface BarData {
   statut: string
   count: number
-  color?: string
+  [key: string]: string | number
 }
 
 export default function RedListBar({ codeInsee, selectedRegne }: RedListBarProps) {
   const { communeData, speciesData } = useAppStore()
+  const { handleChartClick, handleChartHover, isFiltered, filters } = useChartInteractions()
   const [data, setData] = useState<BarData[]>([])
 
   useEffect(() => {
@@ -38,11 +40,30 @@ export default function RedListBar({ codeInsee, selectedRegne }: RedListBarProps
         const species = speciesData.get(cdRef)
         if (species) {
           // Filtrer par règne si nécessaire
-          if (selectedRegne !== 'Tous') {
-            // Utiliser le vrai règne de l'espèce
-            if (species.regne !== selectedRegne) {
-              return // Ignorer cette espèce
-            }
+          if (selectedRegne !== 'Tous' && species.regne !== selectedRegne) {
+            return // Ignorer cette espèce
+          }
+          
+          // Appliquer les filtres du store global
+          if (filters.selectedGroupe && species.groupe !== filters.selectedGroupe) {
+            return
+          }
+          
+          if (filters.selectedMois) {
+            // Vérifier si cette observation a des données pour le mois sélectionné
+            const hasMonthData = commune.phenologie.some(pheno => 
+              pheno['CD REF (pheno!mois!insee)'] === cdRef && 
+              pheno['Mois Obs'] === filters.selectedMois
+            )
+            if (!hasMonthData) return
+          }
+          
+          if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) {
+            return
+          }
+          
+          if (filters.selectedFamille && species.famille !== filters.selectedFamille) {
+            return
           }
           
           if (species.listeRouge) {
@@ -66,9 +87,9 @@ export default function RedListBar({ codeInsee, selectedRegne }: RedListBarProps
       barData.sort((a, b) => b.count - a.count)
 
       setData(barData)
-      console.log('🚨 Données listes rouges pour', codeInsee, 'règne:', selectedRegne, ':', barData)
+      console.log('🚨 Données listes rouges pour', codeInsee, 'règne:', selectedRegne, 'filtres appliqués:', filters, ':', barData)
     }
-  }, [communeData, speciesData, codeInsee, selectedRegne])
+  }, [communeData, speciesData, codeInsee, selectedRegne, filters])
 
   if (data.length === 0) {
     return (
@@ -126,20 +147,49 @@ export default function RedListBar({ codeInsee, selectedRegne }: RedListBarProps
       }}
       animate={true}
       motionConfig="gentle"
-      tooltip={({ id, value, indexValue, color }) => (
-        <div className="glass rounded-lg p-3 text-sm">
-          <div className="flex items-center space-x-2">
-            <div 
-              className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: color }}
-            ></div>
-            <span className="font-medium">{indexValue}</span>
+      onClick={(node) => {
+        handleChartClick({
+          chartType: 'bar',
+          dataKey: 'status',
+          value: node.indexValue as string,
+          action: 'click'
+        })
+      }}
+      onMouseEnter={(node) => {
+        handleChartHover({
+          chartType: 'bar',
+          dataKey: 'status',
+          value: node.indexValue as string,
+          action: 'hover'
+        })
+      }}
+      onMouseLeave={() => {
+        handleChartHover(null)
+      }}
+      tooltip={({ id, value, indexValue, color }) => {
+        const isCurrentFiltered = isFiltered('bar', 'status', indexValue as string)
+        
+        return (
+          <div className="glass rounded-lg p-3 text-sm">
+            <div className="flex items-center space-x-2">
+              <div 
+                className="w-3 h-3 rounded-full"
+                style={{ backgroundColor: color }}
+              ></div>
+              <span className="font-medium">{indexValue}</span>
+              {isCurrentFiltered && (
+                <span className="text-blue-600 text-xs">• Filtré</span>
+              )}
+            </div>
+            <div className="text-gray-600 mt-1">
+              {value} espèce{(value as number) > 1 ? 's' : ''}
+            </div>
+            <div className="text-xs text-gray-500 mt-1">
+              Cliquez pour filtrer par statut
+            </div>
           </div>
-          <div className="text-gray-600 mt-1">
-            {value} espèce{(value as number) > 1 ? 's' : ''}
-          </div>
-        </div>
-      )}
+        )
+      }}
     />
   )
 } 

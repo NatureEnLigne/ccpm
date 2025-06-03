@@ -52,24 +52,24 @@
   - [x] Animations d'apparition/disparition
 
 ## 📊 Phase 5 : Page fiche commune détaillée
-- [ ] Créer `pages/commune/[code_insee].tsx`
-  - [ ] Layout de la page
-  - [ ] Chargement des données par code INSEE
-- [ ] Créer les composants de visualisation :
-  - [ ] `components/dashboards/GroupBubble.tsx` (Nivo bubble)
-  - [ ] `components/dashboards/PhenoLine.tsx` (Nivo line)
-  - [ ] `components/dashboards/RedListBar.tsx` (Nivo bar)
-  - [ ] `components/dashboards/StatusTreemap.tsx` (Nivo treemap)
+- [x] Créer `pages/commune/[code_insee].tsx`
+  - [x] Layout de la page
+  - [x] Chargement des données par code INSEE
+- [x] Créer les composants de visualisation :
+  - [x] `components/dashboards/GroupBubble.tsx` (Nivo bubble)
+  - [x] `components/dashboards/PhenoLine.tsx` (Nivo line)
+  - [x] `components/dashboards/RedListBar.tsx` (Nivo bar)
+  - [x] `components/dashboards/StatusTreemap.tsx` (Nivo treemap)
 
 ## 🔄 Phase 6 : Interactions croisées
-- [ ] Configurer Zustand store
-  - [ ] État global des filtres
-  - [ ] Actions pour mettre à jour les filtres
-- [ ] Implémenter les interactions :
-  - [ ] Clics sur graphiques → filtres
-  - [ ] Hover effects
-  - [ ] Synchronisation entre graphiques
-- [ ] Indicateurs visuels des filtres actifs
+- [x] Configurer Zustand store
+  - [x] État global des filtres
+  - [x] Actions pour mettre à jour les filtres
+- [x] Implémenter les interactions :
+  - [x] Clics sur graphiques → filtres
+  - [x] Hover effects
+  - [x] Synchronisation entre graphiques
+- [x] Indicateurs visuels des filtres actifs
 
 ## 🎨 Phase 7 : Styling et UX
 - [ ] Finaliser le design glassmorphique
