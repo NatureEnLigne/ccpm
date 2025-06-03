@@ -12,9 +12,6 @@ interface ToggleSwitchProps {
 export default function ToggleSwitch({ checked, onChange, label, disabled = false }: ToggleSwitchProps) {
   return (
     <div className="flex items-center justify-between">
-      <span className="text-sm font-medium text-gray-700">
-        {label}
-      </span>
       <button
         type="button"
         disabled={disabled}
@@ -24,20 +21,23 @@ export default function ToggleSwitch({ checked, onChange, label, disabled = fals
           ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
           ${checked ? 'bg-blue-600' : 'bg-gray-200'}
         `}
-        onClick={() => !disabled && onChange(!checked)}
-        aria-checked={checked}
         role="switch"
+        aria-checked={checked}
+        onClick={() => !disabled && onChange(!checked)}
       >
-        <span className="sr-only">{typeof label === 'string' ? label : 'Toggle'}</span>
+        <span className="sr-only">{label}</span>
         <span
           aria-hidden="true"
           className={`
-            pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 
+            pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 
             transition duration-200 ease-in-out
             ${checked ? 'translate-x-5' : 'translate-x-0'}
           `}
         />
       </button>
+      <span className="text-sm font-medium text-gray-700 ml-3">
+        {label}
+      </span>
     </div>
   )
 } 

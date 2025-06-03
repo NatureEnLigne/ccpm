@@ -1,25 +1,41 @@
 import type { CommuneCollection } from '../types'
+import { promises as fs } from 'fs'
+import path from 'path'
 
 export async function loadCommunesGeoJSON(): Promise<CommuneCollection> {
   try {
-    const response = await fetch('/assets/data/ccpm.geojson')
-    if (!response.ok) {
-      throw new Error(`Erreur lors du chargement du GeoJSON: ${response.statusText}`)
+    // Déterminer si on est côté serveur ou client
+    const isServer = typeof window === 'undefined'
+    
+    if (isServer) {
+      // Côté serveur : lire le fichier directement depuis le système de fichiers
+      const filePath = path.join(process.cwd(), 'public', 'assets', 'data', 'ccpm.geojson')
+      const fileContent = await fs.readFile(filePath, 'utf-8')
+      const geojson: CommuneCollection = JSON.parse(fileContent)
+      
+      console.log(`GeoJSON chargé (serveur): ${geojson.features.length} communes`)
+      return geojson
+    } else {
+      // Côté client : utiliser fetch
+      const response = await fetch('/assets/data/ccpm.geojson')
+      if (!response.ok) {
+        throw new Error(`Erreur lors du chargement du GeoJSON: ${response.statusText}`)
+      }
+      
+      const geojson: CommuneCollection = await response.json()
+      
+      // Validation basique du format GeoJSON
+      if (!geojson.type || geojson.type !== 'FeatureCollection') {
+        throw new Error('Format GeoJSON invalide: type FeatureCollection attendu')
+      }
+      
+      if (!Array.isArray(geojson.features)) {
+        throw new Error('Format GeoJSON invalide: features doit être un tableau')
+      }
+      
+      console.log(`GeoJSON chargé (client): ${geojson.features.length} communes`)
+      return geojson
     }
-    
-    const geojson: CommuneCollection = await response.json()
-    
-    // Validation basique du format GeoJSON
-    if (!geojson.type || geojson.type !== 'FeatureCollection') {
-      throw new Error('Format GeoJSON invalide: type FeatureCollection attendu')
-    }
-    
-    if (!Array.isArray(geojson.features)) {
-      throw new Error('Format GeoJSON invalide: features doit être un tableau')
-    }
-    
-    console.log(`GeoJSON chargé: ${geojson.features.length} communes`)
-    return geojson
     
   } catch (error) {
     console.error('Erreur lors du chargement du GeoJSON:', error)

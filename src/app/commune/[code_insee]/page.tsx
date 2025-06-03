@@ -5,40 +5,32 @@ import { loadCommunesGeoJSON } from '../../../utils/geojsonLoader'
 // Fonction requise pour les pages dynamiques avec output: export
 export async function generateStaticParams() {
   try {
+    console.log('🔄 Génération des paramètres statiques pour les communes...')
+    
     // Charger toutes les communes depuis le GeoJSON
     const communesGeoJSON = await loadCommunesGeoJSON()
     
     // Extraire tous les codes INSEE disponibles
-    const codeInseeList = communesGeoJSON.features.map(feature => ({
-      code_insee: feature.properties.insee
-    }))
+    const codeInseeList = communesGeoJSON.features.map(feature => {
+      const insee = feature.properties.insee
+      if (!insee) {
+        console.warn('⚠️ Commune sans code INSEE trouvée:', feature.properties)
+      }
+      return {
+        code_insee: insee
+      }
+    }).filter(item => item.code_insee) // Filtrer les valeurs nulles/undefined
     
-    console.log('📍 generateStaticParams - Codes INSEE générés:', codeInseeList.length)
+    console.log(`✅ generateStaticParams - ${codeInseeList.length} codes INSEE générés`)
+    console.log('📋 Codes INSEE:', codeInseeList.map(item => item.code_insee).sort())
     
     return codeInseeList
   } catch (error) {
     console.error('❌ Erreur lors du chargement des communes pour generateStaticParams:', error)
     
-    // En cas d'erreur, retourner une liste de secours avec les communes principales
-    return [
-      { code_insee: '80001' },
-      { code_insee: '80006' },
-      { code_insee: '80009' },
-      { code_insee: '80025' },
-      { code_insee: '80030' }, // Ajouter ARRY
-      { code_insee: '80179' },
-      { code_insee: '80212' },
-      { code_insee: '80253' },
-      { code_insee: '80318' },
-      { code_insee: '80370' },
-      { code_insee: '80410' },
-      { code_insee: '80450' },
-      { code_insee: '80520' },
-      { code_insee: '80561' },
-      { code_insee: '80570' },
-      { code_insee: '80620' },
-      { code_insee: '80806' }
-    ]
+    // En cas d'erreur, retourner une liste vide plutôt qu'une liste de secours
+    // Cela permettra à Next.js de générer les pages à la demande
+    return []
   }
 }
 

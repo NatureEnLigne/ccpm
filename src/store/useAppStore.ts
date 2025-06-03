@@ -56,7 +56,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   isLoading: true,
   show3D: true,
   showCommunes: true,
-  mapStyle: 'satellite-v9',
+  mapStyle: 'satellite-streets-v12',
   communeData: null,
   speciesData: null,
   filters: {

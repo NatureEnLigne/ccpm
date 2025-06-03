@@ -16,6 +16,7 @@ import ToggleSwitch from './ToggleSwitch'
 import type { SyntheseInsee, PhenoMoisInsee, Taxonomie, ListeRouge, Statut } from '../types'
 
 const MAPBOX_STYLES = {
+  'satellite-streets-v12': 'Satellite + Routes',
   'satellite-v9': 'Satellite',
   'outdoors-v12': 'Terrain',
   'streets-v12': 'Rues',
@@ -122,9 +123,10 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className="w-80 p-4 flex flex-col h-full">
+    <aside className="w-80 p-4 flex flex-col h-full space-y-4">
+      
+      {/* Section Communes CCPM */}
       <div className="glass rounded-2xl p-6 flex-1 flex flex-col">
-        
         {/* Titre */}
         <h3 className="text-xl font-semibold text-gray-800 mb-4 text-shadow">
           🏘️ Communes CCPM
@@ -166,14 +168,11 @@ export default function Sidebar() {
 
         {/* Champ de recherche */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            🔍 Rechercher une commune
-          </label>
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Tapez le nom d'une commune..."
+            placeholder="Nom de la commune"
             className="w-full p-2 text-sm rounded-lg bg-white/30 border border-white/50 text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:bg-white/50 transition-all"
           />
           {searchTerm && (
@@ -239,22 +238,28 @@ export default function Sidebar() {
             )}
           </div>
         </div>
+      </div>
 
-        {/* Contrôles */}
-        <div className="mt-6 space-y-4 border-t border-white/20 pt-4">
-          
+      {/* Section Carte */}
+      <div className="glass rounded-2xl p-6">
+        {/* Titre */}
+        <h3 className="text-xl font-semibold text-gray-800 mb-4 text-shadow text-center">
+          🗺️ Carte
+        </h3>
+        
+        <div className="space-y-3">
           {/* Toggle Communes */}
           <ToggleSwitch
             checked={showCommunes}
             onChange={setShowCommunes}
-            label="Afficher contours communes"
+            label="Communes"
           />
 
           {/* Toggle 3D */}
           <ToggleSwitch
             checked={show3D}
             onChange={setShow3D}
-            label="Afficher bâtiments 3D"
+            label="Bâtiments 3D"
           />
 
           {/* Sélecteur de style */}
