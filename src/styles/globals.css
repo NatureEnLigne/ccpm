@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Mapbox CSS */
+@import 'mapbox-gl/dist/mapbox-gl.css';
+
+@layer base {
+  html {
+    @apply h-full;
+  }
+  
+  body {
+    @apply h-full m-0 bg-gradient-to-br from-blue-50 to-green-50;
+  }
+  
+  #__next {
+    @apply h-full;
+  }
+}
+
+@layer components {
+  /* Style glassmorphique */
+  .glass {
+    @apply bg-white/20 backdrop-blur-md border border-white/30 shadow-lg;
+  }
+  
+  .glass-dark {
+    @apply bg-black/20 backdrop-blur-md border border-white/20 shadow-lg;
+  }
+  
+  /* Animations custom */
+  .fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  .slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+  
+  /* Style pour les cartes */
+  .commune-card {
+    @apply glass rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300;
+  }
+  
+  /* Style pour les graphiques */
+  .chart-container {
+    @apply glass rounded-xl p-4 shadow-lg;
+  }
+}
+
+@layer utilities {
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .text-shadow-lg {
+    text-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+} 
