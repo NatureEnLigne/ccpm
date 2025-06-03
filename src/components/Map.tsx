@@ -24,6 +24,7 @@ export default function Map() {
     communes,
     selectedCommune,
     show3D,
+    showCommunes,
     mapStyle,
     setCommunes,
     setSelectedCommune,
@@ -130,6 +131,9 @@ export default function Map() {
       id: 'communes-line',
       type: 'line',
       source: 'communes',
+      layout: {
+        'visibility': showCommunes ? 'visible' : 'none'
+      },
       paint: {
         'line-color': '#8ac926', // Vert pour toutes les communes
         'line-width': 2,
@@ -144,6 +148,9 @@ export default function Map() {
       type: 'line',
       source: 'communes',
       filter: ['==', ['get', 'insee'], ''], // Initialement vide
+      layout: {
+        'visibility': showCommunes ? 'visible' : 'none'
+      },
       paint: {
         'line-color': '#FF8C00', // Orange pour la sélection
         'line-width': 3,
@@ -254,6 +261,15 @@ export default function Map() {
       }
     }
   }, [selectedCommune])
+
+  // Gestion de la visibilité des communes
+  useEffect(() => {
+    if (map.current && map.current.getLayer('communes-line')) {
+      const visibility = showCommunes ? 'visible' : 'none'
+      map.current.setLayoutProperty('communes-line', 'visibility', visibility)
+      map.current.setLayoutProperty('communes-line-selected', 'visibility', visibility)
+    }
+  }, [showCommunes])
 
   // Gestion de la 3D
   useEffect(() => {

@@ -12,6 +12,7 @@ import {
 } from '../utils/csvLoader'
 import { joinCommuneData, joinSpeciesData, enrichCommuneDataWithNames } from '../utils/dataJoiner'
 import { formatNumber } from '../utils/formatters'
+import ToggleSwitch from './ToggleSwitch'
 import type { SyntheseInsee, PhenoMoisInsee, Taxonomie, ListeRouge, Statut } from '../types'
 
 const MAPBOX_STYLES = {
@@ -27,10 +28,12 @@ export default function Sidebar() {
     communeData,
     selectedCommune,
     show3D,
+    showCommunes,
     mapStyle,
     isLoading,
     setSelectedCommune,
     setShow3D,
+    setShowCommunes,
     setMapStyle,
     setCommuneData,
     setSpeciesData,
@@ -240,20 +243,19 @@ export default function Sidebar() {
         {/* Contrôles */}
         <div className="mt-6 space-y-4 border-t border-white/20 pt-4">
           
+          {/* Toggle Communes */}
+          <ToggleSwitch
+            checked={showCommunes}
+            onChange={setShowCommunes}
+            label="Afficher contours communes"
+          />
+
           {/* Toggle 3D */}
-          <div>
-            <label className="flex items-center space-x-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={show3D}
-                onChange={(e) => setShow3D(e.target.checked)}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-              />
-              <span className="text-sm font-medium text-gray-700">
-                Afficher bâtiments 3D
-              </span>
-            </label>
-          </div>
+          <ToggleSwitch
+            checked={show3D}
+            onChange={setShow3D}
+            label="Afficher bâtiments 3D"
+          />
 
           {/* Sélecteur de style */}
           <div>

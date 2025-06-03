@@ -8,6 +8,7 @@ interface AppState {
   communes: CommuneCollection | null
   isLoading: boolean
   show3D: boolean
+  showCommunes: boolean
   mapStyle: string
   
   // Données jointes
@@ -29,6 +30,7 @@ interface AppState {
   setCommunes: (communes: CommuneCollection) => void
   setLoading: (loading: boolean) => void
   setShow3D: (show: boolean) => void
+  setShowCommunes: (show: boolean) => void
   setMapStyle: (style: string) => void
   setCommuneData: (data: Map<string, CommuneData>) => void
   setSpeciesData: (data: Map<string, SpeciesData>) => void
@@ -52,7 +54,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   selectedCommune: null,
   communes: null,
   isLoading: true,
-  show3D: false,
+  show3D: true,
+  showCommunes: true,
   mapStyle: 'satellite-v9',
   communeData: null,
   speciesData: null,
@@ -85,6 +88,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   setLoading: (loading) => set({ isLoading: loading }),
   
   setShow3D: (show) => set({ show3D: show }),
+  
+  setShowCommunes: (show) => set({ showCommunes: show }),
   
   setMapStyle: (style) => set({ mapStyle: style }),
   
