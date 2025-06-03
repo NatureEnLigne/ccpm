@@ -21,8 +21,6 @@ import FilterBar from '../../../components/FilterBar'
 import SpeciesTable from '../../../components/SpeciesTable'
 import ActiveFilters from '../../../components/ActiveFilters'
 import type { SyntheseInsee, PhenoMoisInsee, Taxonomie, ListeRouge, Statut } from '../../../types'
-import LoadingSpinner from '../../../components/ui/LoadingSpinner'
-import ErrorState from '../../../components/ui/ErrorState'
 
 interface CommunePageClientProps {
   codeInsee: string
@@ -111,24 +109,11 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-nature flex items-center justify-center p-4">
-        <div className="glass-card rounded-2xl p-8 text-center max-w-md w-full animate-scale-in">
-          <LoadingSpinner size="lg" text={`Chargement des données de la commune ${codeInsee}...`} />
-          
-          <div className="mt-6 space-y-2">
-            <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
-              <div className="glass-skeleton h-2 w-32 rounded"></div>
-              <span>Données naturalistes</span>
-            </div>
-            <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
-              <div className="glass-skeleton h-2 w-24 rounded" style={{ animationDelay: '0.2s' }}></div>
-              <span>Taxonomie</span>
-            </div>
-            <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
-              <div className="glass-skeleton h-2 w-28 rounded" style={{ animationDelay: '0.4s' }}></div>
-              <span>Phénologie</span>
-            </div>
-          </div>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-emerald-50 flex items-center justify-center">
+        <div className="glass rounded-2xl p-8 text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">Chargement des données...</h2>
+          <p className="text-gray-600">Commune {codeInsee}</p>
         </div>
       </div>
     )
@@ -136,66 +121,76 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-nature flex items-center justify-center p-4">
-        <ErrorState
-          title="Erreur de chargement"
-          message={`${error} pour la commune ${codeInsee}`}
-          onRetry={loadAllData}
-          className="max-w-md w-full"
-        />
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-emerald-50 flex items-center justify-center">
+        <div className="glass rounded-2xl p-8 text-center">
+          <div className="text-red-500 text-6xl mb-4">⚠️</div>
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">Erreur</h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button 
+            onClick={() => router.push('/')}
+            className="bg-blue-500/20 hover:bg-blue-500/30 text-blue-700 font-medium py-2 px-4 rounded-lg transition-colors border border-blue-300/50"
+          >
+            Retour à l'accueil
+          </button>
+        </div>
       </div>
     )
   }
 
   if (!currentCommune) {
     return (
-      <div className="min-h-screen bg-gradient-nature flex items-center justify-center p-4">
-        <ErrorState
-          title="Commune non trouvée"
-          message={`Aucune donnée disponible pour le code INSEE ${codeInsee}`}
-          onRetry={() => router.push('/')}
-          className="max-w-md w-full"
-        />
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-emerald-50 flex items-center justify-center">
+        <div className="glass rounded-2xl p-8 text-center">
+          <div className="text-gray-500 text-6xl mb-4">🏘️</div>
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">Commune non trouvée</h2>
+          <p className="text-gray-600 mb-4">Aucune donnée disponible pour le code INSEE {codeInsee}</p>
+          <button 
+            onClick={() => router.push('/')}
+            className="bg-blue-500/20 hover:bg-blue-500/30 text-blue-700 font-medium py-2 px-4 rounded-lg transition-colors border border-blue-300/50"
+          >
+            Retour à l'accueil
+          </button>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-nature">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-emerald-50">
       
-      {/* Header responsive */}
-      <header className="glass-strong border-b border-white/20 sticky top-0 z-10 animate-slide-up">
-        <div className="container mx-auto px-4 md:px-6 py-3 md:py-4">
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <div className="flex items-center space-x-3 md:space-x-4 min-w-0 flex-1">
+      {/* Header */}
+      <header className="glass border-b border-white/20 sticky top-0 z-10">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
               <button 
                 onClick={() => router.push('/')}
-                className="glass-button p-2 flex-shrink-0"
+                className="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition-colors"
                 title="Retour à l'accueil"
               >
                 ← 
               </button>
-              <div className="min-w-0 flex-1">
-                <h1 className="text-lg md:text-2xl font-bold text-gray-800 truncate">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-800">
                   {currentCommune.nom || `Commune ${codeInsee}`}
                 </h1>
-                <p className="text-sm text-gray-600">Code INSEE: {codeInsee}</p>
+                <p className="text-gray-600">Code INSEE: {codeInsee}</p>
               </div>
             </div>
             
-            {/* Stats rapides - responsive */}
-            <div className="flex space-x-4 md:space-x-6 flex-shrink-0">
+            {/* Stats rapides */}
+            <div className="flex space-x-6">
               <div className="text-center">
-                <div className="text-lg md:text-2xl font-bold text-blue-600">
+                <div className="text-2xl font-bold text-blue-600">
                   {formatNumber(currentCommune.totalObs)}
                 </div>
-                <div className="text-xs md:text-sm text-gray-600">Observations</div>
+                <div className="text-sm text-gray-600">Observations</div>
               </div>
               <div className="text-center">
-                <div className="text-lg md:text-2xl font-bold text-green-600">
+                <div className="text-2xl font-bold text-green-600">
                   {formatNumber(currentCommune.totalEsp)}
                 </div>
-                <div className="text-xs md:text-sm text-gray-600">Espèces</div>
+                <div className="text-sm text-gray-600">Espèces</div>
               </div>
             </div>
           </div>
@@ -203,58 +198,55 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
       </header>
 
       {/* Contenu principal */}
-      <main className="container mx-auto px-4 md:px-6 py-4 md:py-8 animate-fade-in">
+      <main className="container mx-auto px-6 py-8">
         
         {/* Barre de filtres */}
-        <div className="mb-6">
-          <FilterBar
-            selectedRegne={selectedRegne}
-            onRegneChange={setSelectedRegne}
-          />
-        </div>
+        <FilterBar
+          selectedRegne={selectedRegne}
+          onRegneChange={setSelectedRegne}
+        />
 
         {/* Filtres actifs */}
         <ActiveFilters />
 
-        {/* Grille responsive des graphiques */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6 lg:gap-8 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           
           {/* Groupes taxonomiques - Bubble chart */}
-          <div className="glass-card rounded-2xl p-4 md:p-6 animate-scale-in">
-            <h3 className="text-lg md:text-xl font-semibold text-gray-800 mb-4">
+          <div className="glass rounded-2xl p-6">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">
               🦋 Groupes taxonomiques
             </h3>
-            <div className="h-64 md:h-80">
+            <div className="h-80">
               <GroupBubble codeInsee={codeInsee} selectedRegne={selectedRegne} />
             </div>
           </div>
 
           {/* Phénologie mensuelle - Line chart */}
-          <div className="glass-card rounded-2xl p-4 md:p-6 animate-scale-in" style={{ animationDelay: '0.1s' }}>
-            <h3 className="text-lg md:text-xl font-semibold text-gray-800 mb-4">
+          <div className="glass rounded-2xl p-6">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">
               📅 Phénologie mensuelle
             </h3>
-            <div className="h-64 md:h-80">
+            <div className="h-80">
               <PhenoLine codeInsee={codeInsee} selectedRegne={selectedRegne} />
             </div>
           </div>
 
           {/* Listes rouges - Bar chart */}
-          <div className="glass-card rounded-2xl p-4 md:p-6 animate-scale-in" style={{ animationDelay: '0.2s' }}>
-            <h3 className="text-lg md:text-xl font-semibold text-gray-800 mb-4">
+          <div className="glass rounded-2xl p-6">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">
               🚨 Statuts listes rouges
             </h3>
-            <div className="h-64 md:h-80">
+            <div className="h-80">
               <RedListBar codeInsee={codeInsee} selectedRegne={selectedRegne} />
             </div>
           </div>
 
           {/* Statuts réglementaires - Treemap */}
-          <div className="glass-card rounded-2xl p-4 md:p-6 animate-scale-in" style={{ animationDelay: '0.3s' }}>
-            <h3 className="text-lg md:text-xl font-semibold text-gray-800 mb-4">
+          <div className="glass rounded-2xl p-6">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">
               ⚖️ Statuts réglementaires
             </h3>
-            <div className="h-64 md:h-80">
+            <div className="h-80">
               <StatusTreemap codeInsee={codeInsee} selectedRegne={selectedRegne} />
             </div>
           </div>
@@ -262,7 +254,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
         </div>
         
         {/* Tableau des espèces */}
-        <div className="animate-slide-up" style={{ animationDelay: '0.4s' }}>
+        <div className="mt-8">
           <SpeciesTable codeInsee={codeInsee} selectedRegne={selectedRegne} />
         </div>
       </main>

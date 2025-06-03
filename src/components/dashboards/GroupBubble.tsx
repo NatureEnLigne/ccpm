@@ -119,7 +119,7 @@ export default function GroupBubble({ codeInsee, selectedRegne }: GroupBubblePro
       margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
       id="id"
       value="value"
-      colors={{ scheme: 'category10' }}
+      colors={['#2D5016', '#228B22', '#32CD32', '#90EE90', '#98FB98', '#F0FFF0', '#8FBC8F', '#006400', '#556B2F', '#9ACD32']}
       padding={4}
       enableLabels={true}
       labelsSkipRadius={10}
@@ -170,7 +170,7 @@ export default function GroupBubble({ codeInsee, selectedRegne }: GroupBubblePro
             ></div>
             <span className="font-medium">{id}</span>
             {isFiltered('bubble', 'group', id) && (
-              <span className="text-blue-600 text-xs">• Filtré</span>
+              <span className="text-green-600 text-xs">• Filtré</span>
             )}
           </div>
           <div className="text-gray-600 mt-1">

@@ -155,7 +155,7 @@ export default function StatusTreemap({ codeInsee, selectedRegne }: StatusTreema
           ['darker', 0.1]
         ]
       }}
-      colors={{ scheme: 'nivo' }}
+      colors={['#8FBC8F', '#90EE90', '#98FB98', '#32CD32', '#228B22', '#006400', '#2E8B57', '#3CB371', '#20B2AA', '#66CDAA']}
       animate={true}
       motionConfig="gentle"
       onClick={(node) => {
@@ -189,7 +189,7 @@ export default function StatusTreemap({ codeInsee, selectedRegne }: StatusTreema
             <div className="font-medium flex items-center gap-2">
               {node.id}
               {isCurrentFiltered && (
-                <span className="text-blue-600 text-xs">• Filtré</span>
+                <span className="text-green-600 text-xs">• Filtré</span>
               )}
             </div>
             <div className="text-gray-600 mt-1">

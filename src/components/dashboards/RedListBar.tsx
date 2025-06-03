@@ -124,7 +124,7 @@ export default function RedListBar({ codeInsee, selectedRegne }: RedListBarProps
       padding={0.3}
       valueScale={{ type: 'linear' }}
       indexScale={{ type: 'band', round: true }}
-      colors={{ scheme: 'spectral' }}
+      colors={['#8B4513', '#D2B48C', '#F4A460', '#CD853F', '#DEB887', '#BC8F8F', '#A0522D', '#DAA520', '#B8860B', '#8FBC8F']}
       borderColor={{
         from: 'color',
         modifiers: [
@@ -191,7 +191,7 @@ export default function RedListBar({ codeInsee, selectedRegne }: RedListBarProps
               ></div>
               <span className="font-medium">{indexValue}</span>
               {isCurrentFiltered && (
-                <span className="text-blue-600 text-xs">• Filtré</span>
+                <span className="text-green-600 text-xs">• Filtré</span>
               )}
             </div>
             <div className="text-gray-600 mt-1">

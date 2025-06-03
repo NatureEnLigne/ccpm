@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { X } from 'lucide-react'
 import { useAppStore } from '../store/useAppStore'
 import { getCommunesNames } from '../utils/geojsonLoader'
 import { 
@@ -22,11 +21,7 @@ const MAPBOX_STYLES = {
   'light-v11': 'Clair'
 }
 
-interface SidebarProps {
-  onClose?: () => void
-}
-
-export default function Sidebar({ onClose }: SidebarProps) {
+export default function Sidebar() {
   const {
     communes,
     communeData,
@@ -124,24 +119,13 @@ export default function Sidebar({ onClose }: SidebarProps) {
   }
 
   return (
-    <aside className="w-full h-full p-3 md:p-4 flex flex-col bg-white lg:bg-transparent">
-      <div className="glass-card rounded-2xl p-4 md:p-6 flex-1 flex flex-col animate-slide-in-left">
+    <aside className="w-80 p-4 flex flex-col h-full">
+      <div className="glass rounded-2xl p-6 flex-1 flex flex-col">
         
-        {/* Header avec bouton fermeture mobile */}
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg md:text-xl font-semibold text-gray-800 text-shadow">
-            🏘️ Communes CCPM
-          </h3>
-          {onClose && (
-            <button
-              onClick={onClose}
-              className="lg:hidden glass-button p-2"
-              aria-label="Fermer le menu"
-            >
-              <X size={18} />
-            </button>
-          )}
-        </div>
+        {/* Titre */}
+        <h3 className="text-xl font-semibold text-gray-800 mb-4 text-shadow">
+          🏘️ Communes CCPM
+        </h3>
 
         {/* Fiche commune sélectionnée */}
         {selectedCommuneData && (

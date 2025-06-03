@@ -89,10 +89,33 @@ export default function SpeciesTable({ codeInsee, selectedRegne = '' }: SpeciesT
       }
 
       // Calculer le nombre total d'observations pour cette espèce dans cette commune
-      // Utiliser directement les observations de la commune pour cette espèce
-      const totalObs = currentCommune.observations
-        .filter(obs => obs['Cd Ref'] === cdRef)
-        .reduce((sum, obs) => sum + obs['Nb Obs'], 0)
+      // en tenant compte des filtres actifs
+      let totalObs = 0
+      
+      // Filtrer les observations selon les critères actifs
+      currentCommune.observations.forEach(obs => {
+        if (obs['Cd Ref'] !== cdRef) return
+        
+        let includeThisObs = true
+        
+        // Si filtre par mois actif, vérifier que cette espèce a des données phénologiques pour ce mois
+        if (filters?.selectedMois) {
+          const hasMonthData = currentCommune.phenologie.some(pheno => 
+            pheno['CD REF (pheno!mois!insee)'] === cdRef && 
+            pheno['Mois Obs'] === filters.selectedMois
+          )
+          if (!hasMonthData) includeThisObs = false
+        }
+        
+        // Si filtre par année actif (bien que non encore implémenté dans l'UI, on prépare)
+        if (filters?.selectedAnnee && obs['An Obs'] !== filters.selectedAnnee) {
+          includeThisObs = false
+        }
+        
+        if (includeThisObs) {
+          totalObs += obs['Nb Obs']
+        }
+      })
 
       if (totalObs > 0) {
         // Récupérer les informations taxonomiques détaillées
@@ -183,7 +206,7 @@ export default function SpeciesTable({ codeInsee, selectedRegne = '' }: SpeciesT
         </h3>
         <div className="text-sm text-gray-600">
           {formatNumber(tableData.length)} espèces • {formatNumber(tableData.reduce((sum, row) => sum + row.nombreObservations, 0))} observations
-          {selectedRegne && <span className="ml-2 text-blue-600">• Filtre: {selectedRegne}</span>}
+          {selectedRegne && <span className="ml-2 text-green-600">• Filtre: {selectedRegne}</span>}
         </div>
       </div>
 
@@ -252,7 +275,7 @@ export default function SpeciesTable({ codeInsee, selectedRegne = '' }: SpeciesT
                   }`}
                 >
                   <td className="py-3 px-2 text-sm">
-                    <span className="font-medium text-blue-700">
+                    <span className="font-medium text-green-700">
                       {row.group1Inpn || '-'}
                     </span>
                   </td>
@@ -268,7 +291,7 @@ export default function SpeciesTable({ codeInsee, selectedRegne = '' }: SpeciesT
                     {row.nomVern || '-'}
                   </td>
                   <td className="py-3 px-2 text-sm">
-                    <span className="font-bold text-green-600">
+                    <span className="font-bold text-emerald-600">
                       {formatNumber(row.nombreObservations)}
                     </span>
                   </td>
@@ -277,7 +300,7 @@ export default function SpeciesTable({ codeInsee, selectedRegne = '' }: SpeciesT
                       href={row.urlInpn}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center w-8 h-8 bg-blue-500/20 hover:bg-blue-500/30 text-blue-700 rounded-lg transition-colors text-sm font-medium"
+                      className="inline-flex items-center justify-center w-8 h-8 bg-green-500/20 hover:bg-green-500/30 text-green-700 rounded-lg transition-colors text-sm font-medium"
                       title="Voir sur INPN"
                     >
                       🔗
@@ -326,7 +349,7 @@ export default function SpeciesTable({ codeInsee, selectedRegne = '' }: SpeciesT
                     onClick={() => setCurrentPage(pageNum)}
                     className={`px-3 py-1 rounded-lg transition-colors text-sm ${
                       currentPage === pageNum
-                        ? 'bg-blue-500/30 text-blue-700 font-medium'
+                        ? 'bg-green-500/30 text-green-700 font-medium'
                         : 'bg-white/20 hover:bg-white/30 text-gray-700'
                     }`}
                   >

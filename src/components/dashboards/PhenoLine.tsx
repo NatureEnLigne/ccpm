@@ -148,7 +148,7 @@ export default function PhenoLine({ codeInsee, selectedRegne }: PhenoLineProps) 
       pointBorderColor={{ from: 'serieColor' }}
       pointLabelYOffset={-12}
       useMesh={true}
-      colors={{ scheme: 'category10' }}
+      colors={['#228B22']}
       animate={true}
       motionConfig="gentle"
       onClick={(point) => {
@@ -181,7 +181,7 @@ export default function PhenoLine({ codeInsee, selectedRegne }: PhenoLineProps) 
             <div className="font-medium flex items-center gap-2">
               {point.data.xFormatted}
               {isCurrentFiltered && (
-                <span className="text-blue-600 text-xs">• Filtré</span>
+                <span className="text-green-600 text-xs">• Filtré</span>
               )}
             </div>
             <div className="text-gray-600">
