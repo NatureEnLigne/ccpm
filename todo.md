@@ -2,25 +2,25 @@
 
 ## 🎯 Phase 1 : Configuration initiale
 - [x] Initialiser le projet Git
-- [ ] Configurer Next.js 14 avec TypeScript
-- [ ] Installer les dépendances principales
-  - [ ] Mapbox GL JS + types
-  - [ ] Tailwind CSS
-  - [ ] Papaparse pour CSV
-  - [ ] Nivo pour visualisations
-  - [ ] Zustand pour le state management
-- [ ] Configurer Tailwind avec les styles glassmorphiques
-- [ ] Créer la structure de dossiers recommandée
+- [x] Configurer Next.js 14 avec TypeScript
+- [x] Installer les dépendances principales
+  - [x] Mapbox GL JS + types
+  - [x] Tailwind CSS
+  - [x] Papaparse pour CSV
+  - [x] Nivo pour visualisations
+  - [x] Zustand pour le state management
+- [x] Configurer Tailwind avec les styles glassmorphiques
+- [x] Créer la structure de dossiers recommandée
 
 ## 🗂️ Phase 2 : Préparation des données
-- [ ] Créer le dossier `/assets/data/`
-- [ ] Ajouter les fichiers de données :
-  - [ ] `ccpm.geojson`
-  - [ ] `synthese_insee.csv`
-  - [ ] `pheno_mois_insee.csv`
-  - [ ] `taxonomie.csv`
-  - [ ] `lists_rouges.csv`
-  - [ ] `statuts.csv`
+- [x] Créer le dossier `/assets/data/`
+- [x] Ajouter les fichiers de données :
+  - [x] `ccpm.geojson`
+  - [x] `synthese_insee.csv`
+  - [x] `pheno_mois_insee.csv`
+  - [x] `taxonomie.csv`
+  - [x] `lists_rouges.csv`
+  - [x] `statuts.csv`
 - [ ] Créer les utilitaires de chargement :
   - [ ] `utils/csvLoader.ts`
   - [ ] `utils/geojsonLoader.ts`
