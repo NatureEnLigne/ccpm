@@ -88,10 +88,14 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
       // Convertir en format pour Nivo
       const lineData: LineData[] = [{
         id: 'Observations',
-        data: Array.from(monthlyData.entries()).map(([mois, count]) => ({
-          x: MONTH_NAMES[mois - 1],
-          y: count
-        }))
+        data: MONTH_NAMES.map((monthName, index) => {
+          const monthNumber = index + 1
+          const count = monthlyData.get(monthNumber) || 0
+          return {
+            x: monthName,
+            y: count
+          }
+        })
       }]
 
       setData(lineData)
@@ -113,7 +117,7 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
   return (
     <ResponsiveLine
       data={data}
-      margin={{ top: 20, right: 20, bottom: 60, left: 80 }}
+      margin={{ top: 20, right: 20, bottom: 80, left: 80 }}
       xScale={{ type: 'point' }}
       yScale={{
         type: 'linear',
@@ -129,9 +133,9 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
       axisBottom={{
         tickSize: 5,
         tickPadding: 5,
-        tickRotation: 0,
+        tickRotation: -45,
         legend: 'Mois',
-        legendOffset: 36,
+        legendOffset: 50,
         legendPosition: 'middle'
       }}
       axisLeft={{
