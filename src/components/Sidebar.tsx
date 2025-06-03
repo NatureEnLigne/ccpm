@@ -114,14 +114,8 @@ export default function Sidebar() {
 
   const handleFicheClick = (insee: string, e: React.MouseEvent) => {
     e.stopPropagation() // Empêche de déclencher le clic sur la commune
-    console.log('📊 Clic sur fiche pour INSEE:', insee, '(type:', typeof insee, ')')
-    console.log('📊 communeData disponible:', communeData ? `${communeData.size} communes` : 'null')
-    if (communeData) {
-      console.log('📊 Commune trouvée:', !!communeData.get(insee))
-      console.log('📊 Quelques clés disponibles:', Array.from(communeData.keys()).slice(0, 5))
-    }
-    setStatsPanelCommune(insee)
-    setShowStatsPanel(true)
+    // Rediriger vers la page détaillée de la commune
+    window.location.href = `/commune/${insee}`
   }
 
   return (

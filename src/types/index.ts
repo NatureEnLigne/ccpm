@@ -37,22 +37,31 @@ export interface PhenoMoisInsee {
 
 export interface Taxonomie {
   'Cd Nom': string
+  'CD REF (taxonomie)': string
   'Nom Valide': string
   'Group1 Inpn': string
   'Ordre': string
   'Famille': string
+  'Classe': string
+  'Phylum': string
+  'Regne': string
+  'Nom Complet': string
 }
 
 export interface ListeRouge {
-  'CD NOM': string
-  'Statut': string
-  'Critere': string
+  'CD NOM (lists!rouges)': string
+  'Code Statut': string
+  'Label Statut': string
+  'Lb Adm Tr': string
+  'Lb Type Statut': string
 }
 
 export interface Statut {
-  'CD NOM': string
-  'Type Statut': string
-  'Statut': string
+  'CD NOM (statuts)': string
+  'CD TYPE STATUT (statuts)': string
+  'CODE STATUT (statuts)': string
+  'LABEL STATUT (statuts)': string
+  'LB TYPE STATUT (statuts)': string
 }
 
 // Types pour l'état de l'application

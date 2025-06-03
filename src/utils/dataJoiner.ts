@@ -20,6 +20,7 @@ export interface SpeciesData {
   cdRef: string
   nomValide: string
   groupe: string
+  regne: string
   ordre: string
   famille: string
   listeRouge?: ListeRouge
@@ -134,14 +135,29 @@ export function joinSpeciesData(
   const taxonomieMap = new Map<string, Taxonomie>()
   const listesRougesMap = new Map<string, ListeRouge>()
   
-  // Créer les maps de lookup
-  taxonomieData.forEach(tax => {
-    taxonomieMap.set(tax['Cd Nom'], tax)
+  console.log('🔗 Début jointure espèces...')
+  console.log('🔗 Taxonomie:', taxonomieData.length, 'lignes')
+  console.log('🔗 Listes rouges:', listesRougesData.length, 'lignes')
+  console.log('🔗 Statuts:', statutsData.length, 'lignes')
+  
+  // Créer les maps de lookup avec les bonnes clés
+  taxonomieData.forEach((tax, index) => {
+    const cdRef = tax['CD REF (taxonomie)'] // Utiliser CD REF au lieu de Cd Nom
+    if (index < 3) {
+      console.log(`🔗 Taxonomie ${index}: CD REF=${cdRef}, Nom=${tax['Nom Valide']}`)
+    }
+    taxonomieMap.set(cdRef, tax)
   })
   
-  listesRougesData.forEach(lr => {
-    listesRougesMap.set(lr['CD NOM'], lr)
+  listesRougesData.forEach((lr, index) => {
+    const cdNom = lr['CD NOM (lists!rouges)'] // Utiliser la bonne clé
+    if (index < 3) {
+      console.log(`🔗 Liste rouge ${index}: CD NOM=${cdNom}, Statut=${lr['Label Statut']}`)
+    }
+    listesRougesMap.set(cdNom, lr)
   })
+  
+  console.log('🔗 Maps créées - Taxonomie:', taxonomieMap.size, 'Listes rouges:', listesRougesMap.size)
   
   // Joindre les données
   syntheseData.forEach(obs => {
@@ -150,15 +166,20 @@ export function joinSpeciesData(
     
     if (taxonomie) {
       if (!speciesMap.has(cdRef)) {
-        const statuts = statutsData.filter(s => s['CD NOM'] === cdRef)
+        // Utiliser CD REF pour filtrer les statuts aussi
+        const statuts = statutsData.filter(s => s['CD NOM (statuts)'] === cdRef)
+        // Récupérer la liste rouge avec CD REF (car taxonomie contient le CD NOM correspondant)
+        const cdNom = taxonomie['Cd Nom']
+        const listeRouge = listesRougesMap.get(cdNom)
         
         speciesMap.set(cdRef, {
           cdRef,
           nomValide: taxonomie['Nom Valide'],
           groupe: taxonomie['Group1 Inpn'],
+          regne: taxonomie['Regne'],
           ordre: taxonomie['Ordre'],
           famille: taxonomie['Famille'],
-          listeRouge: listesRougesMap.get(cdRef),
+          listeRouge,
           statuts,
           observations: []
         })
@@ -168,6 +189,11 @@ export function joinSpeciesData(
       species.observations.push(obs)
     }
   })
+  
+  console.log('🔗 Jointure espèces terminée. Espèces créées:', speciesMap.size)
+  const speciesWithLR = Array.from(speciesMap.values()).filter(s => s.listeRouge).length
+  const speciesWithStatuts = Array.from(speciesMap.values()).filter(s => s.statuts.length > 0).length
+  console.log('🔗 Espèces avec liste rouge:', speciesWithLR, 'avec statuts:', speciesWithStatuts)
   
   return speciesMap
 }
