@@ -198,21 +198,21 @@ export default function RedListBar({ codeInsee }: RedListBarProps) {
         const isCurrentFiltered = isFiltered('bar', 'status', indexValue as string)
         
         return (
-          <div className="bg-transparent backdrop-blur-sm rounded-lg p-4 text-sm shadow-xl border border-amber-800/30">
+          <div className="bg-transparent backdrop-blur-lg rounded-lg p-4 text-sm shadow-xl border border-white/20">
             <div className="flex items-center gap-2 mb-2">
               <div 
                 className="w-4 h-4 rounded-full shadow-sm"
                 style={{ backgroundColor: color }}
               ></div>
-              <span className="font-semibold text-amber-800">{indexValue}</span>
+              <span className="font-semibold text-white text-base">{indexValue}</span>
               {isCurrentFiltered && (
-                <span className="bg-amber-700/20 text-amber-700 px-2 py-1 rounded-full text-xs">Filtré</span>
+                <span className="bg-white/20 text-white px-2 py-1 rounded-full text-xs">Filtré</span>
               )}
             </div>
-            <div className="text-amber-700 mb-2">
-              <span className="font-medium text-amber-800">{value}</span> espèce{(value as number) > 1 ? 's' : ''}
+            <div className="text-white/90 mb-2">
+              <span className="font-medium text-white">{value}</span> espèce{(value as number) > 1 ? 's' : ''}
             </div>
-            <div className="text-xs text-amber-600 border-t border-amber-800/20 pt-2">
+            <div className="text-xs text-white/70 border-t border-white/20 pt-2">
               Cliquez pour filtrer par statut
             </div>
           </div>

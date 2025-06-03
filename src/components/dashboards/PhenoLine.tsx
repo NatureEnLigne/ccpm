@@ -181,17 +181,17 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
         const isCurrentFiltered = isFiltered('line', 'month', monthIndex)
         
         return (
-          <div className="bg-transparent backdrop-blur-sm rounded-lg p-4 text-sm shadow-xl border border-green-800/30">
-            <div className="font-semibold text-green-800 flex items-center gap-2 mb-2">
+          <div className="bg-transparent backdrop-blur-lg rounded-lg p-4 text-sm shadow-xl border border-white/20">
+            <div className="font-semibold text-white flex items-center gap-2 mb-2 text-base">
               <span>{point.data.xFormatted}</span>
               {isCurrentFiltered && (
-                <span className="bg-green-700/20 text-green-700 px-2 py-1 rounded-full text-xs">Filtré</span>
+                <span className="bg-white/20 text-white px-2 py-1 rounded-full text-xs">Filtré</span>
               )}
             </div>
-            <div className="text-green-700 mb-2">
-              <span className="font-medium text-green-800">{point.data.yFormatted}</span> observations
+            <div className="text-white/90 mb-2">
+              <span className="font-medium text-white">{point.data.yFormatted}</span> observations
             </div>
-            <div className="text-xs text-green-600 border-t border-green-800/20 pt-2">
+            <div className="text-xs text-white/70 border-t border-white/20 pt-2">
               Cliquez pour filtrer par mois
             </div>
           </div>
