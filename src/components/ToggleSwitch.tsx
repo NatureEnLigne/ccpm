@@ -5,39 +5,40 @@ import { ReactNode } from 'react'
 interface ToggleSwitchProps {
   checked: boolean
   onChange: (checked: boolean) => void
-  label: string | ReactNode
-  disabled?: boolean
+  label: string
 }
 
-export default function ToggleSwitch({ checked, onChange, label, disabled = false }: ToggleSwitchProps) {
+export default function ToggleSwitch({ checked, onChange, label }: ToggleSwitchProps) {
   return (
-    <div className="flex items-center justify-between">
-      <button
-        type="button"
-        disabled={disabled}
-        className={`
-          relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent 
-          transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500/50
-          ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
-          ${checked ? 'bg-blue-600' : 'bg-gray-200'}
-        `}
-        role="switch"
-        aria-checked={checked}
-        onClick={() => !disabled && onChange(!checked)}
+    <div className="flex items-center justify-between group">
+      {/* Toggle switch moderne */}
+      <div 
+        onClick={() => onChange(!checked)}
+        className={`relative inline-flex h-7 w-12 items-center rounded-full cursor-pointer transition-all duration-300 ease-in-out ${
+          checked 
+            ? 'bg-gradient-primary shadow-lg' 
+            : 'bg-gray-300/70 hover:bg-gray-400/70'
+        }`}
       >
-        <span className="sr-only">{label}</span>
         <span
-          aria-hidden="true"
-          className={`
-            pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 
-            transition duration-200 ease-in-out
-            ${checked ? 'translate-x-5' : 'translate-x-0'}
-          `}
+          className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-lg transition-all duration-300 ease-in-out ${
+            checked ? 'translate-x-6' : 'translate-x-1'
+          }`}
         />
-      </button>
-      <span className="text-sm font-medium text-gray-700 ml-3">
+        
+        {/* Indicateur lumineux quand activé */}
+        {checked && (
+          <div className="absolute inset-0 rounded-full bg-gradient-primary opacity-30 animate-pulse" />
+        )}
+      </div>
+      
+      {/* Label moderne */}
+      <label 
+        onClick={() => onChange(!checked)}
+        className="font-medium text-gray-700 cursor-pointer transition-colors duration-200 group-hover:text-gray-900 select-none"
+      >
         {label}
-      </span>
+      </label>
     </div>
   )
 } 

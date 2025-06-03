@@ -36,33 +36,43 @@ export default function HomePage() {
   }, [communeData])
 
   return (
-    <main className="h-screen flex flex-col bg-gradient-to-br from-blue-50 to-green-50">
-      {/* Header */}
-      <header className="glass z-10 p-4 shadow-lg">
-        <div className="container mx-auto">
+    <main className="h-screen flex flex-col">
+      {/* Header moderne */}
+      <header className="modern-card z-10 m-4 mb-0 shadow-xl fade-in-up">
+        <div className="p-6">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-800 text-shadow">
-                📍 CCPM - Cartographie Ponthieu-Marquenterre
+            <div className="fade-in-scale">
+              <h1 className="text-3xl font-bold text-gradient mb-2">
+                📍 CCPM Cartographie
               </h1>
-              <p className="text-gray-600 mt-1">
-                Visualisation interactive des données naturalistes
+              <p className="text-gray-600 text-lg font-medium">
+                Ponthieu-Marquenterre • Données Naturalistes
               </p>
             </div>
             
-            {/* Stats rapides CCPM */}
-            <div className="flex space-x-6">
+            {/* Stats rapides modernes */}
+            <div className="flex space-x-8 fade-in-scale">
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600">
-                  {formatNumberFull(globalStats.totalObs)}
+                <div className="relative">
+                  <div className="text-4xl font-bold text-gradient mb-1">
+                    {formatNumberFull(globalStats.totalObs)}
+                  </div>
+                  <div className="badge-modern">
+                    <span className="w-2 h-2 bg-white rounded-full opacity-80"></span>
+                    Observations
+                  </div>
                 </div>
-                <div className="text-sm text-gray-600">Observations</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">
-                  {formatNumberFull(globalStats.totalEsp)}
+                <div className="relative">
+                  <div className="text-4xl font-bold text-gradient mb-1">
+                    {formatNumberFull(globalStats.totalEsp)}
+                  </div>
+                  <div className="badge-success">
+                    <span className="w-2 h-2 bg-white rounded-full opacity-80"></span>
+                    Espèces
+                  </div>
                 </div>
-                <div className="text-sm text-gray-600">Espèces</div>
               </div>
             </div>
           </div>
@@ -70,15 +80,19 @@ export default function HomePage() {
       </header>
 
       {/* Contenu principal */}
-      <div className="flex-1 flex min-h-0">
-        {/* Zone carte avec panneau de stats - prend tout l'espace disponible */}
-        <div className="flex-1 p-4 relative">
-          <Map />
-          <StatsPanel />
+      <div className="flex-1 flex min-h-0 p-4 gap-4">
+        {/* Zone carte avec panneau de stats */}
+        <div className="flex-1 relative fade-in-up" style={{ animationDelay: '0.1s' }}>
+          <div className="h-full modern-card overflow-hidden">
+            <Map />
+            <StatsPanel />
+          </div>
         </div>
 
-        {/* Sidebar */}
-        <Sidebar />
+        {/* Sidebar moderne */}
+        <div className="slide-in-right" style={{ animationDelay: '0.2s' }}>
+          <Sidebar />
+        </div>
       </div>
     </main>
   )

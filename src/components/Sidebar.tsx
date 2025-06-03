@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useAppStore } from '../store/useAppStore'
-import { getCommunesNames } from '../utils/geojsonLoader'
+import { loadCommunesGeoJSON } from '../utils/geojsonLoader'
 import { 
   loadSyntheseInsee,
   loadPhenoMoisInsee,
@@ -25,252 +25,221 @@ const MAPBOX_STYLES = {
 
 export default function Sidebar() {
   const {
-    communes,
-    communeData,
     selectedCommune,
-    show3D,
-    showCommunes,
-    mapStyle,
-    isLoading,
     setSelectedCommune,
-    setShow3D,
-    setShowCommunes,
-    setMapStyle,
+    communeData,
     setCommuneData,
+    speciesData,
     setSpeciesData,
-    setShowStatsPanel,
-    setStatsPanelCommune
+    mapStyle,
+    setMapStyle,
+    showCommunes,
+    setShowCommunes,
+    show3D,
+    setShow3D
   } = useAppStore()
 
-  const [dataLoaded, setDataLoaded] = useState(false)
+  const [communeNames, setCommuneNames] = useState<Map<string, string>>(new Map())
   const [searchTerm, setSearchTerm] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
 
-  // Chargement des données CSV au montage
+  // Filtrer les communes selon le terme de recherche
+  const filteredCommuneNames = Array.from(communeNames.entries())
+    .filter(([codeInsee, name]) => 
+      name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      codeInsee.includes(searchTerm)
+    )
+    .sort((a, b) => a[1].localeCompare(b[1]))
+
+  // Charger les données au montage
   useEffect(() => {
-    if (!dataLoaded) {
-      loadAllData()
-    }
-  }, [dataLoaded])
+    const loadAllData = async () => {
+      try {
+        console.log('🔄 Chargement des données...')
+        setIsLoading(true)
 
-  const loadAllData = async () => {
-    try {
-      console.log('Chargement des données CSV...')
-      
-      const [
-        syntheseData,
-        phenoData,
-        taxonomieData,
-        listesRougesData,
-        statutsData
-      ] = await Promise.all([
-        loadSyntheseInsee() as Promise<SyntheseInsee[]>,
-        loadPhenoMoisInsee() as Promise<PhenoMoisInsee[]>,
-        loadTaxonomie() as Promise<Taxonomie[]>,
-        loadListesRouges() as Promise<ListeRouge[]>,
-        loadStatuts() as Promise<Statut[]>
-      ])
+        // Charger d'abord le GeoJSON pour obtenir les noms des communes
+        const communesGeoJSON = await loadCommunesGeoJSON()
+        
+        // Créer une map des noms des communes (insee -> nom)
+        const namesMap = new Map<string, string>()
+        communesGeoJSON.features.forEach(feature => {
+          namesMap.set(feature.properties.insee, feature.properties.nom)
+        })
+        setCommuneNames(namesMap)
 
-      console.log('Données chargées:', {
-        synthese: syntheseData.length,
-        pheno: phenoData.length,
-        taxonomie: taxonomieData.length,
-        listesRouges: listesRougesData.length,
-        statuts: statutsData.length
-      })
+        // Charger toutes les données en parallèle
+        const [syntheseData, phenoData, taxonomieData, listesRougesData, statutsData] = await Promise.all([
+          loadSyntheseInsee(),
+          loadPhenoMoisInsee(),
+          loadTaxonomie(),
+          loadListesRouges(),
+          loadStatuts()
+        ])
 
-      // Joindre les données
-      let communeDataMap = joinCommuneData(syntheseData, phenoData)
-      const speciesDataMap = joinSpeciesData(
-        syntheseData,
-        taxonomieData,
-        listesRougesData,
-        statutsData
-      )
+        console.log('📊 Données chargées:', {
+          synthese: syntheseData.length,
+          pheno: phenoData.length,
+          taxonomie: taxonomieData.length,
+          listesRouges: listesRougesData.length,
+          statuts: statutsData.length
+        })
 
-      // Enrichir avec les noms des communes si disponibles
-      if (communes) {
-        communeDataMap = enrichCommuneDataWithNames(communeDataMap, communes)
+        // Joindre et enrichir les données
+        const enrichedCommuneData = joinCommuneData(syntheseData as SyntheseInsee[], phenoData as PhenoMoisInsee[])
+        const enrichedSpeciesData = joinSpeciesData(syntheseData as SyntheseInsee[], taxonomieData as Taxonomie[], listesRougesData as ListeRouge[], statutsData as Statut[])
+        const finalCommuneData = enrichCommuneDataWithNames(enrichedCommuneData, communesGeoJSON)
+
+        setCommuneData(finalCommuneData)
+        setSpeciesData(enrichedSpeciesData)
+
+        console.log('✅ Données enrichies et prêtes')
+      } catch (error) {
+        console.error('❌ Erreur lors du chargement des données:', error)
+      } finally {
+        setIsLoading(false)
       }
-
-      setCommuneData(communeDataMap)
-      setSpeciesData(speciesDataMap)
-      setDataLoaded(true)
-
-    } catch (error) {
-      console.error('Erreur lors du chargement des données:', error)
     }
-  }
 
-  const communeNames = communes ? getCommunesNames(communes) : []
-  
-  // Filtrage des communes selon le terme de recherche
-  const filteredCommuneNames = communeNames.filter(nom =>
-    nom.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-  
-  const selectedCommuneData = communeData && selectedCommune 
-    ? communeData.get(selectedCommune) 
-    : null
-
-  const handleCommuneClick = (insee: string) => {
-    setSelectedCommune(insee)
-  }
-
-  const handleFicheClick = (insee: string, e: React.MouseEvent) => {
-    e.stopPropagation() // Empêche de déclencher le clic sur la commune
-    // Rediriger vers la page détaillée de la commune
-    window.location.href = `/commune/${insee}`
-  }
+    loadAllData()
+  }, [setCommuneData, setSpeciesData])
 
   return (
-    <aside className="w-80 p-4 flex flex-col h-full space-y-4">
-      
+    <div className="w-96 flex flex-col gap-6">
       {/* Section Communes CCPM */}
-      <div className="glass rounded-2xl p-6 flex-1 flex flex-col">
+      <div className="modern-card p-6 fade-in-scale">
         {/* Titre */}
-        <h3 className="text-xl font-semibold text-gray-800 mb-4 text-shadow">
+        <h3 className="text-xl font-bold text-gradient mb-6 flex items-center gap-2">
+          <span className="w-3 h-3 bg-gradient-primary rounded-full"></span>
           🏘️ Communes CCPM
         </h3>
 
         {/* Fiche commune sélectionnée */}
-        {selectedCommuneData && (
-          <div className="commune-card mb-6 animate-slide-up">
-            <h4 className="text-lg font-semibold text-gray-800 mb-2">
-              {selectedCommuneData.nom || `INSEE ${selectedCommuneData.insee}`}
-            </h4>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Code INSEE:</span>
-                <span className="font-medium">{selectedCommuneData.insee}</span>
+        {selectedCommune && communeData?.has(selectedCommune) && (
+          <div className="mb-6 p-4 bg-gradient-primary rounded-2xl text-white shadow-lg">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-bold text-lg">
+                {communeNames.get(selectedCommune) || selectedCommune}
+              </h4>
+              <button
+                onClick={() => setSelectedCommune(null)}
+                className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
+                title="Fermer"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="bg-white/20 rounded-lg p-3 text-center">
+                <div className="font-bold text-xl">
+                  {formatNumber(communeData.get(selectedCommune)?.totalObs || 0)}
+                </div>
+                <div className="opacity-90">Observations</div>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Observations:</span>
-                <span className="font-medium text-blue-600">
-                  {formatNumber(selectedCommuneData.totalObs)}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Espèces:</span>
-                <span className="font-medium text-green-600">
-                  {formatNumber(selectedCommuneData.totalEsp)}
-                </span>
+              <div className="bg-white/20 rounded-lg p-3 text-center">
+                <div className="font-bold text-xl">
+                  {formatNumber(communeData.get(selectedCommune)?.totalEsp || 0)}
+                </div>
+                <div className="opacity-90">Espèces</div>
               </div>
             </div>
-            
-            <button 
-              className="w-full mt-4 bg-blue-500/20 hover:bg-blue-500/30 text-blue-700 font-medium py-2 px-4 rounded-lg transition-colors border border-blue-300/50"
-              onClick={() => handleFicheClick(selectedCommune!, new MouseEvent('click') as any)}
-            >
-              Voir la fiche complète
-            </button>
           </div>
         )}
 
-        {/* Champ de recherche */}
-        <div className="mb-4">
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Nom de la commune"
-            className="w-full p-2 text-sm rounded-lg bg-white/30 border border-white/50 text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:bg-white/50 transition-all"
-          />
+        {/* Champ de recherche moderne */}
+        <div className="mb-6">
+          <div className="relative">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Nom de la commune"
+              className="input-modern w-full pl-10"
+            />
+            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+              🔍
+            </div>
+          </div>
           {searchTerm && (
-            <div className="text-xs text-gray-600 mt-1">
-              {filteredCommuneNames.length} commune(s) trouvée(s)
+            <div className="mt-2">
+              <span className="badge-modern text-xs">
+                {filteredCommuneNames.length} commune(s) trouvée(s)
+              </span>
             </div>
           )}
         </div>
 
         {/* Liste des communes */}
-        <div className="flex-1 min-h-0">
-          <h4 className="font-medium text-gray-700 mb-3">
-            Liste des communes ({filteredCommuneNames.length})
-          </h4>
-          
-          <div className="space-y-1 overflow-y-auto max-h-60">
-            {isLoading || !dataLoaded ? (
-              <div className="space-y-2">
-                {[...Array(5)].map((_, i) => (
-                  <div key={i} className="h-8 bg-white/30 rounded animate-pulse" />
-                ))}
-              </div>
-            ) : (
-              filteredCommuneNames.map((nom) => {
-                const commune = communes?.features.find(f => f.properties.nom === nom)
-                const insee = commune?.properties.insee
-                const isSelected = insee === selectedCommune
-                const data = communeData?.get(insee || '')
-                
-                return (
-                  <div
-                    key={insee}
-                    className={`flex items-center p-2 rounded-lg transition-all duration-200 ${
-                      isSelected 
-                        ? 'bg-blue-500/30 border border-blue-400/50 text-blue-800' 
-                        : 'bg-white/20 hover:bg-white/30 text-gray-700'
-                    }`}
-                  >
-                    {/* Icône de fiche */}
-                    <button
-                      onClick={(e) => handleFicheClick(insee || '', e)}
-                      className="mr-2 p-1 rounded hover:bg-white/20 transition-colors"
-                      title="Voir la fiche détaillée"
-                    >
-                      📊
-                    </button>
-
-                    {/* Nom de la commune cliquable */}
-                    <button
-                      onClick={() => handleCommuneClick(insee || '')}
-                      className="flex-1 text-left flex justify-between items-center"
-                    >
-                      <span className="font-medium text-sm">{nom}</span>
-                      {data && (
-                        <span className="text-xs text-gray-600">
-                          {formatNumber(data.totalObs)}
-                        </span>
-                      )}
-                    </button>
-                  </div>
-                )
-              })
-            )}
+        {isLoading ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="flex items-center gap-3 text-gray-500">
+              <div className="w-5 h-5 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+              <span>Chargement des communes...</span>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="space-y-2 max-h-80 overflow-y-auto">
+            {filteredCommuneNames.map(([codeInsee, name]) => {
+              const commune = communeData?.get(codeInsee)
+              const isSelected = selectedCommune === codeInsee
+              
+              return (
+                <button
+                  key={codeInsee}
+                  onClick={() => setSelectedCommune(codeInsee)}
+                  className={`w-full text-left p-3 rounded-xl transition-all duration-200 ${
+                    isSelected 
+                      ? 'bg-gradient-primary text-white shadow-lg' 
+                      : 'bg-white/50 hover:bg-white/70 text-gray-700'
+                  } transform hover:scale-[1.02]`}
+                >
+                  <div className="font-medium mb-1">{name}</div>
+                  {commune && (
+                    <div className="text-xs opacity-80 grid grid-cols-2">
+                      <span>{formatNumber(commune.totalObs)} obs.</span>
+                      <span>{formatNumber(commune.totalEsp)} esp.</span>
+                    </div>
+                  )}
+                </button>
+              )
+            })}
+          </div>
+        )}
       </div>
 
       {/* Section Carte */}
-      <div className="glass rounded-2xl p-6">
+      <div className="modern-card p-6 fade-in-scale" style={{ animationDelay: '0.1s' }}>
         {/* Titre */}
-        <h3 className="text-xl font-semibold text-gray-800 mb-4 text-shadow text-center">
+        <h3 className="text-xl font-bold text-gradient mb-6 text-center flex items-center justify-center gap-2">
+          <span className="w-3 h-3 bg-gradient-secondary rounded-full"></span>
           🗺️ Carte
         </h3>
         
-        <div className="space-y-3">
-          {/* Toggle Communes */}
-          <ToggleSwitch
-            checked={showCommunes}
-            onChange={setShowCommunes}
-            label="Communes"
-          />
+        <div className="space-y-6">
+          {/* Toggles modernes */}
+          <div className="space-y-4">
+            <ToggleSwitch
+              checked={showCommunes}
+              onChange={setShowCommunes}
+              label="Communes"
+            />
 
-          {/* Toggle 3D */}
-          <ToggleSwitch
-            checked={show3D}
-            onChange={setShow3D}
-            label="Bâtiments 3D"
-          />
+            <ToggleSwitch
+              checked={show3D}
+              onChange={setShow3D}
+              label="Bâtiments 3D"
+            />
+          </div>
 
-          {/* Sélecteur de style */}
+          {/* Sélecteur de style moderne */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 mb-3">
               Fond de carte
             </label>
             <select
               value={mapStyle}
               onChange={(e) => setMapStyle(e.target.value)}
-              className="w-full p-2 text-sm rounded-lg bg-white/30 border border-white/50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+              className="input-modern w-full"
             >
               {Object.entries(MAPBOX_STYLES).map(([value, label]) => (
                 <option key={value} value={value}>
@@ -281,6 +250,6 @@ export default function Sidebar() {
           </div>
         </div>
       </div>
-    </aside>
+    </div>
   )
 } 
