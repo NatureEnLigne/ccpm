@@ -152,7 +152,7 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
       pointBorderColor={{ from: 'serieColor' }}
       pointLabelYOffset={-12}
       useMesh={true}
-      colors={['#228B22']}
+      colors={['#2D5016']}
       animate={true}
       motionConfig="gentle"
       onClick={(point) => {
@@ -181,17 +181,18 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
         const isCurrentFiltered = isFiltered('line', 'month', monthIndex)
         
         return (
-          <div className="glass rounded-lg p-3 text-sm">
-            <div className="font-medium flex items-center gap-2">
-              {point.data.xFormatted}
+          <div className="bg-gray-800/95 backdrop-blur-sm rounded-lg p-4 text-sm shadow-xl border border-gray-600/50">
+            <div className="font-semibold text-white flex items-center gap-2 mb-2">
+              <span className="text-lg">📅</span>
+              <span>{point.data.xFormatted}</span>
               {isCurrentFiltered && (
-                <span className="text-green-600 text-xs">• Filtré</span>
+                <span className="bg-green-500/30 text-green-300 px-2 py-1 rounded-full text-xs">Filtré</span>
               )}
             </div>
-            <div className="text-gray-600">
-              {point.data.yFormatted} observations
+            <div className="text-gray-300 mb-2">
+              <span className="font-medium text-white">{point.data.yFormatted}</span> observations
             </div>
-            <div className="text-xs text-gray-500 mt-1">
+            <div className="text-xs text-gray-400 border-t border-gray-600/50 pt-2">
               Cliquez pour filtrer par mois
             </div>
           </div>

@@ -175,22 +175,40 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
       margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
       id="id"
       value="value"
-      colors={['#2D5016', '#228B22', '#32CD32', '#90EE90', '#98FB98', '#F0FFF0', '#8FBC8F', '#006400', '#556B2F', '#9ACD32']}
-      padding={4}
+      colors={[
+        '#2D5016', // Vert forêt foncé
+        '#4A7C59', // Vert sauge 
+        '#6B8E23', // Olive vert
+        '#8FBC8F', // Gris vert clair
+        '#90EE90', // Vert clair 
+        '#32CD32', // Vert lime
+        '#228B22', // Vert forêt
+        '#006400', // Vert foncé
+        '#2E8B57', // Vert de mer
+        '#3CB371', // Vert medium
+        '#20B2AA', // Turquoise foncé
+        '#66CDAA', // Aquamarine medium
+        '#9ACD32', // Jaune vert
+        '#8B4513', // Brun selle
+        '#CD853F', // Pérou
+        '#DAA520', // Baguette d'or
+        '#B8860B'  // Or foncé
+      ]}
+      padding={6}
       enableLabels={true}
-      labelsSkipRadius={10}
+      labelsSkipRadius={15}
       labelsFilter={(label) => label.node.id !== 'root' && !label.node.id.includes('taxonomiques') && !label.node.id.includes('Sous-groupes') && !label.node.id.includes('Ordres') && !label.node.id.includes('Familles')}
       labelTextColor={{
         from: 'color',
         modifiers: [
-          ['darker', 2]
+          ['darker', 2.5]
         ]
       }}
-      borderWidth={2}
+      borderWidth={3}
       borderColor={{
         from: 'color',
         modifiers: [
-          ['darker', 0.3]
+          ['darker', 0.4]
         ]
       }}
       animate={true}
@@ -200,17 +218,18 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
         if (id === 'root' || id === taxonomicLevel.title) return <div></div>
         
         return (
-          <div className="glass rounded-lg p-3 text-sm">
-            <div className="font-medium flex items-center gap-2">
-              <span className="font-medium">{id}</span>
+          <div className="bg-gray-800/95 backdrop-blur-sm rounded-lg p-4 text-sm shadow-xl border border-gray-600/50">
+            <div className="font-semibold text-white flex items-center gap-2 mb-2">
+              <span className="text-lg">🦋</span>
+              <span>{id}</span>
               {isFiltered('bubble', taxonomicLevel.field === 'groupe' ? 'group' : taxonomicLevel.field, id) && (
-                <span className="text-green-600 text-xs">• Filtré</span>
+                <span className="bg-green-500/30 text-green-300 px-2 py-1 rounded-full text-xs">Filtré</span>
               )}
             </div>
-            <div className="text-gray-600">
-              {value} espèces
+            <div className="text-gray-300 mb-2">
+              <span className="font-medium text-white">{value}</span> espèces
             </div>
-            <div className="text-xs text-gray-500 mt-1">
+            <div className="text-xs text-gray-400 border-t border-gray-600/50 pt-2">
               Cliquez pour filtrer par {taxonomicLevel.level === 'group1' ? 'groupe' : taxonomicLevel.level === 'group2' ? 'sous-groupe' : taxonomicLevel.level}
             </div>
           </div>

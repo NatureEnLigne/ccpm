@@ -156,7 +156,20 @@ export default function StatusTreemap({ codeInsee }: StatusTreemapProps) {
           ['darker', 0.1]
         ]
       }}
-      colors={['#8FBC8F', '#90EE90', '#98FB98', '#32CD32', '#228B22', '#006400', '#2E8B57', '#3CB371', '#20B2AA', '#66CDAA']}
+      colors={[
+        '#2D5016', // Vert forêt foncé
+        '#4A7C59', // Vert sauge
+        '#6B8E23', // Olive vert
+        '#228B22', // Vert forêt
+        '#2E8B57', // Vert de mer
+        '#3CB371', // Vert medium
+        '#8FBC8F', // Gris vert clair
+        '#90EE90', // Vert clair
+        '#32CD32', // Vert lime
+        '#20B2AA', // Turquoise foncé
+        '#66CDAA', // Aquamarine medium
+        '#9ACD32'  // Jaune vert
+      ]}
       animate={true}
       motionConfig="gentle"
       tooltip={({ node }) => {
@@ -166,17 +179,18 @@ export default function StatusTreemap({ codeInsee }: StatusTreemapProps) {
         const isCurrentFiltered = isFiltered('treemap', 'status', node.id)
         
         return (
-          <div className="glass rounded-lg p-3 text-sm">
-            <div className="font-medium flex items-center gap-2">
-              {node.id}
+          <div className="bg-gray-800/95 backdrop-blur-sm rounded-lg p-4 text-sm shadow-xl border border-gray-600/50">
+            <div className="font-semibold text-white flex items-center gap-2 mb-2">
+              <span className="text-lg">⚖️</span>
+              <span>{node.id}</span>
               {isCurrentFiltered && (
-                <span className="text-green-600 text-xs">• Filtré</span>
+                <span className="bg-green-500/30 text-green-300 px-2 py-1 rounded-full text-xs">Filtré</span>
               )}
             </div>
-            <div className="text-gray-600">
-              {node.value} espèces
+            <div className="text-gray-300 mb-2">
+              <span className="font-medium text-white">{node.value}</span> espèces
             </div>
-            <div className="text-xs text-gray-500 mt-1">
+            <div className="text-xs text-gray-400 border-t border-gray-600/50 pt-2">
               Cliquez pour filtrer par statut
             </div>
           </div>

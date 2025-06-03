@@ -126,7 +126,20 @@ export default function RedListBar({ codeInsee }: RedListBarProps) {
       padding={0.3}
       valueScale={{ type: 'linear' }}
       indexScale={{ type: 'band', round: true }}
-      colors={['#8B4513', '#D2B48C', '#F4A460', '#CD853F', '#DEB887', '#BC8F8F', '#A0522D', '#DAA520', '#B8860B', '#8FBC8F']}
+      colors={[
+        '#8B4513', // Brun selle
+        '#CD853F', // Pérou 
+        '#DAA520', // Baguette d'or
+        '#D2B48C', // Tan
+        '#F4A460', // Grès brun
+        '#DEB887', // Bois de rose
+        '#BC8F8F', // Rose brun
+        '#A0522D', // Sienna
+        '#B8860B', // Or foncé
+        '#8FBC8F', // Gris vert clair
+        '#2E8B57', // Vert de mer
+        '#6B8E23'  // Olive vert
+      ]}
       borderColor={{
         from: 'color',
         modifiers: [
@@ -185,21 +198,21 @@ export default function RedListBar({ codeInsee }: RedListBarProps) {
         const isCurrentFiltered = isFiltered('bar', 'status', indexValue as string)
         
         return (
-          <div className="glass rounded-lg p-3 text-sm">
-            <div className="flex items-center space-x-2">
+          <div className="bg-gray-800/95 backdrop-blur-sm rounded-lg p-4 text-sm shadow-xl border border-gray-600/50">
+            <div className="flex items-center gap-2 mb-2">
               <div 
-                className="w-3 h-3 rounded-full"
+                className="w-4 h-4 rounded-full shadow-sm"
                 style={{ backgroundColor: color }}
               ></div>
-              <span className="font-medium">{indexValue}</span>
+              <span className="font-semibold text-white">{indexValue}</span>
               {isCurrentFiltered && (
-                <span className="text-green-600 text-xs">• Filtré</span>
+                <span className="bg-green-500/30 text-green-300 px-2 py-1 rounded-full text-xs">Filtré</span>
               )}
             </div>
-            <div className="text-gray-600 mt-1">
-              {value} espèce{(value as number) > 1 ? 's' : ''}
+            <div className="text-gray-300 mb-2">
+              <span className="font-medium text-white">{value}</span> espèce{(value as number) > 1 ? 's' : ''}
             </div>
-            <div className="text-xs text-gray-500 mt-1">
+            <div className="text-xs text-gray-400 border-t border-gray-600/50 pt-2">
               Cliquez pour filtrer par statut
             </div>
           </div>
