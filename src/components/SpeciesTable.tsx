@@ -7,7 +7,6 @@ import type { Taxonomie } from '../types'
 
 interface SpeciesTableProps {
   codeInsee: string
-  selectedRegne?: string
 }
 
 interface SpeciesTableRow {
@@ -20,7 +19,7 @@ interface SpeciesTableRow {
   nombreObservations: number
 }
 
-export default function SpeciesTable({ codeInsee, selectedRegne = '' }: SpeciesTableProps) {
+export default function SpeciesTable({ codeInsee }: SpeciesTableProps) {
   const { speciesData, communeData, filters } = useAppStore()
   const [sortField, setSortField] = useState<keyof SpeciesTableRow>('nombreObservations')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
@@ -42,7 +41,7 @@ export default function SpeciesTable({ codeInsee, selectedRegne = '' }: SpeciesT
 
     console.log('📋 SpeciesTable - Données disponibles:', {
       codeInsee,
-      selectedRegne,
+      selectedRegne: filters.selectedRegne,
       speciesDataSize: speciesData.size,
       communeObservations: currentCommune.observations.length
     })
@@ -56,6 +55,7 @@ export default function SpeciesTable({ codeInsee, selectedRegne = '' }: SpeciesT
     })
 
     const rows: SpeciesTableRow[] = []
+    const selectedRegne = filters.selectedRegne
 
     // Pour chaque espèce dans cette commune
     communeCdRefs.forEach(cdRef => {
@@ -63,7 +63,7 @@ export default function SpeciesTable({ codeInsee, selectedRegne = '' }: SpeciesT
       if (!species) return
 
       // Filtrer par règne si spécifié (mais pas si c'est "Tous")
-      if (selectedRegne && selectedRegne !== 'Tous' && species.regne !== selectedRegne) return
+      if (selectedRegne && species.regne !== selectedRegne) return
 
       // Appliquer les filtres du store global
       if (filters?.selectedGroupe && species.groupe !== filters.selectedGroupe) return
@@ -138,7 +138,7 @@ export default function SpeciesTable({ codeInsee, selectedRegne = '' }: SpeciesT
     })
 
     return rows
-  }, [speciesData, currentCommune, selectedRegne, codeInsee, filters])
+  }, [speciesData, currentCommune, codeInsee, filters])
 
   // Tri des données
   const sortedData = useMemo(() => {
@@ -192,7 +192,7 @@ export default function SpeciesTable({ codeInsee, selectedRegne = '' }: SpeciesT
         <div className="text-center py-8 text-gray-500">
           <div className="text-4xl mb-2">🔍</div>
           <p>Aucune donnée d'espèce disponible pour cette commune</p>
-          {selectedRegne && <p className="text-sm mt-1">Filtre: {selectedRegne}</p>}
+          {filters.selectedRegne && <p className="text-sm mt-1">Filtre: {filters.selectedRegne}</p>}
         </div>
       </div>
     )
@@ -206,7 +206,7 @@ export default function SpeciesTable({ codeInsee, selectedRegne = '' }: SpeciesT
         </h3>
         <div className="text-sm text-gray-600">
           {formatNumber(tableData.length)} espèces • {formatNumber(tableData.reduce((sum, row) => sum + row.nombreObservations, 0))} observations
-          {selectedRegne && <span className="ml-2 text-green-600">• Filtre: {selectedRegne}</span>}
+          {filters.selectedRegne && <span className="ml-2 text-green-600">• Filtre: {filters.selectedRegne}</span>}
         </div>
       </div>
 

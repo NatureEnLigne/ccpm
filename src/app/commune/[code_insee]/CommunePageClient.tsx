@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAppStore } from '../../../store/useAppStore'
 import { 
@@ -26,31 +26,35 @@ interface CommunePageClientProps {
   codeInsee: string
 }
 
+// Fonction pour formater les nombres sans abréviation (3300 au lieu de 3.3k)
+function formatNumberFull(num: number): string {
+  return num.toLocaleString('fr-FR')
+}
+
 export default function CommunePageClient({ codeInsee }: CommunePageClientProps) {
   const router = useRouter()
-
-  const {
-    communes,
-    communeData,
-    speciesData,
+  const { 
+    communeData, 
+    speciesData, 
+    communes, 
+    setCommuneData, 
+    setSpeciesData, 
     setCommunes,
-    setCommuneData,
-    setSpeciesData
+    filters 
   } = useAppStore()
-
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [selectedRegne, setSelectedRegne] = useState('Tous') // Tous par défaut
 
-  // Chargement des données au montage
   useEffect(() => {
     loadAllData()
   }, [])
 
   const loadAllData = async () => {
+    setIsLoading(true)
+    setError(null)
+
     try {
-      setIsLoading(true)
-      setError(null)
+      console.log('📊 Début du chargement des données pour la commune:', codeInsee)
 
       // Charger toutes les données en parallèle
       const [
@@ -107,13 +111,86 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
   const currentCommune = communeData?.get(codeInsee)
   const communeGeoJSON = communes?.features.find(f => f.properties.insee === codeInsee)
 
+  // Calculer les statistiques filtrées
+  const filteredStats = useMemo(() => {
+    if (!currentCommune || !speciesData) {
+      return { totalObs: 0, totalEsp: 0 }
+    }
+
+    let totalObservations = 0
+    const uniqueSpecies = new Set<string>()
+    const selectedRegne = filters.selectedRegne
+
+    currentCommune.observations.forEach(obs => {
+      const cdRef = obs['Cd Ref']
+      const species = speciesData.get(cdRef)
+      
+      if (!species) return
+
+      // Filtrer par règne si spécifié
+      if (selectedRegne && species.regne !== selectedRegne) {
+        return
+      }
+
+      // Appliquer les filtres du store global
+      if (filters?.selectedGroupe && species.groupe !== filters.selectedGroupe) return
+      
+      if (filters?.selectedMois) {
+        // Vérifier si cette espèce a des données pour le mois sélectionné
+        const hasMonthData = currentCommune.phenologie.some(pheno => 
+          pheno['CD REF (pheno!mois!insee)'] === cdRef && 
+          pheno['Mois Obs'] === filters.selectedMois
+        )
+        if (!hasMonthData) return
+      }
+      
+      if (filters?.selectedRedListCategory && species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
+      if (filters?.selectedOrdre && species.ordre !== filters.selectedOrdre) return
+      if (filters?.selectedFamille && species.famille !== filters.selectedFamille) return
+      
+      if (filters?.selectedStatutReglementaire) {
+        // Vérifier si l'espèce a ce statut réglementaire
+        const hasStatus = species.statuts.some(statut => 
+          statut['LABEL STATUT (statuts)'] === filters.selectedStatutReglementaire
+        )
+        if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') return
+        if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) return
+      }
+
+      // Cette observation passe tous les filtres
+      let includeThisObs = true
+      
+      // Si filtre par mois actif, vérifier que cette observation correspond
+      if (filters?.selectedMois) {
+        const hasMonthData = currentCommune.phenologie.some(pheno => 
+          pheno['CD REF (pheno!mois!insee)'] === cdRef && 
+          pheno['Mois Obs'] === filters.selectedMois
+        )
+        if (!hasMonthData) includeThisObs = false
+      }
+      
+      if (includeThisObs) {
+        totalObservations += obs['Nb Obs']
+        uniqueSpecies.add(cdRef)
+      }
+    })
+
+    return {
+      totalObs: totalObservations,
+      totalEsp: uniqueSpecies.size
+    }
+  }, [currentCommune, speciesData, filters])
+
   if (isLoading) {
+    // Essayer de récupérer le nom de la commune depuis le GeoJSON déjà chargé
+    const communeName = communes?.features.find(f => f.properties.insee === codeInsee)?.properties.nom || `Code INSEE ${codeInsee}`
+    
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-emerald-50 flex items-center justify-center">
         <div className="glass rounded-2xl p-8 text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <h2 className="text-xl font-semibold text-gray-800 mb-2">Chargement des données...</h2>
-          <p className="text-gray-600">Commune {codeInsee}</p>
+          <p className="text-gray-600">Commune : {communeName}</p>
         </div>
       </div>
     )
@@ -182,13 +259,13 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
             <div className="flex space-x-6">
               <div className="text-center">
                 <div className="text-2xl font-bold text-blue-600">
-                  {formatNumber(currentCommune.totalObs)}
+                  {formatNumberFull(filteredStats.totalObs)}
                 </div>
                 <div className="text-sm text-gray-600">Observations</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-green-600">
-                  {formatNumber(currentCommune.totalEsp)}
+                  {formatNumberFull(filteredStats.totalEsp)}
                 </div>
                 <div className="text-sm text-gray-600">Espèces</div>
               </div>
@@ -201,10 +278,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
       <main className="container mx-auto px-6 py-8">
         
         {/* Barre de filtres */}
-        <FilterBar
-          selectedRegne={selectedRegne}
-          onRegneChange={setSelectedRegne}
-        />
+        <FilterBar />
 
         {/* Filtres actifs */}
         <ActiveFilters />
@@ -217,7 +291,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
               🦋 Groupes taxonomiques
             </h3>
             <div className="h-80">
-              <GroupBubble codeInsee={codeInsee} selectedRegne={selectedRegne} />
+              <GroupBubble codeInsee={codeInsee} />
             </div>
           </div>
 
@@ -227,7 +301,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
               📅 Phénologie mensuelle
             </h3>
             <div className="h-80">
-              <PhenoLine codeInsee={codeInsee} selectedRegne={selectedRegne} />
+              <PhenoLine codeInsee={codeInsee} />
             </div>
           </div>
 
@@ -237,7 +311,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
               🚨 Statuts listes rouges
             </h3>
             <div className="h-80">
-              <RedListBar codeInsee={codeInsee} selectedRegne={selectedRegne} />
+              <RedListBar codeInsee={codeInsee} />
             </div>
           </div>
 
@@ -247,7 +321,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
               ⚖️ Statuts réglementaires
             </h3>
             <div className="h-80">
-              <StatusTreemap codeInsee={codeInsee} selectedRegne={selectedRegne} />
+              <StatusTreemap codeInsee={codeInsee} />
             </div>
           </div>
 
@@ -255,7 +329,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
         
         {/* Tableau des espèces */}
         <div className="mt-8">
-          <SpeciesTable codeInsee={codeInsee} selectedRegne={selectedRegne} />
+          <SpeciesTable codeInsee={codeInsee} />
         </div>
       </main>
     </div>

@@ -3,13 +3,8 @@
 import { useEffect, useState } from 'react'
 import { useAppStore } from '../store/useAppStore'
 
-interface FilterBarProps {
-  onRegneChange: (regne: string) => void
-  selectedRegne: string
-}
-
-export default function FilterBar({ onRegneChange, selectedRegne }: FilterBarProps) {
-  const { speciesData } = useAppStore()
+export default function FilterBar() {
+  const { speciesData, filters, setFilter } = useAppStore()
   const [availableRegnes, setAvailableRegnes] = useState<string[]>([])
 
   useEffect(() => {
@@ -30,6 +25,13 @@ export default function FilterBar({ onRegneChange, selectedRegne }: FilterBarPro
     }
   }, [speciesData])
 
+  const handleRegneChange = (regne: string) => {
+    const value = regne === 'Tous' ? null : regne
+    setFilter('selectedRegne', value, 'FilterBar')
+  }
+
+  const selectedRegne = filters.selectedRegne || 'Tous'
+
   return (
     <div className="glass rounded-lg p-4 mb-6">
       <div className="flex items-center space-x-6">
@@ -44,7 +46,7 @@ export default function FilterBar({ onRegneChange, selectedRegne }: FilterBarPro
           </label>
           <select
             value={selectedRegne}
-            onChange={(e) => onRegneChange(e.target.value)}
+            onChange={(e) => handleRegneChange(e.target.value)}
             className="glass border border-white/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50"
           >
             <option value="Tous">Tous les règnes</option>
@@ -63,7 +65,7 @@ export default function FilterBar({ onRegneChange, selectedRegne }: FilterBarPro
               {selectedRegne}
             </span>
             <button
-              onClick={() => onRegneChange('Tous')}
+              onClick={() => handleRegneChange('Tous')}
               className="text-blue-500 hover:text-blue-700 text-xs"
               title="Supprimer le filtre"
             >

@@ -7,7 +7,6 @@ import { useChartInteractions } from '../../hooks/useChartInteractions'
 
 interface StatusTreemapProps {
   codeInsee: string
-  selectedRegne: string
 }
 
 interface TreemapData {
@@ -16,9 +15,9 @@ interface TreemapData {
   children?: TreemapData[]
 }
 
-export default function StatusTreemap({ codeInsee, selectedRegne }: StatusTreemapProps) {
-  const { communeData, speciesData } = useAppStore()
-  const { handleChartClick, handleChartHover, isFiltered, filters } = useChartInteractions()
+export default function StatusTreemap({ codeInsee }: StatusTreemapProps) {
+  const { communeData, speciesData, filters } = useAppStore()
+  const { handleChartClick, handleChartHover, isFiltered } = useChartInteractions()
   const [data, setData] = useState<TreemapData | null>(null)
 
   useEffect(() => {
@@ -29,6 +28,7 @@ export default function StatusTreemap({ codeInsee, selectedRegne }: StatusTreema
       // Compter les espèces par statut réglementaire
       const statusStats = new Map<string, number>()
       const processedSpecies = new Set<string>()
+      const selectedRegne = filters.selectedRegne
 
       commune.observations.forEach(obs => {
         const cdRef = obs['Cd Ref']
@@ -40,7 +40,7 @@ export default function StatusTreemap({ codeInsee, selectedRegne }: StatusTreema
         const species = speciesData.get(cdRef)
         if (species) {
           // Filtrer par règne si nécessaire
-          if (selectedRegne !== 'Tous' && species.regne !== selectedRegne) {
+          if (selectedRegne && species.regne !== selectedRegne) {
             return // Ignorer cette espèce
           }
           
@@ -107,16 +107,17 @@ export default function StatusTreemap({ codeInsee, selectedRegne }: StatusTreema
       // Trier par valeur décroissante
       children.sort((a, b) => b.value - a.value)
 
+      // Passer directement les enfants sans nœud root pour éviter l'affichage de "root"
       const treemapData: TreemapData = {
-        id: 'root',
-        value: 0, // Non utilisé pour le root
+        id: 'Statuts réglementaires',
+        value: 0,
         children
       }
 
       setData(treemapData)
       console.log('⚖️ Données statuts pour', codeInsee, 'règne:', selectedRegne, 'filtres appliqués:', filters, ':', treemapData)
     }
-  }, [communeData, speciesData, codeInsee, selectedRegne, filters])
+  }, [communeData, speciesData, codeInsee, filters])
 
   if (!data || !data.children || data.children.length === 0) {
     return (
@@ -143,12 +144,8 @@ export default function StatusTreemap({ codeInsee, selectedRegne }: StatusTreema
         ]
       }}
       parentLabelPosition="left"
-      parentLabelTextColor={{
-        from: 'color',
-        modifiers: [
-          ['darker', 2]
-        ]
-      }}
+      parentLabelSize={0}
+      parentLabelTextColor="transparent"
       borderColor={{
         from: 'color',
         modifiers: [
@@ -160,7 +157,7 @@ export default function StatusTreemap({ codeInsee, selectedRegne }: StatusTreema
       motionConfig="gentle"
       tooltip={({ node }) => {
         // Filtrer la valeur "root" qui correspond au nœud racine
-        if (node.id === 'root') return <div></div>
+        if (node.id === 'root' || node.id === 'Statuts réglementaires') return <div></div>
         
         const isCurrentFiltered = isFiltered('treemap', 'status', node.id)
         
@@ -183,7 +180,7 @@ export default function StatusTreemap({ codeInsee, selectedRegne }: StatusTreema
       }}
       onClick={(node) => {
         // Filtrer la valeur "root" pour éviter qu'elle devienne un filtre
-        if (node.id === 'root') return
+        if (node.id === 'root' || node.id === 'Statuts réglementaires') return
         handleChartClick({
           chartType: 'treemap',
           dataKey: 'status',
@@ -193,7 +190,7 @@ export default function StatusTreemap({ codeInsee, selectedRegne }: StatusTreema
       }}
       onMouseEnter={(node) => {
         // Filtrer la valeur "root"
-        if (node.id === 'root') return
+        if (node.id === 'root' || node.id === 'Statuts réglementaires') return
         handleChartHover({
           chartType: 'treemap',
           dataKey: 'status',

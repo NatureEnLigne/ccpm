@@ -7,7 +7,6 @@ import { useChartInteractions } from '../../hooks/useChartInteractions'
 
 interface GroupBubbleProps {
   codeInsee: string
-  selectedRegne: string
 }
 
 interface BubbleData {
@@ -16,9 +15,9 @@ interface BubbleData {
   children?: BubbleData[]
 }
 
-export default function GroupBubble({ codeInsee, selectedRegne }: GroupBubbleProps) {
-  const { communeData, speciesData } = useAppStore()
-  const { handleChartClick, handleChartHover, isFiltered, isHovered, filters } = useChartInteractions()
+export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
+  const { communeData, speciesData, filters } = useAppStore()
+  const { handleChartClick, handleChartHover, isFiltered, isHovered } = useChartInteractions()
   const [data, setData] = useState<BubbleData | null>(null)
 
   useEffect(() => {
@@ -28,6 +27,7 @@ export default function GroupBubble({ codeInsee, selectedRegne }: GroupBubblePro
 
       // Compter les observations par groupe taxonomique
       const groupStats = new Map<string, number>()
+      const selectedRegne = filters.selectedRegne
       
       commune.observations.forEach(obs => {
         const cdRef = obs['Cd Ref']
@@ -35,7 +35,7 @@ export default function GroupBubble({ codeInsee, selectedRegne }: GroupBubblePro
         
         if (species) {
           // Filtrer par règne si nécessaire
-          if (selectedRegne !== 'Tous' && species.regne !== selectedRegne) {
+          if (selectedRegne && species.regne !== selectedRegne) {
             return // Ignorer cette espèce
           }
           
@@ -92,7 +92,7 @@ export default function GroupBubble({ codeInsee, selectedRegne }: GroupBubblePro
       children.sort((a, b) => b.value - a.value)
 
       const bubbleData: BubbleData = {
-        id: 'root',
+        id: 'Groupes taxonomiques',
         value: 0, // Non utilisé pour le root
         children
       }
@@ -100,7 +100,7 @@ export default function GroupBubble({ codeInsee, selectedRegne }: GroupBubblePro
       setData(bubbleData)
       console.log('🦋 Données bubble pour', codeInsee, 'règne:', selectedRegne, 'filtres appliqués:', filters, ':', bubbleData)
     }
-  }, [communeData, speciesData, codeInsee, selectedRegne, filters])
+  }, [communeData, speciesData, codeInsee, filters])
 
   if (!data || !data.children || data.children.length === 0) {
     return (
@@ -123,6 +123,7 @@ export default function GroupBubble({ codeInsee, selectedRegne }: GroupBubblePro
       padding={4}
       enableLabels={true}
       labelsSkipRadius={10}
+      labelsFilter={(label) => label.node.id !== 'root' && label.node.id !== 'Groupes taxonomiques'}
       labelTextColor={{
         from: 'color',
         modifiers: [
@@ -140,7 +141,7 @@ export default function GroupBubble({ codeInsee, selectedRegne }: GroupBubblePro
       motionConfig="gentle"
       tooltip={({ id, value }) => {
         // Filtrer la valeur "root" qui correspond au nœud racine de la hiérarchie
-        if (id === 'root') return <div></div>
+        if (id === 'root' || id === 'Groupes taxonomiques') return <div></div>
         
         const isCurrentFiltered = isFiltered('bubble', 'group', id)
         
@@ -163,7 +164,7 @@ export default function GroupBubble({ codeInsee, selectedRegne }: GroupBubblePro
       }}
       onClick={(node) => {
         // Filtrer la valeur "root" pour éviter qu'elle devienne un filtre
-        if (node.id === 'root') return
+        if (node.id === 'root' || node.id === 'Groupes taxonomiques') return
         handleChartClick({
           chartType: 'bubble',
           dataKey: 'group',
@@ -173,7 +174,7 @@ export default function GroupBubble({ codeInsee, selectedRegne }: GroupBubblePro
       }}
       onMouseEnter={(node) => {
         // Filtrer la valeur "root" 
-        if (node.id === 'root') return
+        if (node.id === 'root' || node.id === 'Groupes taxonomiques') return
         handleChartHover({
           chartType: 'bubble',
           dataKey: 'group',

@@ -7,7 +7,6 @@ import { useChartInteractions } from '../../hooks/useChartInteractions'
 
 interface PhenoLineProps {
   codeInsee: string
-  selectedRegne: string
 }
 
 interface LineData {
@@ -16,13 +15,13 @@ interface LineData {
 }
 
 const MONTH_NAMES = [
-  'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun',
-  'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'
+  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
 ]
 
-export default function PhenoLine({ codeInsee, selectedRegne }: PhenoLineProps) {
-  const { communeData, speciesData } = useAppStore()
-  const { handleChartClick, handleChartHover, isFiltered, filters } = useChartInteractions()
+export default function PhenoLine({ codeInsee }: PhenoLineProps) {
+  const { communeData, speciesData, filters } = useAppStore()
+  const { handleChartClick, handleChartHover, isFiltered } = useChartInteractions()
   const [data, setData] = useState<LineData[]>([])
 
   useEffect(() => {
@@ -30,19 +29,16 @@ export default function PhenoLine({ codeInsee, selectedRegne }: PhenoLineProps) 
       const commune = communeData.get(codeInsee)
       if (!commune) return
 
-      // Initialiser les données mensuelles
+      // Compter les observations par mois
       const monthlyData = new Map<number, number>()
-      for (let i = 1; i <= 12; i++) {
-        monthlyData.set(i, 0)
-      }
-
-      // Compter les données par mois en appliquant les filtres
+      const selectedRegne = filters.selectedRegne
+      
       commune.phenologie.forEach(pheno => {
         const cdRef = pheno['CD REF (pheno!mois!insee)']
         const species = speciesData?.get(cdRef)
         
         // Filtrer par règne si spécifié
-        if (selectedRegne !== 'Tous' && species && species.regne !== selectedRegne) {
+        if (selectedRegne && species && species.regne !== selectedRegne) {
           return
         }
         
@@ -97,7 +93,7 @@ export default function PhenoLine({ codeInsee, selectedRegne }: PhenoLineProps) 
       setData(lineData)
       console.log('📅 Données phénologie pour', codeInsee, 'règne:', selectedRegne, 'filtres appliqués:', filters, ':', lineData)
     }
-  }, [communeData, speciesData, codeInsee, selectedRegne, filters])
+  }, [communeData, speciesData, codeInsee, filters])
 
   if (data.length === 0 || data[0].data.every(d => d.y === 0)) {
     return (

@@ -7,18 +7,15 @@ import { useChartInteractions } from '../../hooks/useChartInteractions'
 
 interface RedListBarProps {
   codeInsee: string
-  selectedRegne: string
 }
 
 interface BarData {
-  statut: string
-  count: number
   [key: string]: string | number
 }
 
-export default function RedListBar({ codeInsee, selectedRegne }: RedListBarProps) {
-  const { communeData, speciesData } = useAppStore()
-  const { handleChartClick, handleChartHover, isFiltered, filters } = useChartInteractions()
+export default function RedListBar({ codeInsee }: RedListBarProps) {
+  const { communeData, speciesData, filters } = useAppStore()
+  const { handleChartClick, handleChartHover, isFiltered } = useChartInteractions()
   const [data, setData] = useState<BarData[]>([])
 
   useEffect(() => {
@@ -29,6 +26,7 @@ export default function RedListBar({ codeInsee, selectedRegne }: RedListBarProps
       // Compter les espèces par statut liste rouge
       const statusStats = new Map<string, number>()
       const processedSpecies = new Set<string>()
+      const selectedRegne = filters.selectedRegne
 
       commune.observations.forEach(obs => {
         const cdRef = obs['Cd Ref']
@@ -40,7 +38,7 @@ export default function RedListBar({ codeInsee, selectedRegne }: RedListBarProps
         const species = speciesData.get(cdRef)
         if (species) {
           // Filtrer par règne si nécessaire
-          if (selectedRegne !== 'Tous' && species.regne !== selectedRegne) {
+          if (selectedRegne && species.regne !== selectedRegne) {
             return // Ignorer cette espèce
           }
           
@@ -90,19 +88,19 @@ export default function RedListBar({ codeInsee, selectedRegne }: RedListBarProps
         }
       })
 
-      // Convertir en format pour Nivo
+      // Convertir en format pour Nivo Bar
       const barData: BarData[] = Array.from(statusStats.entries()).map(([statut, count]) => ({
-        statut: statut || 'Non évalué',
-        count
+        category: statut,
+        value: count
       }))
 
       // Trier par valeur décroissante
-      barData.sort((a, b) => b.count - a.count)
+      barData.sort((a, b) => (b.value as number) - (a.value as number))
 
       setData(barData)
       console.log('🚨 Données listes rouges pour', codeInsee, 'règne:', selectedRegne, 'filtres appliqués:', filters, ':', barData)
     }
-  }, [communeData, speciesData, codeInsee, selectedRegne, filters])
+  }, [communeData, speciesData, codeInsee, filters])
 
   if (data.length === 0) {
     return (
@@ -118,8 +116,8 @@ export default function RedListBar({ codeInsee, selectedRegne }: RedListBarProps
   return (
     <ResponsiveBar
       data={data}
-      keys={['count']}
-      indexBy="statut"
+      keys={['value']}
+      indexBy="category"
       margin={{ top: 20, right: 20, bottom: 120, left: 60 }}
       padding={0.3}
       valueScale={{ type: 'linear' }}
