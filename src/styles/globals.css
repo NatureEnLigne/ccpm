@@ -5,20 +5,20 @@
 /* Mapbox CSS */
 @import 'mapbox-gl/dist/mapbox-gl.css';
 
-/* Variables CSS pour le thème moderne */
+/* Variables CSS pour le thème nature vert-marron */
 :root {
-  --color-primary: #667eea;
-  --color-primary-light: #764ba2;
-  --color-secondary: #f093fb;
-  --color-accent: #4facfe;
-  --color-success: #00b894;
-  --color-warning: #fdcb6e;
-  --color-error: #e84393;
+  --color-primary: #2d5016;        /* Vert forêt foncé */
+  --color-primary-light: #4a7c59;  /* Vert mousse */
+  --color-secondary: #8fbc8f;      /* Vert sauge */
+  --color-accent: #cd853f;         /* Brun doré */
+  --color-success: #228b22;        /* Vert prairie */
+  --color-warning: #daa520;        /* Or foncé */
+  --color-error: #8b4513;          /* Brun rouille */
   --color-surface: rgba(255, 255, 255, 0.85);
-  --color-surface-dark: rgba(26, 32, 46, 0.9);
-  --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.08);
-  --shadow-medium: 0 12px 48px rgba(0, 0, 0, 0.12);
-  --shadow-large: 0 20px 64px rgba(0, 0, 0, 0.16);
+  --color-surface-dark: rgba(45, 80, 22, 0.9);
+  --shadow-soft: 0 8px 32px rgba(45, 80, 22, 0.08);
+  --shadow-medium: 0 12px 48px rgba(45, 80, 22, 0.12);
+  --shadow-large: 0 20px 64px rgba(45, 80, 22, 0.16);
   --border-radius: 16px;
   --border-radius-large: 24px;
 }
@@ -30,7 +30,7 @@
   
   body {
     @apply h-full m-0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2d5016 0%, #4a7c59 50%, #8fbc8f 100%);
     background-attachment: fixed;
   }
   
@@ -38,7 +38,7 @@
     @apply h-full;
   }
 
-  /* Scrollbar personnalisée */
+  /* Scrollbar personnalisée nature */
   ::-webkit-scrollbar {
     width: 6px;
   }
@@ -49,7 +49,7 @@
   }
   
   ::-webkit-scrollbar-thumb {
-    background: linear-gradient(45deg, var(--color-primary), var(--color-secondary));
+    background: linear-gradient(45deg, var(--color-primary), var(--color-accent));
     border-radius: 10px;
   }
   
@@ -59,11 +59,11 @@
 }
 
 @layer components {
-  /* Style glassmorphique moderne */
+  /* Style glassmorphique nature */
   .glass {
     background: var(--color-surface);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(139, 195, 74, 0.2);
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-soft);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -78,16 +78,16 @@
   .glass-dark {
     background: var(--color-surface-dark);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(139, 195, 74, 0.1);
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-soft);
   }
 
-  /* Cartes modernes */
+  /* Cartes modernes nature */
   .modern-card {
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.8));
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 245, 0.8));
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(139, 195, 74, 0.3);
     border-radius: var(--border-radius-large);
     box-shadow: var(--shadow-soft);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -112,12 +112,12 @@
   }
 
   .modern-card:hover {
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.9));
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 245, 0.9));
     box-shadow: var(--shadow-large);
     transform: translateY(-4px) scale(1.02);
   }
   
-  /* Boutons modernes */
+  /* Boutons modernes nature */
   .btn-modern {
     background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
     color: white;
@@ -128,7 +128,7 @@
     font-size: 14px;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 16px rgba(45, 80, 22, 0.3);
     position: relative;
     overflow: hidden;
   }
@@ -150,13 +150,13 @@
 
   .btn-modern:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 8px 32px rgba(45, 80, 22, 0.4);
   }
 
-  /* Inputs modernes */
+  /* Inputs modernes nature */
   .input-modern {
     background: rgba(255, 255, 255, 0.9);
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(139, 195, 74, 0.3);
     border-radius: 12px;
     padding: 12px 16px;
     font-size: 14px;
@@ -168,7 +168,7 @@
     outline: none;
     background: rgba(255, 255, 255, 0.95);
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 0 0 4px rgba(45, 80, 22, 0.1);
     transform: scale(1.02);
   }
 
@@ -187,9 +187,9 @@
 
   /* Style pour les graphiques */
   .chart-container {
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 245, 0.85));
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(139, 195, 74, 0.3);
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-soft);
     transition: all 0.3s ease;
@@ -200,7 +200,7 @@
     transform: translateY(-2px);
   }
 
-  /* Badges modernes */
+  /* Badges modernes nature */
   .badge-modern {
     background: linear-gradient(135deg, var(--color-accent), var(--color-secondary));
     color: white;
@@ -211,21 +211,21 @@
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    box-shadow: 0 2px 8px rgba(79, 172, 254, 0.3);
+    box-shadow: 0 2px 8px rgba(205, 133, 63, 0.3);
   }
 
   .badge-success {
-    background: linear-gradient(135deg, var(--color-success), #55a3ff);
+    background: linear-gradient(135deg, var(--color-success), var(--color-secondary));
   }
 
   .badge-warning {
-    background: linear-gradient(135deg, var(--color-warning), #ff6b6b);
+    background: linear-gradient(135deg, var(--color-warning), var(--color-accent));
   }
 }
 
 @layer utilities {
   .text-gradient {
-    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

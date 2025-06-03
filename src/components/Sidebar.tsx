@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useAppStore } from '../store/useAppStore'
 import { loadCommunesGeoJSON } from '../utils/geojsonLoader'
 import { 
@@ -23,35 +24,81 @@ const MAPBOX_STYLES = {
   'light-v11': 'Clair'
 }
 
+// Composant icône de fiche optimisé
+const FicheIcon = ({ isSelected, codeInsee }: { isSelected: boolean, codeInsee: string }) => {
+  const router = useRouter()
+  
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    router.push(`/commune/${codeInsee}`)
+  }
+
+  return (
+    <button
+      onClick={handleClick}
+      className={`flex-shrink-0 p-1.5 rounded-lg transition-all duration-300 hover:scale-110 hover:drop-shadow-lg ${
+        isSelected ? 'bg-white/20 hover:bg-white/30' : 'bg-gray-100 hover:bg-gray-200'
+      }`}
+      title="Ouvrir la fiche de la commune"
+    >
+      <svg 
+        width="20" 
+        height="20" 
+        viewBox="0 0 24 24" 
+        fill="none" 
+        className={`transition-all duration-300 ${
+          isSelected 
+            ? 'stroke-white scale-110 animate-pulse' 
+            : 'stroke-gray-600'
+        }`}
+        strokeWidth="2"
+      >
+        {/* Contour du document */}
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+        {/* Coin plié */}
+        <path d="M14,2 L14,8 L20,8" />
+        {/* Lignes de contenu */}
+        <path 
+          d="M16,13 L8,13 M16,17 L8,17 M10,9 L8,9"
+          className={`transition-all duration-300 ${
+            isSelected 
+              ? 'stroke-white/90' 
+              : 'stroke-var(--color-accent)'
+          }`}
+          strokeWidth="1.5"
+        />
+      </svg>
+    </button>
+  )
+}
+
 export default function Sidebar() {
   const {
     selectedCommune,
     setSelectedCommune,
-    communeData,
-    setCommuneData,
-    speciesData,
-    setSpeciesData,
-    mapStyle,
-    setMapStyle,
     showCommunes,
     setShowCommunes,
     show3D,
-    setShow3D
+    setShow3D,
+    mapStyle,
+    setMapStyle,
+    communeData,
+    setCommuneData,
+    speciesData,
+    setSpeciesData
   } = useAppStore()
 
-  const [communeNames, setCommuneNames] = useState<Map<string, string>>(new Map())
   const [searchTerm, setSearchTerm] = useState('')
+  const [communeNames, setCommuneNames] = useState<Map<string, string>>(new Map())
   const [isLoading, setIsLoading] = useState(true)
 
-  // Filtrer les communes selon le terme de recherche
+  // Filtrer les communes par nom
   const filteredCommuneNames = Array.from(communeNames.entries())
-    .filter(([codeInsee, name]) => 
-      name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      codeInsee.includes(searchTerm)
+    .filter(([, name]) => 
+      name.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .sort((a, b) => a[1].localeCompare(b[1]))
 
-  // Charger les données au montage
   useEffect(() => {
     const loadAllData = async () => {
       try {
@@ -105,9 +152,9 @@ export default function Sidebar() {
   }, [setCommuneData, setSpeciesData])
 
   return (
-    <div className="w-96 flex flex-col gap-6">
+    <div className="w-96 flex flex-col gap-6 overflow-hidden">
       {/* Section Communes CCPM */}
-      <div className="modern-card p-6 fade-in-scale">
+      <div className="modern-card p-6 fade-in-scale overflow-hidden">
         {/* Titre */}
         <h3 className="text-xl font-bold text-gradient mb-6 flex items-center gap-2">
           <span className="w-3 h-3 bg-gradient-primary rounded-full"></span>
@@ -118,12 +165,12 @@ export default function Sidebar() {
         {selectedCommune && communeData?.has(selectedCommune) && (
           <div className="mb-6 p-4 bg-gradient-primary rounded-2xl text-white shadow-lg">
             <div className="flex items-center justify-between mb-3">
-              <h4 className="font-bold text-lg">
+              <h4 className="font-bold text-lg truncate pr-2">
                 {communeNames.get(selectedCommune) || selectedCommune}
               </h4>
               <button
                 onClick={() => setSelectedCommune(null)}
-                className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
+                className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 flex-shrink-0"
                 title="Fermer"
               >
                 ✕
@@ -178,7 +225,7 @@ export default function Sidebar() {
             </div>
           </div>
         ) : (
-          <div className="space-y-2 max-h-80 overflow-y-auto">
+          <div className="space-y-2 max-h-80 overflow-y-auto overflow-x-hidden">
             {filteredCommuneNames.map(([codeInsee, name]) => {
               const commune = communeData?.get(codeInsee)
               const isSelected = selectedCommune === codeInsee
@@ -187,17 +234,20 @@ export default function Sidebar() {
                 <button
                   key={codeInsee}
                   onClick={() => setSelectedCommune(codeInsee)}
-                  className={`w-full text-left p-3 rounded-xl transition-all duration-200 ${
+                  className={`w-full text-left p-3 rounded-xl transition-all duration-200 overflow-hidden ${
                     isSelected 
                       ? 'bg-gradient-primary text-white shadow-lg' 
                       : 'bg-white/50 hover:bg-white/70 text-gray-700'
                   } transform hover:scale-[1.02]`}
                 >
-                  <div className="font-medium mb-1">{name}</div>
+                  <div className="font-medium mb-1 truncate pr-2">{name}</div>
                   {commune && (
-                    <div className="text-xs opacity-80 grid grid-cols-2">
-                      <span>{formatNumber(commune.totalObs)} obs.</span>
-                      <span>{formatNumber(commune.totalEsp)} esp.</span>
+                    <div className="text-xs opacity-80 flex items-center justify-between gap-2 min-w-0">
+                      <div className="flex items-center gap-3 min-w-0 flex-shrink">
+                        <span className="whitespace-nowrap">{formatNumber(commune.totalObs)} obs.</span>
+                        <span className="whitespace-nowrap">{formatNumber(commune.totalEsp)} esp.</span>
+                      </div>
+                      <FicheIcon isSelected={isSelected} codeInsee={codeInsee} />
                     </div>
                   )}
                 </button>
@@ -208,7 +258,7 @@ export default function Sidebar() {
       </div>
 
       {/* Section Carte */}
-      <div className="modern-card p-6 fade-in-scale" style={{ animationDelay: '0.1s' }}>
+      <div className="modern-card p-6 fade-in-scale overflow-hidden" style={{ animationDelay: '0.1s' }}>
         {/* Titre */}
         <h3 className="text-xl font-bold text-gradient mb-6 text-center flex items-center justify-center gap-2">
           <span className="w-3 h-3 bg-gradient-secondary rounded-full"></span>
