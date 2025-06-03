@@ -1,28 +1,45 @@
 import { Suspense } from 'react'
 import CommunePageClient from './CommunePageClient'
+import { loadCommunesGeoJSON } from '../../../utils/geojsonLoader'
 
 // Fonction requise pour les pages dynamiques avec output: export
 export async function generateStaticParams() {
-  // Pour le moment, on génère les paramètres pour quelques communes de test
-  // En production, on pourrait charger la liste complète des communes
-  return [
-    { code_insee: '80001' },
-    { code_insee: '80006' },
-    { code_insee: '80009' },
-    { code_insee: '80025' },
-    { code_insee: '80179' },
-    { code_insee: '80212' },
-    { code_insee: '80253' },
-    { code_insee: '80318' },
-    { code_insee: '80370' },
-    { code_insee: '80410' },
-    { code_insee: '80450' },
-    { code_insee: '80520' },
-    { code_insee: '80561' },
-    { code_insee: '80570' },
-    { code_insee: '80620' },
-    { code_insee: '80806' }
-  ]
+  try {
+    // Charger toutes les communes depuis le GeoJSON
+    const communesGeoJSON = await loadCommunesGeoJSON()
+    
+    // Extraire tous les codes INSEE disponibles
+    const codeInseeList = communesGeoJSON.features.map(feature => ({
+      code_insee: feature.properties.insee
+    }))
+    
+    console.log('📍 generateStaticParams - Codes INSEE générés:', codeInseeList.length)
+    
+    return codeInseeList
+  } catch (error) {
+    console.error('❌ Erreur lors du chargement des communes pour generateStaticParams:', error)
+    
+    // En cas d'erreur, retourner une liste de secours avec les communes principales
+    return [
+      { code_insee: '80001' },
+      { code_insee: '80006' },
+      { code_insee: '80009' },
+      { code_insee: '80025' },
+      { code_insee: '80030' }, // Ajouter ARRY
+      { code_insee: '80179' },
+      { code_insee: '80212' },
+      { code_insee: '80253' },
+      { code_insee: '80318' },
+      { code_insee: '80370' },
+      { code_insee: '80410' },
+      { code_insee: '80450' },
+      { code_insee: '80520' },
+      { code_insee: '80561' },
+      { code_insee: '80570' },
+      { code_insee: '80620' },
+      { code_insee: '80806' }
+    ]
+  }
 }
 
 interface CommunePageProps {

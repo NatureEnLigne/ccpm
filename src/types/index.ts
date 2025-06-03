@@ -40,12 +40,24 @@ export interface Taxonomie {
   'CD REF (taxonomie)': string
   'Nom Valide': string
   'Group1 Inpn': string
+  'Group2 Inpn': string
+  'Group3 Inpn': string
   'Ordre': string
   'Famille': string
   'Classe': string
   'Phylum': string
   'Regne': string
   'Nom Complet': string
+  'Nom Vern': string
+  'Url Inpn': string
+  'Rang': string
+  'Sous Famille': string
+  'Tribu': string
+  'URL': string
+  'Gbif Id': string
+  'Afficher Niveau': string
+  'Afficher Niveau good': string
+  'Habitat': string
 }
 
 export interface ListeRouge {

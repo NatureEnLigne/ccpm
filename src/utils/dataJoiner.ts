@@ -19,10 +19,14 @@ export interface CommuneData {
 export interface SpeciesData {
   cdRef: string
   nomValide: string
+  nomComplet: string
+  nomVern: string
   groupe: string
+  group2: string
   regne: string
   ordre: string
   famille: string
+  urlInpn: string
   listeRouge?: ListeRouge
   statuts: Statut[]
   observations: SyntheseInsee[]
@@ -175,10 +179,14 @@ export function joinSpeciesData(
         speciesMap.set(cdRef, {
           cdRef,
           nomValide: taxonomie['Nom Valide'],
+          nomComplet: taxonomie['Nom Complet'],
+          nomVern: taxonomie['Nom Vern'],
           groupe: taxonomie['Group1 Inpn'],
+          group2: taxonomie['Group2 Inpn'],
           regne: taxonomie['Regne'],
           ordre: taxonomie['Ordre'],
           famille: taxonomie['Famille'],
+          urlInpn: taxonomie['Url Inpn'],
           listeRouge,
           statuts,
           observations: []

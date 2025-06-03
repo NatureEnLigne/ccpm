@@ -18,6 +18,7 @@ import PhenoLine from '../../../components/dashboards/PhenoLine'
 import RedListBar from '../../../components/dashboards/RedListBar'
 import StatusTreemap from '../../../components/dashboards/StatusTreemap'
 import FilterBar from '../../../components/FilterBar'
+import SpeciesTable from '../../../components/SpeciesTable'
 import type { SyntheseInsee, PhenoMoisInsee, Taxonomie, ListeRouge, Statut } from '../../../types'
 
 interface CommunePageClientProps {
@@ -38,7 +39,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
 
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [selectedRegne, setSelectedRegne] = useState('Animalia') // Animalia par défaut
+  const [selectedRegne, setSelectedRegne] = useState('Tous') // Tous par défaut
 
   // Chargement des données au montage
   useEffect(() => {
@@ -246,6 +247,11 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
             </div>
           </div>
 
+        </div>
+        
+        {/* Tableau des espèces */}
+        <div className="mt-8">
+          <SpeciesTable codeInsee={codeInsee} selectedRegne={selectedRegne} />
         </div>
       </main>
     </div>
