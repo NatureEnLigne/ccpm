@@ -274,35 +274,6 @@ export default function Sidebar() {
               ))}
             </select>
           </div>
-
-          {/* Statistiques globales */}
-          {communeData && (
-            <div className="bg-white/20 rounded-lg p-3">
-              <h5 className="text-sm font-medium text-gray-700 mb-2">
-                📊 Statistiques CCPM
-              </h5>
-              <div className="space-y-1 text-xs">
-                <div className="flex justify-between">
-                  <span>Total observations:</span>
-                  <span className="font-medium">
-                    {formatNumber(
-                      Array.from(communeData.values())
-                        .reduce((sum, c) => sum + c.totalObs, 0)
-                    )}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Total espèces:</span>
-                  <span className="font-medium">
-                    {formatNumber(
-                      Array.from(communeData.values())
-                        .reduce((sum, c) => sum + c.totalEsp, 0)
-                    )}
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </aside>

@@ -9,6 +9,11 @@ export function formatNumber(num: number): string {
   return num.toString()
 }
 
+// Formatage des nombres complets (sans abréviation)
+export function formatNumberFull(num: number): string {
+  return num.toLocaleString('fr-FR')
+}
+
 // Formatage des pourcentages
 export function formatPercent(value: number, total: number): string {
   const percent = (value / total) * 100
