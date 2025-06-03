@@ -42,8 +42,8 @@ export default function Map() {
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: `mapbox://styles/mapbox/${mapStyle}`,
-      center: [1.8, 50.25], // Centre sur la CCPM
-      zoom: 9, // Zoom réduit pour voir toute l'emprise
+      center: [2.5, 46.8], // Centre sur la France
+      zoom: 5, // Vue France entière
       pitch: 0,
       bearing: 0
     })
@@ -226,10 +226,16 @@ export default function Map() {
     
     const bounds = getBounds(communesData)
     if (bounds) {
-      map.current.fitBounds(bounds, { 
-        padding: 50,
-        maxZoom: 11 // Limiter le zoom pour voir toute l'emprise
-      })
+      // Délai avant de zoomer pour permettre à l'utilisateur de voir la vue France
+      setTimeout(() => {
+        console.log('🎯 Zoom automatique vers la zone CCPM...')
+        map.current?.fitBounds(bounds, { 
+          padding: 50,
+          maxZoom: 11, // Limiter le zoom pour voir toute l'emprise
+          duration: 2000, // Animation de 2 secondes
+          essential: true // Animation non interruptible
+        })
+      }, 1500) // Attendre 1.5 secondes avant de zoomer
     }
   }
 
@@ -318,7 +324,8 @@ export default function Map() {
         <div className="absolute inset-0 glass rounded-2xl flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Chargement de la carte...</p>
+            <p className="text-gray-600 font-medium">Chargement de la carte...</p>
+            <p className="text-gray-500 text-sm mt-2">Vue France → Zoom automatique CCPM</p>
           </div>
         </div>
       )}
