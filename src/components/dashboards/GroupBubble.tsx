@@ -138,49 +138,52 @@ export default function GroupBubble({ codeInsee, selectedRegne }: GroupBubblePro
       }}
       animate={true}
       motionConfig="gentle"
+      tooltip={({ id, value }) => {
+        // Filtrer la valeur "root" qui correspond au nœud racine de la hiérarchie
+        if (id === 'root') return <div></div>
+        
+        const isCurrentFiltered = isFiltered('bubble', 'group', id)
+        
+        return (
+          <div className="glass rounded-lg p-3 text-sm">
+            <div className="font-medium flex items-center gap-2">
+              <span className="font-medium">{id}</span>
+              {isFiltered('bubble', 'group', id) && (
+                <span className="text-green-600 text-xs">• Filtré</span>
+              )}
+            </div>
+            <div className="text-gray-600">
+              {value} espèces
+            </div>
+            <div className="text-xs text-gray-500 mt-1">
+              Cliquez pour filtrer par groupe
+            </div>
+          </div>
+        )
+      }}
       onClick={(node) => {
-        if (node.id !== 'root') {
-          handleChartClick({
-            chartType: 'bubble',
-            dataKey: 'group',
-            value: node.id as string,
-            action: 'click'
-          })
-        }
+        // Filtrer la valeur "root" pour éviter qu'elle devienne un filtre
+        if (node.id === 'root') return
+        handleChartClick({
+          chartType: 'bubble',
+          dataKey: 'group',
+          value: node.id as string,
+          action: 'click'
+        })
       }}
       onMouseEnter={(node) => {
-        if (node.id !== 'root') {
-          handleChartHover({
-            chartType: 'bubble',
-            dataKey: 'group',
-            value: node.id as string,
-            action: 'hover'
-          })
-        }
+        // Filtrer la valeur "root" 
+        if (node.id === 'root') return
+        handleChartHover({
+          chartType: 'bubble',
+          dataKey: 'group',
+          value: node.id as string,
+          action: 'hover'
+        })
       }}
       onMouseLeave={() => {
         handleChartHover(null)
       }}
-      tooltip={({ id, value, color }) => (
-        <div className="glass rounded-lg p-3 text-sm">
-          <div className="flex items-center space-x-2">
-            <div 
-              className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: color }}
-            ></div>
-            <span className="font-medium">{id}</span>
-            {isFiltered('bubble', 'group', id) && (
-              <span className="text-green-600 text-xs">• Filtré</span>
-            )}
-          </div>
-          <div className="text-gray-600 mt-1">
-            {value.toLocaleString()} observations
-          </div>
-          <div className="text-xs text-gray-500 mt-1">
-            Cliquez pour filtrer
-          </div>
-        </div>
-      )}
     />
   )
 } 

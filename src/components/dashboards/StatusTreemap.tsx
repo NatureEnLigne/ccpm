@@ -158,31 +158,11 @@ export default function StatusTreemap({ codeInsee, selectedRegne }: StatusTreema
       colors={['#8FBC8F', '#90EE90', '#98FB98', '#32CD32', '#228B22', '#006400', '#2E8B57', '#3CB371', '#20B2AA', '#66CDAA']}
       animate={true}
       motionConfig="gentle"
-      onClick={(node) => {
-        if (node.id !== 'root') {
-          handleChartClick({
-            chartType: 'treemap',
-            dataKey: 'status',
-            value: node.id as string,
-            action: 'click'
-          })
-        }
-      }}
-      onMouseEnter={(node) => {
-        if (node.id !== 'root') {
-          handleChartHover({
-            chartType: 'treemap',
-            dataKey: 'status',
-            value: node.id as string,
-            action: 'hover'
-          })
-        }
-      }}
-      onMouseLeave={() => {
-        handleChartHover(null)
-      }}
       tooltip={({ node }) => {
-        const isCurrentFiltered = isFiltered('treemap', 'status', node.id as string)
+        // Filtrer la valeur "root" qui correspond au nœud racine
+        if (node.id === 'root') return <div></div>
+        
+        const isCurrentFiltered = isFiltered('treemap', 'status', node.id)
         
         return (
           <div className="glass rounded-lg p-3 text-sm">
@@ -192,14 +172,37 @@ export default function StatusTreemap({ codeInsee, selectedRegne }: StatusTreema
                 <span className="text-green-600 text-xs">• Filtré</span>
               )}
             </div>
-            <div className="text-gray-600 mt-1">
-              {node.value} espèce{node.value > 1 ? 's' : ''}
+            <div className="text-gray-600">
+              {node.value} espèces
             </div>
             <div className="text-xs text-gray-500 mt-1">
               Cliquez pour filtrer par statut
             </div>
           </div>
         )
+      }}
+      onClick={(node) => {
+        // Filtrer la valeur "root" pour éviter qu'elle devienne un filtre
+        if (node.id === 'root') return
+        handleChartClick({
+          chartType: 'treemap',
+          dataKey: 'status',
+          value: node.id as string,
+          action: 'click'
+        })
+      }}
+      onMouseEnter={(node) => {
+        // Filtrer la valeur "root"
+        if (node.id === 'root') return
+        handleChartHover({
+          chartType: 'treemap',
+          dataKey: 'status',
+          value: node.id as string,
+          action: 'hover'
+        })
+      }}
+      onMouseLeave={() => {
+        handleChartHover(null)
       }}
     />
   )
