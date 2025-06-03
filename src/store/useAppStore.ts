@@ -17,6 +17,10 @@ interface AppState {
   // Filtres
   filters: FilterState
   
+  // Panneau de statistiques
+  showStatsPanel: boolean
+  statsPanelCommune: string | null
+  
   // Actions
   setSelectedCommune: (insee: string | null) => void
   setCommunes: (communes: CommuneCollection) => void
@@ -27,6 +31,8 @@ interface AppState {
   setSpeciesData: (data: Map<string, SpeciesData>) => void
   setFilter: (filterType: keyof FilterState, value: string | number | null) => void
   clearFilters: () => void
+  setShowStatsPanel: (show: boolean) => void
+  setStatsPanelCommune: (insee: string | null) => void
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -43,6 +49,8 @@ export const useAppStore = create<AppState>((set, get) => ({
     selectedMois: null,
     selectedStatut: null,
   },
+  showStatsPanel: false,
+  statsPanelCommune: null,
   
   // Actions
   setSelectedCommune: (insee) => set({ selectedCommune: insee }),
@@ -73,6 +81,10 @@ export const useAppStore = create<AppState>((set, get) => ({
       selectedStatut: null,
     }
   }),
+  
+  setShowStatsPanel: (showStatsPanel) => set({ showStatsPanel }),
+  
+  setStatsPanelCommune: (statsPanelCommune) => set({ statsPanelCommune }),
 }))
 
 // Sélecteurs utiles

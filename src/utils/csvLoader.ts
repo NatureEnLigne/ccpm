@@ -2,21 +2,28 @@ import Papa from 'papaparse'
 
 export async function loadCSV<T>(filePath: string): Promise<T[]> {
   try {
+    console.log(`Chargement de ${filePath}...`)
     const response = await fetch(filePath)
     if (!response.ok) {
       throw new Error(`Erreur lors du chargement de ${filePath}: ${response.statusText}`)
     }
     
     const csvText = await response.text()
+    console.log(`Fichier chargé: ${csvText.length} caractères`)
     
     return new Promise((resolve, reject) => {
       Papa.parse<T>(csvText, {
         header: true,
+        delimiter: ';',
         skipEmptyLines: true,
         dynamicTyping: true,
         complete: (results) => {
           if (results.errors.length > 0) {
             console.warn('Erreurs de parsing CSV:', results.errors)
+          }
+          console.log(`${filePath} parsé: ${results.data.length} lignes`)
+          if (results.data.length > 0) {
+            console.log('Premier élément:', results.data[0])
           }
           resolve(results.data)
         },

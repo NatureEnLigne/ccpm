@@ -29,13 +29,13 @@ export async function loadCommunesGeoJSON(): Promise<CommuneCollection> {
 
 export function getCommuneByInsee(communes: CommuneCollection, insee: string) {
   return communes.features.find(
-    feature => feature.properties.Insee === insee
+    feature => feature.properties.insee === insee
   )
 }
 
 export function getCommunesNames(communes: CommuneCollection): string[] {
   return communes.features
-    .map(feature => feature.properties.Nom)
+    .map(feature => feature.properties.nom)
     .sort()
 }
 

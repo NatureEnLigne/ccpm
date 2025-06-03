@@ -1,9 +1,9 @@
 // Types pour les données GeoJSON
 export interface CommuneProperties {
-  Insee: string
-  Nom: string
-  Superficie?: number
-  Population?: number
+  insee: string
+  nom: string
+  wikipedia?: string
+  surf_ha?: number
 }
 
 export interface CommuneFeature {
@@ -20,26 +20,25 @@ export interface CommuneCollection {
   features: CommuneFeature[]
 }
 
-// Types pour les données CSV
+// Types pour les données CSV - Noms réels des colonnes
 export interface SyntheseInsee {
-  Insee: string
-  'Nb Obs': number
-  'Nb Esp': number
+  'Insee (Synthese!Insee)': string
+  'An Obs': number
   'Cd Ref': string
-  Nom?: string
+  'Nb Obs': number
 }
 
 export interface PhenoMoisInsee {
-  'CD REF': string
-  Insee: string
-  Mois: number
-  'Nb Obs': number
+  'Insee (Pheno!Mois!Insee)': string
+  'Mois Obs': number
+  'CD REF (pheno!mois!insee)': string
+  'Nb Donnees': number
 }
 
 export interface Taxonomie {
   'Cd Nom': string
   'Nom Valide': string
-  'Groupe': string
+  'Group1 Inpn': string
   'Ordre': string
   'Famille': string
 }

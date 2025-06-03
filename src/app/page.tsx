@@ -2,10 +2,11 @@
 
 import Map from '../components/Map'
 import Sidebar from '../components/Sidebar'
+import StatsPanel from '../components/StatsPanel'
 
 export default function HomePage() {
   return (
-    <main className="h-screen w-full flex flex-col">
+    <main className="h-screen flex flex-col bg-gradient-to-br from-blue-50 to-green-50">
       {/* Header */}
       <header className="glass z-10 p-4 shadow-lg">
         <div className="container mx-auto">
@@ -19,10 +20,11 @@ export default function HomePage() {
       </header>
 
       {/* Contenu principal */}
-      <div className="flex-1 flex">
-        {/* Zone carte */}
-        <div className="flex-1 relative p-4">
+      <div className="flex-1 flex min-h-0">
+        {/* Zone carte avec panneau de stats - prend tout l'espace disponible */}
+        <div className="flex-1 p-4 relative">
           <Map />
+          <StatsPanel />
         </div>
 
         {/* Sidebar */}

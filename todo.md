@@ -21,35 +21,35 @@
   - [x] `taxonomie.csv`
   - [x] `lists_rouges.csv`
   - [x] `statuts.csv`
-- [ ] Créer les utilitaires de chargement :
-  - [ ] `utils/csvLoader.ts`
-  - [ ] `utils/geojsonLoader.ts`
-  - [ ] `utils/dataJoiner.ts`
-  - [ ] `utils/formatters.ts`
+- [x] Créer les utilitaires de chargement :
+  - [x] `utils/csvLoader.ts`
+  - [x] `utils/geojsonLoader.ts`
+  - [x] `utils/dataJoiner.ts`
+  - [x] `utils/formatters.ts`
 
 ## 🗺️ Phase 3 : Carte principale
-- [ ] Créer `components/Map.tsx`
-  - [ ] Intégration Mapbox GL JS
-  - [ ] Configuration avec la clé API
-  - [ ] Chargement du GeoJSON des communes
-  - [ ] Gestion des clics sur les communes
-  - [ ] Zoom automatique sur sélection
-- [ ] Créer `components/Sidebar.tsx`
-  - [ ] Liste des communes
-  - [ ] Toggle "Afficher bâtiments 3D"
-  - [ ] Sélecteur de fond de plan Mapbox
-- [ ] Page principale `pages/index.tsx`
-  - [ ] Layout avec carte et sidebar
-  - [ ] Intégration des composants
+- [x] Créer `components/Map.tsx`
+  - [x] Intégration Mapbox GL JS
+  - [x] Configuration avec la clé API
+  - [x] Chargement du GeoJSON des communes
+  - [x] Gestion des clics sur les communes
+  - [x] Zoom automatique sur sélection
+- [x] Créer `components/Sidebar.tsx`
+  - [x] Liste des communes
+  - [x] Toggle "Afficher bâtiments 3D"
+  - [x] Sélecteur de fond de plan Mapbox
+- [x] Page principale `pages/index.tsx`
+  - [x] Layout avec carte et sidebar
+  - [x] Intégration des composants
 
 ## 🧊 Phase 4 : Fiche commune (glassmorphism)
-- [ ] Créer `components/CommuneCard.tsx`
-  - [ ] Design glassmorphique avec Tailwind
-  - [ ] Affichage des infos de base
-  - [ ] Bouton "Voir la fiche complète"
-- [ ] Intégrer la fiche dans la carte
-  - [ ] Positionnement responsive
-  - [ ] Animations d'apparition/disparition
+- [x] Créer `components/CommuneCard.tsx`
+  - [x] Design glassmorphique avec Tailwind
+  - [x] Affichage des infos de base
+  - [x] Bouton "Voir la fiche complète"
+- [x] Intégrer la fiche dans la carte
+  - [x] Positionnement responsive
+  - [x] Animations d'apparition/disparition
 
 ## 📊 Phase 5 : Page fiche commune détaillée
 - [ ] Créer `pages/commune/[code_insee].tsx`
