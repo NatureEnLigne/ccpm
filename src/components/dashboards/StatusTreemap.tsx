@@ -49,6 +49,10 @@ export default function StatusTreemap({ codeInsee }: StatusTreemapProps) {
             return
           }
           
+          if (filters.selectedGroup2 && species.group2 !== filters.selectedGroup2) {
+            return
+          }
+          
           if (filters.selectedMois) {
             // Vérifier si cette espèce a des données pour le mois sélectionné
             const hasMonthData = commune.phenologie.some(pheno => 

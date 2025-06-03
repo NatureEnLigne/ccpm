@@ -5,6 +5,7 @@ import { X } from 'lucide-react'
 
 const FILTER_LABELS: Record<string, string> = {
   selectedGroupe: 'Groupe',
+  selectedGroup2: 'Sous-groupe',
   selectedMois: 'Mois',
   selectedStatut: 'Statut',
   selectedRegne: 'Règne',

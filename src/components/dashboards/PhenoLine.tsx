@@ -48,6 +48,10 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
             return
           }
           
+          if (filters.selectedGroup2 && species.group2 !== filters.selectedGroup2) {
+            return
+          }
+          
           if (filters.selectedRedListCategory) {
             if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) {
               return

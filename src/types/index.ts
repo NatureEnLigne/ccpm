@@ -87,6 +87,7 @@ export interface MapState {
 
 export interface FilterState {
   selectedGroupe: string | null
+  selectedGroup2: string | null
   selectedMois: number | null
   selectedStatut: string | null
   selectedRegne: string | null

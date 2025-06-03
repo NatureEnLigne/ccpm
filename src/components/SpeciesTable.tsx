@@ -67,6 +67,9 @@ export default function SpeciesTable({ codeInsee }: SpeciesTableProps) {
 
       // Appliquer les filtres du store global
       if (filters?.selectedGroupe && species.groupe !== filters.selectedGroupe) return
+      
+      if (filters?.selectedGroup2 && species.group2 !== filters.selectedGroup2) return
+      
       if (filters?.selectedMois) {
         // Vérifier si cette espèce a des données pour le mois sélectionné
         const hasMonthData = currentCommune.phenologie.some(pheno => 

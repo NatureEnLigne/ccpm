@@ -28,6 +28,24 @@ export function useChartInteractions() {
             value: value as string,
             source: 'GroupBubble'
           }
+        } else if (dataKey === 'group2') {
+          filterEvent = {
+            filterKey: 'selectedGroup2',
+            value: value as string,
+            source: 'GroupBubble'
+          }
+        } else if (dataKey === 'ordre') {
+          filterEvent = {
+            filterKey: 'selectedOrdre',
+            value: value as string,
+            source: 'GroupBubble'
+          }
+        } else if (dataKey === 'famille') {
+          filterEvent = {
+            filterKey: 'selectedFamille',
+            value: value as string,
+            source: 'GroupBubble'
+          }
         }
         break
         
@@ -97,6 +115,12 @@ export function useChartInteractions() {
     switch (`${chartType}-${dataKey}`) {
       case 'bubble-group':
         return filters.selectedGroupe === value
+      case 'bubble-group2':
+        return filters.selectedGroup2 === value
+      case 'bubble-ordre':
+        return filters.selectedOrdre === value
+      case 'bubble-famille':
+        return filters.selectedFamille === value
       case 'line-month':
         return filters.selectedMois === value
       case 'bar-status':

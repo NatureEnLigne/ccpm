@@ -58,6 +58,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   speciesData: null,
   filters: {
     selectedGroupe: null,
+    selectedGroup2: null,
     selectedMois: null,
     selectedStatut: null,
     selectedRegne: null,
@@ -108,6 +109,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   clearFilters: () => set({
     filters: {
       selectedGroupe: null,
+      selectedGroup2: null,
       selectedMois: null,
       selectedStatut: null,
       selectedRegne: null,

@@ -20,12 +20,40 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
   const { handleChartClick, handleChartHover, isFiltered, isHovered } = useChartInteractions()
   const [data, setData] = useState<BubbleData | null>(null)
 
+  // Déterminer quel niveau taxonomique afficher selon les filtres actifs
+  const getTaxonomicLevel = () => {
+    // Si aucun filtre de groupe, afficher Group1 Inpn
+    if (!filters.selectedGroupe) {
+      return { level: 'group1', title: 'Groupes taxonomiques', field: 'groupe' }
+    }
+    
+    // Si Group1 est filtré mais pas Group2, afficher Group2 Inpn  
+    if (filters.selectedGroupe && !filters.selectedGroup2) {
+      return { level: 'group2', title: 'Sous-groupes taxonomiques', field: 'group2' }
+    }
+    
+    // Si Group1 et Group2 sont filtrés, afficher Group3 Inpn (ou Ordre/Famille)
+    if (filters.selectedGroupe && filters.selectedGroup2 && !filters.selectedOrdre) {
+      return { level: 'ordre', title: 'Ordres', field: 'ordre' }
+    }
+    
+    // Si Ordre est filtré, afficher Famille
+    if (filters.selectedOrdre && !filters.selectedFamille) {
+      return { level: 'famille', title: 'Familles', field: 'famille' }
+    }
+    
+    // Dernier niveau : revenir aux espèces individuelles ou Group1 par défaut
+    return { level: 'group1', title: 'Groupes taxonomiques', field: 'groupe' }
+  }
+
   useEffect(() => {
     if (communeData && speciesData && codeInsee) {
       const commune = communeData.get(codeInsee)
       if (!commune) return
 
-      // Compter les observations par groupe taxonomique
+      const taxonomicLevel = getTaxonomicLevel()
+      
+      // Compter les observations par niveau taxonomique déterminé
       const groupStats = new Map<string, number>()
       const selectedRegne = filters.selectedRegne
       
@@ -55,6 +83,14 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
             }
           }
           
+          if (filters.selectedGroupe && species.groupe !== filters.selectedGroupe) {
+            return
+          }
+          
+          if (filters.selectedGroup2 && species.group2 !== filters.selectedGroup2) {
+            return
+          }
+          
           if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) {
             return
           }
@@ -76,9 +112,27 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
             }
           }
           
-          const groupe = species.groupe || 'Inconnu'
-          const current = groupStats.get(groupe) || 0
-          groupStats.set(groupe, current + obs['Nb Obs'])
+          // Récupérer la valeur du champ taxonomique approprié
+          let groupValue: string
+          switch (taxonomicLevel.field) {
+            case 'groupe':
+              groupValue = species.groupe || 'Inconnu'
+              break
+            case 'group2':
+              groupValue = species.group2 || 'Inconnu'
+              break
+            case 'ordre':
+              groupValue = species.ordre || 'Inconnu'
+              break
+            case 'famille':
+              groupValue = species.famille || 'Inconnu'
+              break
+            default:
+              groupValue = species.groupe || 'Inconnu'
+          }
+          
+          const current = groupStats.get(groupValue) || 0
+          groupStats.set(groupValue, current + obs['Nb Obs'])
         }
       })
 
@@ -92,15 +146,17 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
       children.sort((a, b) => b.value - a.value)
 
       const bubbleData: BubbleData = {
-        id: 'Groupes taxonomiques',
+        id: taxonomicLevel.title,
         value: 0, // Non utilisé pour le root
         children
       }
 
       setData(bubbleData)
-      console.log('🦋 Données bubble pour', codeInsee, 'règne:', selectedRegne, 'filtres appliqués:', filters, ':', bubbleData)
+      console.log('🦋 Données bubble pour', codeInsee, 'niveau:', taxonomicLevel.level, 'filtres appliqués:', filters, ':', bubbleData)
     }
   }, [communeData, speciesData, codeInsee, filters])
+
+  const taxonomicLevel = getTaxonomicLevel()
 
   if (!data || !data.children || data.children.length === 0) {
     return (
@@ -123,7 +179,7 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
       padding={4}
       enableLabels={true}
       labelsSkipRadius={10}
-      labelsFilter={(label) => label.node.id !== 'root' && label.node.id !== 'Groupes taxonomiques'}
+      labelsFilter={(label) => label.node.id !== 'root' && !label.node.id.includes('taxonomiques') && !label.node.id.includes('Sous-groupes') && !label.node.id.includes('Ordres') && !label.node.id.includes('Familles')}
       labelTextColor={{
         from: 'color',
         modifiers: [
@@ -141,15 +197,13 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
       motionConfig="gentle"
       tooltip={({ id, value }) => {
         // Filtrer la valeur "root" qui correspond au nœud racine de la hiérarchie
-        if (id === 'root' || id === 'Groupes taxonomiques') return <div></div>
-        
-        const isCurrentFiltered = isFiltered('bubble', 'group', id)
+        if (id === 'root' || id === taxonomicLevel.title) return <div></div>
         
         return (
           <div className="glass rounded-lg p-3 text-sm">
             <div className="font-medium flex items-center gap-2">
               <span className="font-medium">{id}</span>
-              {isFiltered('bubble', 'group', id) && (
+              {isFiltered('bubble', taxonomicLevel.field === 'groupe' ? 'group' : taxonomicLevel.field, id) && (
                 <span className="text-green-600 text-xs">• Filtré</span>
               )}
             </div>
@@ -157,27 +211,27 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
               {value} espèces
             </div>
             <div className="text-xs text-gray-500 mt-1">
-              Cliquez pour filtrer par groupe
+              Cliquez pour filtrer par {taxonomicLevel.level === 'group1' ? 'groupe' : taxonomicLevel.level === 'group2' ? 'sous-groupe' : taxonomicLevel.level}
             </div>
           </div>
         )
       }}
       onClick={(node) => {
         // Filtrer la valeur "root" pour éviter qu'elle devienne un filtre
-        if (node.id === 'root' || node.id === 'Groupes taxonomiques') return
+        if (node.id === 'root' || node.id === taxonomicLevel.title) return
         handleChartClick({
           chartType: 'bubble',
-          dataKey: 'group',
+          dataKey: taxonomicLevel.field === 'groupe' ? 'group' : taxonomicLevel.field,
           value: node.id as string,
           action: 'click'
         })
       }}
       onMouseEnter={(node) => {
         // Filtrer la valeur "root" 
-        if (node.id === 'root' || node.id === 'Groupes taxonomiques') return
+        if (node.id === 'root' || node.id === taxonomicLevel.title) return
         handleChartHover({
           chartType: 'bubble',
-          dataKey: 'group',
+          dataKey: taxonomicLevel.field === 'groupe' ? 'group' : taxonomicLevel.field,
           value: node.id as string,
           action: 'hover'
         })

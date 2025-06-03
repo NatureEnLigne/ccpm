@@ -47,6 +47,10 @@ export default function RedListBar({ codeInsee }: RedListBarProps) {
             return
           }
           
+          if (filters.selectedGroup2 && species.group2 !== filters.selectedGroup2) {
+            return
+          }
+          
           if (filters.selectedMois) {
             // Vérifier si cette observation a des données pour le mois sélectionné
             const hasMonthData = commune.phenologie.some(pheno => 
