@@ -179,17 +179,17 @@ export default function StatusTreemap({ codeInsee }: StatusTreemapProps) {
         const isCurrentFiltered = isFiltered('treemap', 'status', node.id)
         
         return (
-          <div className="bg-transparent backdrop-blur-lg rounded-lg p-4 text-sm shadow-xl border border-white/20">
-            <div className="font-semibold text-white flex items-center gap-2 mb-2 text-base">
+          <div className="bg-white/80 backdrop-blur-md rounded-lg p-4 text-sm shadow-xl border border-stone-800/30">
+            <div className="font-semibold text-stone-800 flex items-center gap-2 mb-2">
               <span>{node.id}</span>
               {isCurrentFiltered && (
-                <span className="bg-white/20 text-white px-2 py-1 rounded-full text-xs">Filtré</span>
+                <span className="bg-stone-700/20 text-stone-700 px-2 py-1 rounded-full text-xs">Filtré</span>
               )}
             </div>
-            <div className="text-white/90 mb-2">
-              <span className="font-medium text-white">{node.value}</span> espèces
+            <div className="text-stone-700 mb-2">
+              <span className="font-medium text-stone-800">{node.value}</span> espèces
             </div>
-            <div className="text-xs text-white/70 border-t border-white/20 pt-2">
+            <div className="text-xs text-stone-600 border-t border-stone-800/20 pt-2">
               Cliquez pour filtrer par statut
             </div>
           </div>
