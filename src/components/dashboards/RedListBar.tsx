@@ -66,6 +66,19 @@ export default function RedListBar({ codeInsee, selectedRegne }: RedListBarProps
             return
           }
           
+          if (filters.selectedStatutReglementaire) {
+            // Vérifier si l'espèce a ce statut réglementaire
+            const hasStatus = species.statuts.some(statut => 
+              statut['LABEL STATUT (statuts)'] === filters.selectedStatutReglementaire
+            )
+            if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') {
+              return
+            }
+            if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) {
+              return
+            }
+          }
+          
           if (species.listeRouge) {
             const statut = species.listeRouge['Label Statut'] || 'Non évalué'
             const current = statusStats.get(statut) || 0

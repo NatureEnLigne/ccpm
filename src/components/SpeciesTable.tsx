@@ -78,6 +78,15 @@ export default function SpeciesTable({ codeInsee, selectedRegne = '' }: SpeciesT
       if (filters?.selectedRedListCategory && species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
       if (filters?.selectedOrdre && species.ordre !== filters.selectedOrdre) return
       if (filters?.selectedFamille && species.famille !== filters.selectedFamille) return
+      
+      if (filters?.selectedStatutReglementaire) {
+        // Vérifier si l'espèce a ce statut réglementaire
+        const hasStatus = species.statuts.some(statut => 
+          statut['LABEL STATUT (statuts)'] === filters.selectedStatutReglementaire
+        )
+        if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') return
+        if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) return
+      }
 
       // Calculer le nombre total d'observations pour cette espèce dans cette commune
       // Utiliser directement les observations de la commune pour cette espèce

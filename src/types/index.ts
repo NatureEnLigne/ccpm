@@ -94,6 +94,7 @@ export interface FilterState {
   selectedFamille: string | null
   selectedAnnee: number | null
   selectedRedListCategory: string | null
+  selectedStatutReglementaire: string | null
   activeFilters: string[] // Liste des filtres actifs pour l'affichage
 }
 

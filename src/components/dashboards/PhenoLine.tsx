@@ -65,6 +65,19 @@ export default function PhenoLine({ codeInsee, selectedRegne }: PhenoLineProps) 
           if (filters.selectedFamille && species.famille !== filters.selectedFamille) {
             return
           }
+          
+          if (filters.selectedStatutReglementaire) {
+            // Vérifier si l'espèce a ce statut réglementaire
+            const hasStatus = species.statuts.some(statut => 
+              statut['LABEL STATUT (statuts)'] === filters.selectedStatutReglementaire
+            )
+            if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') {
+              return
+            }
+            if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) {
+              return
+            }
+          }
         }
         
         const mois = pheno['Mois Obs']

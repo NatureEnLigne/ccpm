@@ -63,6 +63,19 @@ export default function GroupBubble({ codeInsee, selectedRegne }: GroupBubblePro
             return
           }
           
+          if (filters.selectedStatutReglementaire) {
+            // Vérifier si l'espèce a ce statut réglementaire
+            const hasStatus = species.statuts.some(statut => 
+              statut['LABEL STATUT (statuts)'] === filters.selectedStatutReglementaire
+            )
+            if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') {
+              return
+            }
+            if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) {
+              return
+            }
+          }
+          
           const groupe = species.groupe || 'Inconnu'
           const current = groupStats.get(groupe) || 0
           groupStats.set(groupe, current + obs['Nb Obs'])

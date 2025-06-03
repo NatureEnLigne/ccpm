@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { ResponsiveTreeMap } from '@nivo/treemap'
 import { useAppStore } from '../../store/useAppStore'
+import { useChartInteractions } from '../../hooks/useChartInteractions'
 
 interface StatusTreemapProps {
   codeInsee: string
@@ -17,6 +18,7 @@ interface TreemapData {
 
 export default function StatusTreemap({ codeInsee, selectedRegne }: StatusTreemapProps) {
   const { communeData, speciesData } = useAppStore()
+  const { handleChartClick, handleChartHover, isFiltered, filters } = useChartInteractions()
   const [data, setData] = useState<TreemapData | null>(null)
 
   useEffect(() => {
@@ -38,10 +40,48 @@ export default function StatusTreemap({ codeInsee, selectedRegne }: StatusTreema
         const species = speciesData.get(cdRef)
         if (species) {
           // Filtrer par règne si nécessaire
-          if (selectedRegne !== 'Tous') {
-            // Utiliser le vrai règne de l'espèce
-            if (species.regne !== selectedRegne) {
-              return // Ignorer cette espèce
+          if (selectedRegne !== 'Tous' && species.regne !== selectedRegne) {
+            return // Ignorer cette espèce
+          }
+          
+          // Appliquer les filtres du store global
+          if (filters.selectedGroupe && species.groupe !== filters.selectedGroupe) {
+            return
+          }
+          
+          if (filters.selectedMois) {
+            // Vérifier si cette espèce a des données pour le mois sélectionné
+            const hasMonthData = commune.phenologie.some(pheno => 
+              pheno['CD REF (pheno!mois!insee)'] === cdRef && 
+              pheno['Mois Obs'] === filters.selectedMois
+            )
+            if (!hasMonthData) return
+          }
+          
+          if (filters.selectedRedListCategory) {
+            if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) {
+              return
+            }
+          }
+          
+          if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) {
+            return
+          }
+          
+          if (filters.selectedFamille && species.famille !== filters.selectedFamille) {
+            return
+          }
+          
+          if (filters.selectedStatutReglementaire) {
+            // Vérifier si l'espèce a ce statut réglementaire
+            const hasStatus = species.statuts.some(statut => 
+              statut['LABEL STATUT (statuts)'] === filters.selectedStatutReglementaire
+            )
+            if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') {
+              return
+            }
+            if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) {
+              return
             }
           }
           
@@ -74,9 +114,9 @@ export default function StatusTreemap({ codeInsee, selectedRegne }: StatusTreema
       }
 
       setData(treemapData)
-      console.log('⚖️ Données statuts pour', codeInsee, 'règne:', selectedRegne, ':', treemapData)
+      console.log('⚖️ Données statuts pour', codeInsee, 'règne:', selectedRegne, 'filtres appliqués:', filters, ':', treemapData)
     }
-  }, [communeData, speciesData, codeInsee, selectedRegne])
+  }, [communeData, speciesData, codeInsee, selectedRegne, filters])
 
   if (!data || !data.children || data.children.length === 0) {
     return (
@@ -118,14 +158,49 @@ export default function StatusTreemap({ codeInsee, selectedRegne }: StatusTreema
       colors={{ scheme: 'nivo' }}
       animate={true}
       motionConfig="gentle"
-      tooltip={({ node }) => (
-        <div className="glass rounded-lg p-3 text-sm">
-          <div className="font-medium">{node.id}</div>
-          <div className="text-gray-600 mt-1">
-            {node.value} espèce{node.value > 1 ? 's' : ''}
+      onClick={(node) => {
+        if (node.id !== 'root') {
+          handleChartClick({
+            chartType: 'treemap',
+            dataKey: 'status',
+            value: node.id as string,
+            action: 'click'
+          })
+        }
+      }}
+      onMouseEnter={(node) => {
+        if (node.id !== 'root') {
+          handleChartHover({
+            chartType: 'treemap',
+            dataKey: 'status',
+            value: node.id as string,
+            action: 'hover'
+          })
+        }
+      }}
+      onMouseLeave={() => {
+        handleChartHover(null)
+      }}
+      tooltip={({ node }) => {
+        const isCurrentFiltered = isFiltered('treemap', 'status', node.id as string)
+        
+        return (
+          <div className="glass rounded-lg p-3 text-sm">
+            <div className="font-medium flex items-center gap-2">
+              {node.id}
+              {isCurrentFiltered && (
+                <span className="text-blue-600 text-xs">• Filtré</span>
+              )}
+            </div>
+            <div className="text-gray-600 mt-1">
+              {node.value} espèce{node.value > 1 ? 's' : ''}
+            </div>
+            <div className="text-xs text-gray-500 mt-1">
+              Cliquez pour filtrer par statut
+            </div>
           </div>
-        </div>
-      )}
+        )
+      }}
     />
   )
 } 

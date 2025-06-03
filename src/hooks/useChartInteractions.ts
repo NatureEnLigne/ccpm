@@ -52,7 +52,13 @@ export function useChartInteractions() {
         break
         
       case 'treemap':
-        if (dataKey === 'ordre') {
+        if (dataKey === 'status') {
+          filterEvent = {
+            filterKey: 'selectedStatutReglementaire',
+            value: value as string,
+            source: 'StatusTreemap'
+          }
+        } else if (dataKey === 'ordre') {
           filterEvent = {
             filterKey: 'selectedOrdre',
             value: value as string,
@@ -95,6 +101,8 @@ export function useChartInteractions() {
         return filters.selectedMois === value
       case 'bar-status':
         return filters.selectedRedListCategory === value
+      case 'treemap-status':
+        return filters.selectedStatutReglementaire === value
       case 'treemap-ordre':
         return filters.selectedOrdre === value
       case 'treemap-famille':

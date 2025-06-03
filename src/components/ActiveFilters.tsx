@@ -11,7 +11,8 @@ const FILTER_LABELS: Record<string, string> = {
   selectedOrdre: 'Ordre',
   selectedFamille: 'Famille',
   selectedAnnee: 'Année',
-  selectedRedListCategory: 'Liste Rouge'
+  selectedRedListCategory: 'Liste Rouge',
+  selectedStatutReglementaire: 'Statut Réglementaire'
 }
 
 export default function ActiveFilters() {
