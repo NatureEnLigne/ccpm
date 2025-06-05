@@ -25,10 +25,72 @@ export default function StatusTreemap({ codeInsee }: StatusTreemapProps) {
       const commune = communeData.get(codeInsee)
       if (!commune) return
 
-      // Compter les espèces par statut réglementaire
       const statusStats = new Map<string, number>()
-      const processedSpecies = new Set<string>()
       const selectedRegne = filters.selectedRegne
+      
+      if (filters.selectedMois) {
+        // Si un filtre par mois est actif, utiliser les données phénologiques
+        // Compter les espèces uniques pour ce mois
+        const uniqueSpecies = new Set<string>()
+        
+        commune.phenologie.forEach(pheno => {
+          if (pheno['Mois Obs'] !== filters.selectedMois) return
+          
+          const cdRef = pheno['CD REF (pheno!mois!insee)']
+          const species = speciesData?.get(cdRef)
+          
+          if (species) {
+            // Filtrer par règne si nécessaire
+            if (selectedRegne && species.regne !== selectedRegne) return
+            
+            // Appliquer les filtres du store global
+            if (filters.selectedGroupe && species.groupe !== filters.selectedGroupe) return
+            if (filters.selectedGroup2 && species.group2 !== filters.selectedGroup2) return
+            if (filters.selectedRedListCategory) {
+              if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
+            }
+            if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) return
+            if (filters.selectedFamille && species.famille !== filters.selectedFamille) return
+            
+            if (filters.selectedStatutReglementaire) {
+              const hasStatus = species.statuts.some(statut => 
+                statut['LABEL STATUT (statuts)'] === filters.selectedStatutReglementaire
+              )
+              if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') return
+              if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) return
+            }
+            
+            // Ajouter cette espèce aux espèces uniques du mois
+            uniqueSpecies.add(cdRef)
+          }
+        })
+        
+        // Compter les statuts pour les espèces uniques du mois
+        uniqueSpecies.forEach(cdRef => {
+          const species = speciesData.get(cdRef)
+          if (species) {
+            if (species.statuts.length > 0) {
+              // Créer un Set pour éviter de compter plusieurs fois le même statut pour une espèce
+              const speciesStatuts = new Set<string>()
+              species.statuts.forEach(statut => {
+                const statutLabel = statut['LABEL STATUT (statuts)'] || 'Inconnu'
+                speciesStatuts.add(statutLabel)
+              })
+              
+              // Compter cette espèce pour chaque statut unique qu'elle possède
+              speciesStatuts.forEach(statutLabel => {
+                const current = statusStats.get(statutLabel) || 0
+                statusStats.set(statutLabel, current + 1)
+              })
+            } else {
+              const current = statusStats.get('Non réglementé') || 0
+              statusStats.set('Non réglementé', current + 1)
+            }
+          }
+        })
+      } else {
+        // Logique normale sans filtre par mois
+        const processedSpecies = new Set<string>()
 
       commune.observations.forEach(obs => {
         const cdRef = obs['Cd Ref']
@@ -37,63 +99,40 @@ export default function StatusTreemap({ codeInsee }: StatusTreemapProps) {
         if (processedSpecies.has(cdRef)) return
         processedSpecies.add(cdRef)
 
-        const species = speciesData.get(cdRef)
+          const species = speciesData?.get(cdRef)
         if (species) {
           // Filtrer par règne si nécessaire
-          if (selectedRegne && species.regne !== selectedRegne) {
-            return // Ignorer cette espèce
-          }
+            if (selectedRegne && species.regne !== selectedRegne) return
           
           // Appliquer les filtres du store global
-          if (filters.selectedGroupe && species.groupe !== filters.selectedGroupe) {
-            return
-          }
-          
-          if (filters.selectedGroup2 && species.group2 !== filters.selectedGroup2) {
-            return
-          }
-          
-          if (filters.selectedMois) {
-            // Vérifier si cette espèce a des données pour le mois sélectionné
-            const hasMonthData = commune.phenologie.some(pheno => 
-              pheno['CD REF (pheno!mois!insee)'] === cdRef && 
-              pheno['Mois Obs'] === filters.selectedMois
-            )
-            if (!hasMonthData) return
-          }
-          
+            if (filters.selectedGroupe && species.groupe !== filters.selectedGroupe) return
+            if (filters.selectedGroup2 && species.group2 !== filters.selectedGroup2) return
           if (filters.selectedRedListCategory) {
-            if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) {
-              return
+              if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
             }
-          }
-          
-          if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) {
-            return
-          }
-          
-          if (filters.selectedFamille && species.famille !== filters.selectedFamille) {
-            return
-          }
+            if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) return
+            if (filters.selectedFamille && species.famille !== filters.selectedFamille) return
           
           if (filters.selectedStatutReglementaire) {
-            // Vérifier si l'espèce a ce statut réglementaire
             const hasStatus = species.statuts.some(statut => 
               statut['LABEL STATUT (statuts)'] === filters.selectedStatutReglementaire
             )
-            if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') {
-              return
-            }
-            if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) {
-              return
-            }
+              if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') return
+              if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) return
           }
           
           if (species.statuts.length > 0) {
+              // Créer un Set pour éviter de compter plusieurs fois le même statut pour une espèce
+              const speciesStatuts = new Set<string>()
             species.statuts.forEach(statut => {
-              const statutText = statut['LABEL STATUT (statuts)'] || 'Non réglementé'
-              const current = statusStats.get(statutText) || 0
-              statusStats.set(statutText, current + 1)
+                const statutLabel = statut['LABEL STATUT (statuts)'] || 'Inconnu'
+                speciesStatuts.add(statutLabel)
+              })
+              
+              // Compter cette espèce pour chaque statut unique qu'elle possède
+              speciesStatuts.forEach(statutLabel => {
+                const current = statusStats.get(statutLabel) || 0
+                statusStats.set(statutLabel, current + 1)
             })
           } else {
             const current = statusStats.get('Non réglementé') || 0
@@ -101,20 +140,20 @@ export default function StatusTreemap({ codeInsee }: StatusTreemapProps) {
           }
         }
       })
+      }
 
       // Convertir en format pour Nivo Treemap
       const children: TreemapData[] = Array.from(statusStats.entries()).map(([statut, count]) => ({
-        id: statut || 'Non réglementé',
+        id: statut,
         value: count
       }))
 
       // Trier par valeur décroissante
       children.sort((a, b) => b.value - a.value)
 
-      // Passer directement les enfants sans nœud root pour éviter l'affichage de "root"
       const treemapData: TreemapData = {
-        id: 'Statuts réglementaires',
-        value: 0,
+        id: 'Statuts Réglementaires',
+        value: 0, // Non utilisé pour le root
         children
       }
 

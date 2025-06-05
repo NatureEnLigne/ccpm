@@ -104,7 +104,7 @@
     transform: translateY(-4px) scale(1.02);
     z-index: 10;
   }
-
+  
   /* Boutons modernes nature */
   .btn-modern {
     background: linear-gradient(135deg, var(--color-primary), var(--color-accent));

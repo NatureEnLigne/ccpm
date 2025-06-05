@@ -39,7 +39,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
     speciesData, 
     setSpeciesData, 
     communes, 
-    setCommunes, 
+    setCommunes,
     filters,
     resetFiltersOnCommuneChange
   } = useAppStore()
@@ -128,6 +128,39 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
     const uniqueSpecies = new Set<string>()
     const selectedRegne = filters.selectedRegne
 
+    // Si un filtre par mois est actif, utiliser les données phénologiques
+    if (filters?.selectedMois) {
+      // Compter directement depuis les données phénologiques
+      currentCommune.phenologie.forEach(pheno => {
+        if (pheno['Mois Obs'] !== filters.selectedMois) return
+        
+        const cdRef = pheno['CD REF (pheno!mois!insee)']
+        const species = speciesData.get(cdRef)
+        
+        if (!species) return
+
+        // Appliquer tous les autres filtres sur l'espèce
+        if (selectedRegne && species.regne !== selectedRegne) return
+        if (filters?.selectedGroupe && species.groupe !== filters.selectedGroupe) return
+        if (filters?.selectedGroup2 && species.group2 !== filters.selectedGroup2) return
+        if (filters?.selectedRedListCategory && species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
+        if (filters?.selectedOrdre && species.ordre !== filters.selectedOrdre) return
+        if (filters?.selectedFamille && species.famille !== filters.selectedFamille) return
+        
+        if (filters?.selectedStatutReglementaire) {
+          const hasStatus = species.statuts.some(statut => 
+            statut['LABEL STATUT (statuts)'] === filters.selectedStatutReglementaire
+          )
+          if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') return
+          if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) return
+        }
+
+        // Cette espèce passe tous les filtres pour ce mois
+        totalObservations += pheno['Nb Donnees']
+        uniqueSpecies.add(cdRef)
+      })
+    } else {
+      // Logique normale sans filtre par mois
     currentCommune.observations.forEach(obs => {
       const cdRef = obs['Cd Ref']
       const species = speciesData.get(cdRef)
@@ -135,30 +168,16 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
       if (!species) return
 
       // Filtrer par règne si spécifié
-      if (selectedRegne && species.regne !== selectedRegne) {
-        return
-      }
+        if (selectedRegne && species.regne !== selectedRegne) return
 
       // Appliquer les filtres globaux sur les espèces
       if (filters?.selectedGroupe && species.groupe !== filters.selectedGroupe) return
-      
       if (filters?.selectedGroup2 && species.group2 !== filters.selectedGroup2) return
-      
-      if (filters?.selectedMois) {
-        // Vérifier si cette espèce a des données pour le mois sélectionné
-        const hasMonthData = currentCommune.phenologie.some(pheno => 
-          pheno['CD REF (pheno!mois!insee)'] === cdRef && 
-          pheno['Mois Obs'] === filters.selectedMois
-        )
-        if (!hasMonthData) return
-      }
-      
       if (filters?.selectedRedListCategory && species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
       if (filters?.selectedOrdre && species.ordre !== filters.selectedOrdre) return
       if (filters?.selectedFamille && species.famille !== filters.selectedFamille) return
       
       if (filters?.selectedStatutReglementaire) {
-        // Vérifier si l'espèce a ce statut réglementaire
         const hasStatus = species.statuts.some(statut => 
           statut['LABEL STATUT (statuts)'] === filters.selectedStatutReglementaire
         )
@@ -167,22 +186,10 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
       }
 
       // Cette observation passe tous les filtres
-      let includeThisObs = true
-      
-      // Si filtre par mois actif, vérifier que cette observation correspond
-      if (filters?.selectedMois) {
-        const hasMonthData = currentCommune.phenologie.some(pheno => 
-          pheno['CD REF (pheno!mois!insee)'] === cdRef && 
-          pheno['Mois Obs'] === filters.selectedMois
-        )
-        if (!hasMonthData) includeThisObs = false
-      }
-      
-      if (includeThisObs) {
         totalObservations += obs['Nb Obs']
         uniqueSpecies.add(cdRef)
+      })
       }
-    })
 
     return {
       totalObs: totalObservations,
@@ -260,9 +267,9 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
                 ← 
               </button>
               <div>
-                  <h1 className="text-3xl font-bold text-gradient mb-2 flex items-center gap-3">
+                  <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
                     <span className="text-4xl">🏘️</span>
-                  {currentCommune.nom || `Commune ${codeInsee}`}
+                    <span className="text-gradient">{currentCommune.nom || `Commune ${codeInsee}`}</span>
                 </h1>
                   <p className="text-gray-600 text-lg font-medium flex items-center gap-2">
                     <span className="text-xl">📍</span>
@@ -275,7 +282,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
               <div className="flex space-x-8 fade-in-scale">
               <div className="text-center">
                   <div className="relative">
-                    <div className="text-4xl font-bold text-gradient mb-1">
+                    <div className="text-2xl font-bold text-gradient mb-1">
                   {formatNumberFull(filteredStats.totalObs)}
                 </div>
                     <div className="badge-modern flex items-center gap-2">
@@ -286,7 +293,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
               </div>
               <div className="text-center">
                   <div className="relative">
-                    <div className="text-4xl font-bold text-gradient mb-1">
+                    <div className="text-2xl font-bold text-gradient mb-1">
                   {formatNumberFull(filteredStats.totalEsp)}
                 </div>
                     <div className="badge-modern flex items-center gap-2">
@@ -310,48 +317,52 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
           
           {/* Groupes taxonomiques - Bubble chart */}
           <div className="container-hover-safe">
-            <div className="glass rounded-2xl p-6">
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                🦋 Groupes taxonomiques
-              </h3>
-              <div className="h-80">
-                <GroupBubble codeInsee={codeInsee} />
+          <div className="glass rounded-2xl p-6">
+            <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <span className="text-xl">🦋</span>
+              <span className="text-gradient">Groupes taxonomiques</span>
+            </h3>
+            <div className="h-80">
+              <GroupBubble codeInsee={codeInsee} />
               </div>
             </div>
           </div>
 
           {/* Phénologie mensuelle - Line chart */}
           <div className="container-hover-safe">
-            <div className="glass rounded-2xl p-6">
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                📅 Phénologie mensuelle
-              </h3>
-              <div className="h-80">
-                <PhenoLine codeInsee={codeInsee} />
+          <div className="glass rounded-2xl p-6">
+            <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <span className="text-xl">📅</span>
+              <span className="text-gradient">Phénologie mensuelle</span>
+            </h3>
+            <div className="h-80">
+              <PhenoLine codeInsee={codeInsee} />
               </div>
             </div>
           </div>
 
           {/* Listes rouges - Bar chart */}
           <div className="container-hover-safe">
-            <div className="glass rounded-2xl p-6">
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                🚨 Statuts listes rouges
-              </h3>
-              <div className="h-80">
-                <RedListBar codeInsee={codeInsee} />
+          <div className="glass rounded-2xl p-6">
+            <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <span className="text-xl">🚨</span>
+              <span className="text-gradient">Statuts listes rouges</span>
+            </h3>
+            <div className="h-80">
+              <RedListBar codeInsee={codeInsee} />
               </div>
             </div>
           </div>
 
           {/* Statuts réglementaires - Treemap */}
           <div className="container-hover-safe">
-            <div className="glass rounded-2xl p-6">
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                ⚖️ Statuts réglementaires
-              </h3>
-              <div className="h-80">
-                <StatusTreemap codeInsee={codeInsee} />
+          <div className="glass rounded-2xl p-6">
+            <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <span className="text-xl">⚖️</span>
+              <span className="text-gradient">Statuts réglementaires</span>
+            </h3>
+            <div className="h-80">
+              <StatusTreemap codeInsee={codeInsee} />
               </div>
             </div>
           </div>

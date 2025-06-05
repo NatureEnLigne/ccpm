@@ -47,13 +47,11 @@ export default function HomePage() {
               <div className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="fade-in-scale">
-                    <h1 className="text-3xl font-bold text-gradient mb-2 flex items-center gap-3">
-                      <span className="text-4xl">🗺️</span>
-                      CCPM Cartographie
+                    <h1 className="text-3xl font-bold text-gradient mb-2">
+                      Observations naturalistes : Ponthieu-Marquenterre
                     </h1>
-                    <p className="text-gray-600 text-lg font-medium flex items-center gap-2">
-                      <span className="text-xl">🌿</span>
-                      Ponthieu-Marquenterre • Données Naturalistes
+                    <p className="text-gray-600 text-lg font-medium">
+                      Données OpenOBS (Muséum national d'Histoire naturelle)
                     </p>
                   </div>
                   
@@ -61,7 +59,7 @@ export default function HomePage() {
                   <div className="flex space-x-8 fade-in-scale">
                     <div className="text-center">
                       <div className="relative">
-                        <div className="text-4xl font-bold text-gradient mb-1">
+                        <div className="text-2xl font-bold text-gradient mb-1">
                           {formatNumberFull(globalStats.totalObs)}
                         </div>
                         <div className="badge-modern flex items-center gap-2">
@@ -72,7 +70,7 @@ export default function HomePage() {
                     </div>
                     <div className="text-center">
                       <div className="relative">
-                        <div className="text-4xl font-bold text-gradient mb-1">
+                        <div className="text-2xl font-bold text-gradient mb-1">
                           {formatNumberFull(globalStats.totalEsp)}
                         </div>
                         <div className="badge-modern flex items-center gap-2">

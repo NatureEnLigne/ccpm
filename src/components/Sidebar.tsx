@@ -155,59 +155,59 @@ export default function Sidebar() {
     <div className="w-96 flex flex-col gap-6 overflow-visible">
       {/* Section Communes CCPM */}
       <div className="container-hover-safe">
-        <div className="modern-card p-6 fade-in-scale overflow-hidden">
+      <div className="modern-card p-6 fade-in-scale overflow-hidden">
           {/* Titre avec icône plus lisible */}
-          <h3 className="text-xl font-bold text-gradient mb-6 flex items-center gap-3">
+          <h3 className="text-xl font-bold mb-6 flex items-center gap-3">
             <span className="text-2xl">🏛️</span>
-            Communes CCPM
-          </h3>
+            <span className="text-gradient">Communes CCPM</span>
+        </h3>
 
-          {/* Fiche commune sélectionnée */}
-          {selectedCommune && communeData?.has(selectedCommune) && (
-            <div className="mb-6 p-4 bg-gradient-primary rounded-2xl text-white shadow-lg">
-              <div className="flex items-center justify-between mb-3">
+        {/* Fiche commune sélectionnée */}
+        {selectedCommune && communeData?.has(selectedCommune) && (
+          <div className="mb-6 p-4 bg-gradient-primary rounded-2xl text-white shadow-lg">
+            <div className="flex items-center justify-between mb-3">
                 <h4 className="font-bold text-lg truncate pr-2 flex items-center gap-2">
                   <span className="text-xl">🏘️</span>
-                  {communeNames.get(selectedCommune) || selectedCommune}
-                </h4>
-                <button
-                  onClick={() => setSelectedCommune(null)}
+                {communeNames.get(selectedCommune) || selectedCommune}
+              </h4>
+              <button
+                onClick={() => setSelectedCommune(null)}
                   className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 flex-shrink-0 text-lg"
-                  title="Fermer"
-                >
-                  ✕
-                </button>
-              </div>
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div className="bg-white/20 rounded-lg p-3 text-center">
+                title="Fermer"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="bg-white/20 rounded-lg p-3 text-center">
                   <div className="font-bold text-xl flex items-center justify-center gap-1">
                     <span className="text-sm">👁️</span>
-                    {formatNumber(communeData.get(selectedCommune)?.totalObs || 0)}
-                  </div>
-                  <div className="opacity-90">Observations</div>
+                  {formatNumber(communeData.get(selectedCommune)?.totalObs || 0)}
                 </div>
-                <div className="bg-white/20 rounded-lg p-3 text-center">
+                <div className="opacity-90">Observations</div>
+              </div>
+              <div className="bg-white/20 rounded-lg p-3 text-center">
                   <div className="font-bold text-xl flex items-center justify-center gap-1">
                     <span className="text-sm">🦋</span>
-                    {formatNumber(communeData.get(selectedCommune)?.totalEsp || 0)}
-                  </div>
-                  <div className="opacity-90">Espèces</div>
+                  {formatNumber(communeData.get(selectedCommune)?.totalEsp || 0)}
                 </div>
+                <div className="opacity-90">Espèces</div>
               </div>
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Champ de recherche moderne */}
-          <div className="mb-6">
-            <div className="relative">
+        {/* Champ de recherche moderne */}
+        <div className="mb-6">
+          <div className="relative">
               <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg">🔍</span>
-              <input
-                type="text"
+            <input
+              type="text"
                 placeholder="Nom de la commune"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
                 className="input-modern w-full pl-10 pr-4"
-              />
+            />
             </div>
           </div>
 
@@ -219,30 +219,30 @@ export default function Sidebar() {
             </div>
           )}
 
-          {/* Liste des communes */}
+        {/* Liste des communes */}
           {!isLoading && filteredCommuneNames.length > 0 && (
-            <div className="space-y-2 max-h-80 overflow-y-auto overflow-x-hidden">
-              {filteredCommuneNames.map(([codeInsee, name]) => {
-                const commune = communeData?.get(codeInsee)
-                const isSelected = selectedCommune === codeInsee
-                
-                return (
-                  <button
-                    key={codeInsee}
-                    onClick={() => setSelectedCommune(codeInsee)}
-                    className={`w-full text-left p-3 rounded-xl transition-all duration-200 overflow-hidden ${
-                      isSelected 
-                        ? 'bg-gradient-primary text-white shadow-lg' 
-                        : 'bg-white/50 hover:bg-white/70 text-gray-700'
-                    } transform hover:scale-[1.02]`}
-                  >
+          <div className="space-y-2 max-h-80 overflow-y-auto overflow-x-hidden">
+            {filteredCommuneNames.map(([codeInsee, name]) => {
+              const commune = communeData?.get(codeInsee)
+              const isSelected = selectedCommune === codeInsee
+              
+              return (
+                <button
+                  key={codeInsee}
+                  onClick={() => setSelectedCommune(codeInsee)}
+                  className={`w-full text-left p-3 rounded-xl transition-all duration-200 overflow-hidden ${
+                    isSelected 
+                      ? 'bg-gradient-primary text-white shadow-lg' 
+                      : 'bg-white/50 hover:bg-white/70 text-gray-700'
+                  } transform hover:scale-[1.02]`}
+                >
                     <div className="font-medium mb-1 truncate pr-2 flex items-center gap-2">
                       <span className="text-sm">🏘️</span>
                       {name}
                     </div>
-                    {commune && (
-                      <div className="text-xs opacity-80 flex items-center justify-between gap-2 min-w-0">
-                        <div className="flex items-center gap-3 min-w-0 flex-shrink">
+                  {commune && (
+                    <div className="text-xs opacity-80 flex items-center justify-between gap-2 min-w-0">
+                      <div className="flex items-center gap-3 min-w-0 flex-shrink">
                           <span className="whitespace-nowrap flex items-center gap-1">
                             <span className="text-xs">👁️</span>
                             {formatNumber(commune.totalObs)} obs.
@@ -251,26 +251,26 @@ export default function Sidebar() {
                             <span className="text-xs">🦋</span>
                             {formatNumber(commune.totalEsp)} esp.
                           </span>
-                        </div>
-                        <FicheIcon isSelected={isSelected} codeInsee={codeInsee} />
                       </div>
-                    )}
-                  </button>
-                )
-              })}
-            </div>
-          )}
+                      <FicheIcon isSelected={isSelected} codeInsee={codeInsee} />
+                    </div>
+                  )}
+                </button>
+              )
+            })}
+          </div>
+        )}
         </div>
       </div>
 
       {/* Section Carte */}
       <div className="container-hover-safe">
         <div className="modern-card p-6 fade-in-scale">
-          <h4 className="text-lg font-bold text-gradient mb-4 flex items-center gap-3">
-            <span className="text-xl">🗺️</span>
-            Carte
+          <h4 className="text-xl font-bold mb-6 flex items-center gap-3">
+            <span className="text-2xl">🗺️</span>
+            <span className="text-gradient">Carte</span>
           </h4>
-
+        
           {/* Toggles */}
           <div className="space-y-4">
             <ToggleSwitch

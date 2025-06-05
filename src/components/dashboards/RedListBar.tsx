@@ -23,10 +23,60 @@ export default function RedListBar({ codeInsee }: RedListBarProps) {
       const commune = communeData.get(codeInsee)
       if (!commune) return
 
-      // Compter les espèces par statut liste rouge
       const statusStats = new Map<string, number>()
-      const processedSpecies = new Set<string>()
       const selectedRegne = filters.selectedRegne
+      
+      if (filters.selectedMois) {
+        // Si un filtre par mois est actif, utiliser les données phénologiques
+        // Compter les espèces uniques pour ce mois
+        const uniqueSpecies = new Set<string>()
+        
+        commune.phenologie.forEach(pheno => {
+          if (pheno['Mois Obs'] !== filters.selectedMois) return
+          
+          const cdRef = pheno['CD REF (pheno!mois!insee)']
+          const species = speciesData?.get(cdRef)
+          
+          if (species) {
+            // Filtrer par règne si nécessaire
+            if (selectedRegne && species.regne !== selectedRegne) return
+            
+            // Appliquer les filtres du store global
+            if (filters.selectedGroupe && species.groupe !== filters.selectedGroupe) return
+            if (filters.selectedGroup2 && species.group2 !== filters.selectedGroup2) return
+            if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) return
+            if (filters.selectedFamille && species.famille !== filters.selectedFamille) return
+            
+            if (filters.selectedStatutReglementaire) {
+              const hasStatus = species.statuts.some(statut => 
+                statut['LABEL STATUT (statuts)'] === filters.selectedStatutReglementaire
+              )
+              if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') return
+              if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) return
+            }
+            
+            // Ajouter cette espèce aux espèces uniques du mois
+            uniqueSpecies.add(cdRef)
+          }
+        })
+        
+        // Compter les statuts pour les espèces uniques du mois
+        uniqueSpecies.forEach(cdRef => {
+          const species = speciesData.get(cdRef)
+          if (species) {
+            if (species.listeRouge) {
+              const statut = species.listeRouge['Label Statut'] || 'Non évalué'
+              const current = statusStats.get(statut) || 0
+              statusStats.set(statut, current + 1)
+            } else {
+              const current = statusStats.get('Non évalué') || 0
+              statusStats.set('Non évalué', current + 1)
+            }
+          }
+        })
+      } else {
+        // Logique normale sans filtre par mois
+        const processedSpecies = new Set<string>()
 
       commune.observations.forEach(obs => {
         const cdRef = obs['Cd Ref']
@@ -35,50 +85,24 @@ export default function RedListBar({ codeInsee }: RedListBarProps) {
         if (processedSpecies.has(cdRef)) return
         processedSpecies.add(cdRef)
 
-        const species = speciesData.get(cdRef)
+          const species = speciesData?.get(cdRef)
+
         if (species) {
           // Filtrer par règne si nécessaire
-          if (selectedRegne && species.regne !== selectedRegne) {
-            return // Ignorer cette espèce
-          }
+            if (selectedRegne && species.regne !== selectedRegne) return
           
           // Appliquer les filtres du store global
-          if (filters.selectedGroupe && species.groupe !== filters.selectedGroupe) {
-            return
-          }
-          
-          if (filters.selectedGroup2 && species.group2 !== filters.selectedGroup2) {
-            return
-          }
-          
-          if (filters.selectedMois) {
-            // Vérifier si cette observation a des données pour le mois sélectionné
-            const hasMonthData = commune.phenologie.some(pheno => 
-              pheno['CD REF (pheno!mois!insee)'] === cdRef && 
-              pheno['Mois Obs'] === filters.selectedMois
-            )
-            if (!hasMonthData) return
-          }
-          
-          if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) {
-            return
-          }
-          
-          if (filters.selectedFamille && species.famille !== filters.selectedFamille) {
-            return
-          }
+            if (filters.selectedGroupe && species.groupe !== filters.selectedGroupe) return
+            if (filters.selectedGroup2 && species.group2 !== filters.selectedGroup2) return
+            if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) return
+            if (filters.selectedFamille && species.famille !== filters.selectedFamille) return
           
           if (filters.selectedStatutReglementaire) {
-            // Vérifier si l'espèce a ce statut réglementaire
             const hasStatus = species.statuts.some(statut => 
               statut['LABEL STATUT (statuts)'] === filters.selectedStatutReglementaire
             )
-            if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') {
-              return
-            }
-            if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) {
-              return
-            }
+              if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') return
+              if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) return
           }
           
           if (species.listeRouge) {
@@ -91,6 +115,7 @@ export default function RedListBar({ codeInsee }: RedListBarProps) {
           }
         }
       })
+      }
 
       // Convertir en format pour Nivo Bar
       const barData: BarData[] = Array.from(statusStats.entries()).map(([statut, count]) => ({
@@ -167,12 +192,7 @@ export default function RedListBar({ codeInsee }: RedListBarProps) {
       enableLabel={true}
       labelSkipWidth={12}
       labelSkipHeight={12}
-      labelTextColor={{
-        from: 'color',
-        modifiers: [
-          ['darker', 1.6]
-        ]
-      }}
+      labelTextColor="#ffffff"
       animate={true}
       motionConfig="gentle"
       onClick={(node) => {

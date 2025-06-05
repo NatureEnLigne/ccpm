@@ -57,59 +57,85 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
       const groupStats = new Map<string, number>()
       const selectedRegne = filters.selectedRegne
       
+      if (filters.selectedMois) {
+        // Si un filtre par mois est actif, utiliser les données phénologiques
+        commune.phenologie.forEach(pheno => {
+          if (pheno['Mois Obs'] !== filters.selectedMois) return
+          
+          const cdRef = pheno['CD REF (pheno!mois!insee)']
+          const species = speciesData?.get(cdRef)
+          
+          if (species) {
+            // Filtrer par règne si nécessaire
+            if (selectedRegne && species.regne !== selectedRegne) return
+            
+            // Appliquer les filtres du store global
+            if (filters.selectedRedListCategory) {
+              if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
+            }
+            
+            if (filters.selectedGroupe && species.groupe !== filters.selectedGroupe) return
+            if (filters.selectedGroup2 && species.group2 !== filters.selectedGroup2) return
+            if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) return
+            if (filters.selectedFamille && species.famille !== filters.selectedFamille) return
+            
+            if (filters.selectedStatutReglementaire) {
+              const hasStatus = species.statuts.some(statut => 
+                statut['LABEL STATUT (statuts)'] === filters.selectedStatutReglementaire
+              )
+              if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') return
+              if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) return
+            }
+            
+            // Récupérer la valeur du champ taxonomique approprié
+            let groupValue: string
+            switch (taxonomicLevel.field) {
+              case 'groupe':
+                groupValue = species.groupe || 'Inconnu'
+                break
+              case 'group2':
+                groupValue = species.group2 || 'Inconnu'
+                break
+              case 'ordre':
+                groupValue = species.ordre || 'Inconnu'
+                break
+              case 'famille':
+                groupValue = species.famille || 'Inconnu'
+                break
+              default:
+                groupValue = species.groupe || 'Inconnu'
+            }
+            
+            const current = groupStats.get(groupValue) || 0
+            groupStats.set(groupValue, current + pheno['Nb Donnees'])
+          }
+        })
+      } else {
+        // Logique normale sans filtre par mois
       commune.observations.forEach(obs => {
         const cdRef = obs['Cd Ref']
         const species = speciesData.get(cdRef)
         
         if (species) {
           // Filtrer par règne si nécessaire
-          if (selectedRegne && species.regne !== selectedRegne) {
-            return // Ignorer cette espèce
-          }
+            if (selectedRegne && species.regne !== selectedRegne) return
           
           // Appliquer les filtres du store global
-          if (filters.selectedMois) {
-            // Vérifier si cette observation a des données pour le mois sélectionné
-            const hasMonthData = commune.phenologie.some(pheno => 
-              pheno['CD REF (pheno!mois!insee)'] === cdRef && 
-              pheno['Mois Obs'] === filters.selectedMois
-            )
-            if (!hasMonthData) return
-          }
-          
           if (filters.selectedRedListCategory) {
-            if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) {
-              return
-            }
+              if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
           }
           
-          if (filters.selectedGroupe && species.groupe !== filters.selectedGroupe) {
-            return
-          }
-          
-          if (filters.selectedGroup2 && species.group2 !== filters.selectedGroup2) {
-            return
-          }
-          
-          if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) {
-            return
-          }
-          
-          if (filters.selectedFamille && species.famille !== filters.selectedFamille) {
-            return
-          }
+            if (filters.selectedGroupe && species.groupe !== filters.selectedGroupe) return
+            if (filters.selectedGroup2 && species.group2 !== filters.selectedGroup2) return
+            if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) return
+            if (filters.selectedFamille && species.famille !== filters.selectedFamille) return
           
           if (filters.selectedStatutReglementaire) {
-            // Vérifier si l'espèce a ce statut réglementaire
             const hasStatus = species.statuts.some(statut => 
               statut['LABEL STATUT (statuts)'] === filters.selectedStatutReglementaire
             )
-            if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') {
-              return
-            }
-            if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) {
-              return
-            }
+              if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') return
+              if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) return
           }
           
           // Récupérer la valeur du champ taxonomique approprié
@@ -135,6 +161,7 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
           groupStats.set(groupValue, current + obs['Nb Obs'])
         }
       })
+      }
 
       // Convertir en format pour Nivo CirclePacking
       const children: BubbleData[] = Array.from(groupStats.entries()).map(([groupe, count]) => ({
@@ -198,12 +225,7 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
       enableLabels={true}
       labelsSkipRadius={15}
       labelsFilter={(label) => label.node.id !== 'root' && !label.node.id.includes('taxonomiques') && !label.node.id.includes('Sous-groupes') && !label.node.id.includes('Ordres') && !label.node.id.includes('Familles')}
-      labelTextColor={{
-        from: 'color',
-        modifiers: [
-          ['darker', 2.5]
-        ]
-      }}
+      labelTextColor="#ffffff"
       borderWidth={3}
       borderColor={{
         from: 'color',
@@ -226,7 +248,7 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
               )}
             </div>
             <div className="text-green-700 mb-2">
-              <span className="font-medium text-green-800">{value}</span> espèces
+              <span className="font-medium text-green-800">{value}</span> observations
             </div>
             <div className="text-xs text-green-600 border-t border-green-800/20 pt-2">
               Cliquez pour filtrer par {taxonomicLevel.level === 'group1' ? 'groupe' : taxonomicLevel.level === 'group2' ? 'sous-groupe' : taxonomicLevel.level}

@@ -34,8 +34,9 @@ export default function FilterBar() {
   return (
     <div className="glass rounded-lg p-4 mb-6">
       <div className="flex items-center space-x-6">
-        <h3 className="text-lg font-semibold text-gray-800 flex items-center">
-          🔍 Filtres
+        <h3 className="text-lg font-semibold flex items-center gap-2">
+          <span className="text-lg">🔍</span>
+          <span className="text-gradient">Filtres</span>
         </h3>
         
         {/* Filtre Règne */}
