@@ -20,6 +20,20 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
   const { handleChartClick, handleChartHover, isFiltered, isHovered } = useChartInteractions()
   const [data, setData] = useState<BubbleData | null>(null)
 
+  // Générer une rampe de couleurs cohérente du vert au marron
+  const generateColorRamp = (count: number) => {
+    const colors = []
+    for (let i = 0; i < count; i++) {
+      const ratio = count === 1 ? 0 : i / (count - 1)
+      // Interpolation du vert forêt (#2d5016) vers le brun doré (#cd853f)
+      const r = Math.round(45 + (205 - 45) * ratio)
+      const g = Math.round(80 + (133 - 80) * ratio)
+      const b = Math.round(22 + (63 - 22) * ratio)
+      colors.push(`rgb(${r}, ${g}, ${b})`)
+    }
+    return colors
+  }
+
   // Déterminer quel niveau taxonomique afficher selon les filtres actifs
   const getTaxonomicLevel = () => {
     // Si aucun filtre de groupe, afficher Group1 Inpn
@@ -173,7 +187,7 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
       children.sort((a, b) => b.value - a.value)
 
       const bubbleData: BubbleData = {
-        id: taxonomicLevel.title,
+        id: 'root',
         value: 0, // Non utilisé pour le root
         children
       }
@@ -199,48 +213,30 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
   return (
     <ResponsiveCirclePacking
       data={data}
-      margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+      margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
       id="id"
       value="value"
-      colors={[
-        '#2D5016', // Vert forêt foncé
-        '#4A7C59', // Vert sauge 
-        '#6B8E23', // Olive vert
-        '#8FBC8F', // Gris vert clair
-        '#90EE90', // Vert clair 
-        '#32CD32', // Vert lime
-        '#228B22', // Vert forêt
-        '#006400', // Vert foncé
-        '#2E8B57', // Vert de mer
-        '#3CB371', // Vert medium
-        '#20B2AA', // Turquoise foncé
-        '#66CDAA', // Aquamarine medium
-        '#9ACD32', // Jaune vert
-        '#8B4513', // Brun selle
-        '#CD853F', // Pérou
-        '#DAA520', // Baguette d'or
-        '#B8860B'  // Or foncé
-      ]}
-      padding={6}
+      colors={generateColorRamp(data.children.length)}
+      padding={1}
       enableLabels={true}
-      labelsSkipRadius={15}
-      labelsFilter={(label) => label.node.id !== 'root' && !label.node.id.includes('taxonomiques') && !label.node.id.includes('Sous-groupes') && !label.node.id.includes('Ordres') && !label.node.id.includes('Familles')}
+      labelsSkipRadius={8}
+      labelsFilter={(label) => label.node.id !== 'root'}
       labelTextColor="#ffffff"
-      borderWidth={3}
+      borderWidth={2}
       borderColor={{
         from: 'color',
         modifiers: [
-          ['darker', 0.4]
+          ['darker', 0.6]
         ]
       }}
       animate={true}
       motionConfig="gentle"
       tooltip={({ id, value }) => {
         // Filtrer la valeur "root" qui correspond au nœud racine de la hiérarchie
-        if (id === 'root' || id === taxonomicLevel.title) return <div></div>
+        if (id === 'root') return <div></div>
         
         return (
-          <div className="bg-white/80 backdrop-blur-md rounded-lg p-4 text-sm shadow-xl border border-green-800/30">
+          <div className="bg-white/90 backdrop-blur-md rounded-lg p-4 text-sm shadow-xl border border-green-800/30">
             <div className="font-semibold text-green-800 flex items-center gap-2 mb-2">
               <span>{id}</span>
               {isFiltered('bubble', taxonomicLevel.field === 'groupe' ? 'group' : taxonomicLevel.field, id) && (
@@ -258,7 +254,7 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
       }}
       onClick={(node) => {
         // Filtrer la valeur "root" pour éviter qu'elle devienne un filtre
-        if (node.id === 'root' || node.id === taxonomicLevel.title) return
+        if (node.id === 'root') return
         handleChartClick({
           chartType: 'bubble',
           dataKey: taxonomicLevel.field === 'groupe' ? 'group' : taxonomicLevel.field,
@@ -268,7 +264,7 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
       }}
       onMouseEnter={(node) => {
         // Filtrer la valeur "root" 
-        if (node.id === 'root' || node.id === taxonomicLevel.title) return
+        if (node.id === 'root') return
         handleChartHover({
           chartType: 'bubble',
           dataKey: taxonomicLevel.field === 'groupe' ? 'group' : taxonomicLevel.field,
