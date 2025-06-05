@@ -162,6 +162,23 @@ export default function StatusTreemap({ codeInsee }: StatusTreemapProps) {
     }
   }, [communeData, speciesData, codeInsee, filters])
 
+  // Générer une rampe de couleurs cohérente du vert au marron
+  const generateColorRamp = (count: number): string[] => {
+    const colors: string[] = []
+    const startColor = { r: 45, g: 80, b: 22 }    // #2d5016 (vert foncé)
+    const endColor = { r: 205, g: 133, b: 63 }    // #cd853f (marron doré)
+    
+    for (let i = 0; i < count; i++) {
+      const ratio = count === 1 ? 0 : i / (count - 1)
+      const r = Math.round(startColor.r + (endColor.r - startColor.r) * ratio)
+      const g = Math.round(startColor.g + (endColor.g - startColor.g) * ratio)
+      const b = Math.round(startColor.b + (endColor.b - startColor.b) * ratio)
+      colors.push(`rgb(${r}, ${g}, ${b})`)
+    }
+    
+    return colors
+  }
+
   if (!data || !data.children || data.children.length === 0) {
     return (
       <div className="h-full flex items-center justify-center text-gray-500">
@@ -195,20 +212,7 @@ export default function StatusTreemap({ codeInsee }: StatusTreemapProps) {
           ['darker', 0.1]
         ]
       }}
-      colors={[
-        '#2D5016', // Vert forêt foncé
-        '#4A7C59', // Vert sauge
-        '#6B8E23', // Olive vert
-        '#228B22', // Vert forêt
-        '#2E8B57', // Vert de mer
-        '#3CB371', // Vert medium
-        '#8FBC8F', // Gris vert clair
-        '#90EE90', // Vert clair
-        '#32CD32', // Vert lime
-        '#20B2AA', // Turquoise foncé
-        '#66CDAA', // Aquamarine medium
-        '#9ACD32'  // Jaune vert
-      ]}
+      colors={generateColorRamp(data.children.length)}
       animate={true}
       motionConfig="gentle"
       tooltip={({ node }) => {

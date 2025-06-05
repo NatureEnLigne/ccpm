@@ -131,6 +131,23 @@ export default function RedListBar({ codeInsee }: RedListBarProps) {
     }
   }, [communeData, speciesData, codeInsee, filters])
 
+  // Générer une rampe de couleurs cohérente du vert au marron
+  const generateColorRamp = (count: number): string[] => {
+    const colors: string[] = []
+    const startColor = { r: 45, g: 80, b: 22 }    // #2d5016 (vert foncé)
+    const endColor = { r: 205, g: 133, b: 63 }    // #cd853f (marron doré)
+    
+    for (let i = 0; i < count; i++) {
+      const ratio = count === 1 ? 0 : i / (count - 1)
+      const r = Math.round(startColor.r + (endColor.r - startColor.r) * ratio)
+      const g = Math.round(startColor.g + (endColor.g - startColor.g) * ratio)
+      const b = Math.round(startColor.b + (endColor.b - startColor.b) * ratio)
+      colors.push(`rgb(${r}, ${g}, ${b})`)
+    }
+    
+    return colors
+  }
+
   if (data.length === 0) {
     return (
       <div className="h-full flex items-center justify-center text-gray-500">
@@ -151,19 +168,23 @@ export default function RedListBar({ codeInsee }: RedListBarProps) {
       padding={0.3}
       valueScale={{ type: 'linear' }}
       indexScale={{ type: 'band', round: true }}
-      colors={[
-        '#8B4513', // Brun selle
-        '#CD853F', // Pérou 
-        '#DAA520', // Baguette d'or
-        '#D2B48C', // Tan
-        '#F4A460', // Grès brun
-        '#DEB887', // Bois de rose
-        '#BC8F8F', // Rose brun
-        '#A0522D', // Sienna
-        '#B8860B', // Or foncé
-        '#8FBC8F', // Gris vert clair
-        '#2E8B57', // Vert de mer
-        '#6B8E23'  // Olive vert
+      colors={generateColorRamp(data.length)}
+      defs={[
+        {
+          id: 'gradient-green-brown-bar',
+          type: 'linearGradient',
+          x1: 0,
+          y1: 0,
+          x2: 1,
+          y2: 1,
+          colors: [
+            { offset: 0, color: '#2d5016' },
+            { offset: 100, color: '#cd853f' }
+          ]
+        }
+      ]}
+      fill={[
+        { match: '*', id: 'gradient-green-brown-bar' }
       ]}
       borderColor={{
         from: 'color',
