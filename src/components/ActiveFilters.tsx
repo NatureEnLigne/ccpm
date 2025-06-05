@@ -42,33 +42,52 @@ export default function ActiveFilters() {
   return (
     <div className="bg-white/20 backdrop-blur-md rounded-xl border border-white/30 p-4 mb-4">
       <div className="flex items-center justify-between mb-2">
-        <h3 className="text-sm font-medium text-slate-700">Filtres actifs</h3>
+        <h3 className="text-sm font-medium">
+          <span className="text-gradient">Filtres actifs</span>
+        </h3>
         <button
           onClick={clearFilters}
-          className="text-xs text-red-600 hover:text-red-800 transition-colors"
+          className="text-xs px-3 py-1 rounded-full text-white font-medium transition-all hover:shadow-lg"
+          style={{
+            background: 'linear-gradient(45deg, #2d5016, #cd853f)',
+            opacity: 0.9
+          }}
         >
           Tout effacer
         </button>
       </div>
       
       <div className="flex flex-wrap gap-2">
-        {activeFilterEntries.map(([key, value]) => (
-          <div
-            key={key}
-            className="inline-flex items-center gap-1 bg-green-100/60 backdrop-blur-sm border border-green-200/50 rounded-lg px-2 py-1 text-xs"
-          >
-            <span className="text-green-700 font-medium">
-              {FILTER_LABELS[key] || key}:
-            </span>
-            <span className="text-green-600">{formatFilterValue(key, value)}</span>
-            <button
-              onClick={() => removeFilter(key as keyof typeof filters)}
-              className="ml-1 text-green-500 hover:text-green-700 transition-colors"
+        {activeFilterEntries.map(([key, value], index) => {
+          // Calculer la couleur basée sur l'index pour variation
+          const ratio = activeFilterEntries.length === 1 ? 0.5 : index / (activeFilterEntries.length - 1)
+          const startColor = { r: 45, g: 80, b: 22 }       // #2d5016 (vert foncé)
+          const endColor = { r: 205, g: 133, b: 63 }       // #cd853f (marron doré)
+          
+          const r = Math.round(startColor.r + (endColor.r - startColor.r) * ratio)
+          const g = Math.round(startColor.g + (endColor.g - startColor.g) * ratio)
+          const b = Math.round(startColor.b + (endColor.b - startColor.b) * ratio)
+          const bgColor = `rgb(${r}, ${g}, ${b})`
+          
+          return (
+            <div
+              key={key}
+              className="inline-flex items-center gap-1 backdrop-blur-sm border border-white/30 rounded-lg px-2 py-1 text-xs text-white"
+              style={{ backgroundColor: bgColor, opacity: 0.9 }}
             >
-              <X size={12} />
-            </button>
-          </div>
-        ))}
+              <span className="font-medium">
+                {FILTER_LABELS[key] || key}:
+              </span>
+              <span className="opacity-90">{formatFilterValue(key, value)}</span>
+              <button
+                onClick={() => removeFilter(key as keyof typeof filters)}
+                className="ml-1 text-white/80 hover:text-white transition-colors"
+              >
+                <X size={12} />
+              </button>
+            </div>
+          )
+        })}
       </div>
     </div>
   )

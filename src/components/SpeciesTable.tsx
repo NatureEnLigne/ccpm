@@ -189,6 +189,23 @@ export default function SpeciesTable({ codeInsee }: SpeciesTableProps) {
   const startIndex = (currentPage - 1) * itemsPerPage
   const paginatedData = sortedData.slice(startIndex, startIndex + itemsPerPage)
 
+  // Générer une couleur basée sur le nombre d'observations (marron pour les plus grands, vert pour les plus petits)
+  const getObservationColor = (count: number, maxCount: number): string => {
+    if (maxCount === 0) return '#2d5016' // Vert par défaut
+    
+    const ratio = count / maxCount
+    const startColor = { r: 205, g: 133, b: 63 }   // #cd853f (marron doré) - pour les plus grandes valeurs
+    const endColor = { r: 45, g: 80, b: 22 }       // #2d5016 (vert foncé) - pour les plus petites valeurs
+    
+    const r = Math.round(startColor.r + (endColor.r - startColor.r) * (1 - ratio))
+    const g = Math.round(startColor.g + (endColor.g - startColor.g) * (1 - ratio))
+    const b = Math.round(startColor.b + (endColor.b - startColor.b) * (1 - ratio))
+    
+    return `rgb(${r}, ${g}, ${b})`
+  }
+
+  const maxObservations = Math.max(...tableData.map(row => row.nombreObservations), 1)
+
   const handleSort = (field: keyof SpeciesTableRow) => {
     if (sortField === field) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
@@ -241,19 +258,10 @@ export default function SpeciesTable({ codeInsee }: SpeciesTableProps) {
               <tr className="border-b border-gray-200/50">
                 <th 
                   className="text-left py-3 px-2 font-medium text-gray-700 cursor-pointer hover:bg-white/20 rounded"
-                  onClick={() => handleSort('group1Inpn')}
-                >
-                  <div className="flex items-center gap-2">
-                    Groupe 1
-                    <SortIcon field="group1Inpn" />
-                  </div>
-                </th>
-                <th 
-                  className="text-left py-3 px-2 font-medium text-gray-700 cursor-pointer hover:bg-white/20 rounded"
                   onClick={() => handleSort('group2Inpn')}
                 >
                   <div className="flex items-center gap-2">
-                    Groupe 2
+                    Groupe
                     <SortIcon field="group2Inpn" />
                   </div>
                 </th>
@@ -297,11 +305,6 @@ export default function SpeciesTable({ codeInsee }: SpeciesTableProps) {
                     index % 2 === 0 ? 'bg-white/5' : ''
                   }`}
                 >
-                  <td className="py-3 px-2 text-sm">
-                    <span className="font-medium text-green-700">
-                      {row.group1Inpn || '-'}
-                    </span>
-                  </td>
                   <td className="py-3 px-2 text-sm text-gray-700">
                     {row.group2Inpn || '-'}
                   </td>
@@ -314,7 +317,10 @@ export default function SpeciesTable({ codeInsee }: SpeciesTableProps) {
                     {row.nomVern || '-'}
                   </td>
                   <td className="py-3 px-2 text-sm">
-                    <span className="font-bold text-emerald-600">
+                    <span 
+                      className="font-bold"
+                      style={{ color: getObservationColor(row.nombreObservations, maxObservations) }}
+                    >
                       {formatNumber(row.nombreObservations)}
                     </span>
                   </td>
@@ -323,7 +329,11 @@ export default function SpeciesTable({ codeInsee }: SpeciesTableProps) {
                       href={row.urlInpn}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center w-8 h-8 bg-green-500/20 hover:bg-green-500/30 text-green-700 rounded-lg transition-colors text-sm font-medium"
+                      className="inline-flex items-center justify-center w-8 h-8 rounded-lg transition-colors text-sm font-medium text-white"
+                      style={{ 
+                        backgroundColor: getObservationColor(row.nombreObservations, maxObservations),
+                        opacity: 0.8 
+                      }}
                       title="Voir sur INPN"
                     >
                       🔗

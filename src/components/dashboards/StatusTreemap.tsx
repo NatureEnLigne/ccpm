@@ -162,17 +162,31 @@ export default function StatusTreemap({ codeInsee }: StatusTreemapProps) {
     }
   }, [communeData, speciesData, codeInsee, filters])
 
-  // Générer une rampe de couleurs cohérente du vert au marron
-  const generateColorRamp = (count: number): string[] => {
+  // Générer un mélange harmonieux de couleurs vert-marron pour le treemap
+  const generateColorMix = (count: number): string[] => {
     const colors: string[] = []
-    const startColor = { r: 45, g: 80, b: 22 }    // #2d5016 (vert foncé)
-    const endColor = { r: 205, g: 133, b: 63 }    // #cd853f (marron doré)
+    const baseColors = [
+      { r: 45, g: 80, b: 22 },     // #2d5016 (vert foncé)
+      { r: 107, g: 142, b: 35 },   // #6b8e23 (olive)
+      { r: 139, g: 69, b: 19 },    // #8b4513 (brun selle)
+      { r: 205, g: 133, b: 63 },   // #cd853f (marron doré)
+      { r: 160, g: 82, b: 45 },    // #a0522d (sienna)
+      { r: 34, g: 139, b: 34 },    // #228b22 (vert forêt)
+    ]
     
+    // Mélanger les couleurs de base de manière harmonieuse
     for (let i = 0; i < count; i++) {
-      const ratio = count === 1 ? 0 : i / (count - 1)
-      const r = Math.round(startColor.r + (endColor.r - startColor.r) * ratio)
-      const g = Math.round(startColor.g + (endColor.g - startColor.g) * ratio)
-      const b = Math.round(startColor.b + (endColor.b - startColor.b) * ratio)
+      const baseIndex = i % baseColors.length
+      const nextIndex = (i + 1) % baseColors.length
+      const ratio = (i / count) * 0.3 // Variation subtile
+      
+      const baseColor = baseColors[baseIndex]
+      const nextColor = baseColors[nextIndex]
+      
+      const r = Math.round(baseColor.r + (nextColor.r - baseColor.r) * ratio)
+      const g = Math.round(baseColor.g + (nextColor.g - baseColor.g) * ratio)
+      const b = Math.round(baseColor.b + (nextColor.b - baseColor.b) * ratio)
+      
       colors.push(`rgb(${r}, ${g}, ${b})`)
     }
     
@@ -212,7 +226,7 @@ export default function StatusTreemap({ codeInsee }: StatusTreemapProps) {
           ['darker', 0.1]
         ]
       }}
-      colors={generateColorRamp(data.children.length)}
+      colors={generateColorMix(data.children.length)}
       animate={true}
       motionConfig="gentle"
       tooltip={({ node }) => {
