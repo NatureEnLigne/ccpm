@@ -146,15 +146,40 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
         legendOffset: -60,
         legendPosition: 'middle'
       }}
-      pointSize={8}
+      enableArea={true}
+      areaOpacity={0.15}
+      lineWidth={3}
+      pointSize={6}
       pointColor={{ theme: 'background' }}
-      pointBorderWidth={2}
+      pointBorderWidth={3}
       pointBorderColor={{ from: 'serieColor' }}
       pointLabelYOffset={-12}
       useMesh={true}
+      defs={[
+        {
+          id: 'gradientA',
+          type: 'linearGradient',
+          colors: [
+            { offset: 0, color: '#2D5016', opacity: 0.3 },
+            { offset: 100, color: '#2D5016', opacity: 0 }
+          ]
+        }
+      ]}
+      fill={[
+        { match: '*', id: 'gradientA' }
+      ]}
       colors={['#2D5016']}
       animate={true}
       motionConfig="gentle"
+      markers={filters.selectedMois ? [{
+        axis: 'x',
+        value: MONTH_NAMES[filters.selectedMois - 1],
+        lineStyle: {
+          stroke: '#8B4513',
+          strokeWidth: 3,
+          strokeDasharray: '10 8'
+        }
+      }] : []}
       onClick={(point) => {
         const monthIndex = MONTH_NAMES.indexOf(point.data.x as string) + 1
         handleChartClick({
@@ -181,18 +206,18 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
         const isCurrentFiltered = isFiltered('line', 'month', monthIndex)
         
         return (
-          <div className="bg-white/80 backdrop-blur-md rounded-lg p-4 text-sm shadow-xl border border-green-800/30">
+          <div className="bg-white/90 backdrop-blur-md rounded-xl p-4 text-sm shadow-xl border border-green-800/20">
             <div className="font-semibold text-green-800 flex items-center gap-2 mb-2">
               <span>{point.data.xFormatted}</span>
               {isCurrentFiltered && (
-                <span className="bg-green-700/20 text-green-700 px-2 py-1 rounded-full text-xs">Filtré</span>
+                <span className="bg-green-700/20 text-green-700 px-2 py-1 rounded-full text-xs font-medium">Filtré</span>
               )}
             </div>
             <div className="text-green-700 mb-2">
-              <span className="font-medium text-green-800">{point.data.yFormatted}</span> observations
+              <span className="font-bold text-green-800 text-base">{point.data.yFormatted}</span> observations
             </div>
-            <div className="text-xs text-green-600 border-t border-green-800/20 pt-2">
-              Cliquez pour filtrer par mois
+            <div className="text-xs text-green-600 border-t border-green-800/10 pt-2">
+              💡 Cliquez pour filtrer par ce mois
             </div>
           </div>
         )
