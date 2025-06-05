@@ -42,8 +42,8 @@ const FicheIcon = ({ isSelected, codeInsee }: { isSelected: boolean, codeInsee: 
       title="Ouvrir la fiche de la commune"
     >
       <svg 
-        width="20" 
-        height="20" 
+        width="24" 
+        height="24" 
         viewBox="0 0 24 24" 
         fill="none" 
         className={`transition-all duration-300 ${
@@ -302,6 +302,23 @@ export default function Sidebar() {
                 </option>
               ))}
             </select>
+          </div>
+
+          {/* Mention Nature en ligne */}
+          <div className="mt-4 pt-3 border-t border-white/30">
+            <div className="text-center">
+              <p className="text-sm text-gray-600">
+                Une production{' '}
+                <a 
+                  href="https://natureenligne.fr" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="font-medium text-gradient hover:underline"
+                >
+                  Nature en ligne
+                </a>
+              </p>
+            </div>
           </div>
         </div>
       </div>

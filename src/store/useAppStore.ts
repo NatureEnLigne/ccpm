@@ -55,7 +55,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   selectedCommune: null,
   communes: null,
   isLoading: true,
-  show3D: true,
+  show3D: false,
   showCommunes: true,
   mapStyle: 'satellite-streets-v12',
   communeData: null,
