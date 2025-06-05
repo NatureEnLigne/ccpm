@@ -39,6 +39,7 @@ interface AppState {
   setFilter: (filterType: keyof FilterState, value: string | number | null, source?: string) => void
   removeFilter: (filterType: keyof FilterState) => void
   clearFilters: () => void
+  resetFiltersOnCommuneChange: () => void
   applyFilterEvent: (event: FilterEvent) => void
   
   // Actions d'interaction
@@ -112,6 +113,22 @@ export const useAppStore = create<AppState>((set, get) => ({
   })),
   
   clearFilters: () => set({
+    filters: {
+      selectedGroupe: null,
+      selectedGroup2: null,
+      selectedMois: null,
+      selectedStatut: null,
+      selectedRegne: null,
+      selectedOrdre: null,
+      selectedFamille: null,
+      selectedAnnee: null,
+      selectedRedListCategory: null,
+      selectedStatutReglementaire: null,
+      activeFilters: [],
+    }
+  }),
+  
+  resetFiltersOnCommuneChange: () => set({
     filters: {
       selectedGroupe: null,
       selectedGroup2: null,

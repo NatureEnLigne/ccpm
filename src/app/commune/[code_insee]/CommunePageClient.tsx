@@ -35,15 +35,22 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
   const router = useRouter()
   const { 
     communeData, 
-    speciesData, 
-    communes, 
     setCommuneData, 
+    speciesData, 
     setSpeciesData, 
-    setCommunes,
-    filters 
+    communes, 
+    setCommunes, 
+    filters,
+    resetFiltersOnCommuneChange
   } = useAppStore()
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  // Réinitialiser les filtres à chaque changement de commune
+  useEffect(() => {
+    console.log('🔄 Changement de commune détecté:', codeInsee)
+    resetFiltersOnCommuneChange()
+  }, [codeInsee, resetFiltersOnCommuneChange])
 
   useEffect(() => {
     loadAllData()
@@ -237,47 +244,61 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-emerald-50">
       
-      {/* Header */}
-      <header className="glass border-b border-white/20 sticky top-0 z-10">
-        <div className="container mx-auto px-6 py-4">
+      {/* Contenu principal */}
+      <main className="container mx-auto px-6 py-8">
+        
+        {/* Header dans un cadre moderne - même style que CCPM Cartographie */}
+        <header className="modern-card shadow-xl mb-8 fade-in-up">
+          <div className="p-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-4 fade-in-scale">
               <button 
                 onClick={() => router.push('/')}
-                className="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition-colors"
+                  className="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition-colors text-lg"
                 title="Retour à l'accueil"
               >
                 ← 
               </button>
               <div>
-                <h1 className="text-2xl font-bold text-gray-800">
+                  <h1 className="text-3xl font-bold text-gradient mb-2 flex items-center gap-3">
+                    <span className="text-4xl">🏘️</span>
                   {currentCommune.nom || `Commune ${codeInsee}`}
                 </h1>
-                <p className="text-gray-600">Code INSEE: {codeInsee}</p>
+                  <p className="text-gray-600 text-lg font-medium flex items-center gap-2">
+                    <span className="text-xl">📍</span>
+                    Code INSEE: {codeInsee}
+                  </p>
               </div>
             </div>
             
-            {/* Stats rapides */}
-            <div className="flex space-x-6">
+              {/* Stats rapides modernes - même style que l'accueil */}
+              <div className="flex space-x-8 fade-in-scale">
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600">
+                  <div className="relative">
+                    <div className="text-4xl font-bold text-gradient mb-1">
                   {formatNumberFull(filteredStats.totalObs)}
                 </div>
-                <div className="text-sm text-gray-600">Observations</div>
+                    <div className="badge-modern flex items-center gap-2">
+                      <span className="text-base">👁️</span>
+                      Observations
+                    </div>
+                  </div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">
+                  <div className="relative">
+                    <div className="text-4xl font-bold text-gradient mb-1">
                   {formatNumberFull(filteredStats.totalEsp)}
                 </div>
-                <div className="text-sm text-gray-600">Espèces</div>
+                    <div className="badge-modern flex items-center gap-2">
+                      <span className="text-base">🦋</span>
+                      Espèces
+                    </div>
+                  </div>
               </div>
             </div>
           </div>
         </div>
       </header>
-
-      {/* Contenu principal */}
-      <main className="container mx-auto px-6 py-8">
         
         {/* Barre de filtres */}
         <FilterBar />
@@ -285,45 +306,53 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
         {/* Filtres actifs */}
         <ActiveFilters />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 overflow-hover-safe">
           
           {/* Groupes taxonomiques - Bubble chart */}
-          <div className="glass rounded-2xl p-6">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">
-              🦋 Groupes taxonomiques
-            </h3>
-            <div className="h-80">
-              <GroupBubble codeInsee={codeInsee} />
+          <div className="container-hover-safe">
+            <div className="glass rounded-2xl p-6">
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                🦋 Groupes taxonomiques
+              </h3>
+              <div className="h-80">
+                <GroupBubble codeInsee={codeInsee} />
+              </div>
             </div>
           </div>
 
           {/* Phénologie mensuelle - Line chart */}
-          <div className="glass rounded-2xl p-6">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">
-              📅 Phénologie mensuelle
-            </h3>
-            <div className="h-80">
-              <PhenoLine codeInsee={codeInsee} />
+          <div className="container-hover-safe">
+            <div className="glass rounded-2xl p-6">
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                📅 Phénologie mensuelle
+              </h3>
+              <div className="h-80">
+                <PhenoLine codeInsee={codeInsee} />
+              </div>
             </div>
           </div>
 
           {/* Listes rouges - Bar chart */}
-          <div className="glass rounded-2xl p-6">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">
-              🚨 Statuts listes rouges
-            </h3>
-            <div className="h-80">
-              <RedListBar codeInsee={codeInsee} />
+          <div className="container-hover-safe">
+            <div className="glass rounded-2xl p-6">
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                🚨 Statuts listes rouges
+              </h3>
+              <div className="h-80">
+                <RedListBar codeInsee={codeInsee} />
+              </div>
             </div>
           </div>
 
           {/* Statuts réglementaires - Treemap */}
-          <div className="glass rounded-2xl p-6">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">
-              ⚖️ Statuts réglementaires
-            </h3>
-            <div className="h-80">
-              <StatusTreemap codeInsee={codeInsee} />
+          <div className="container-hover-safe">
+            <div className="glass rounded-2xl p-6">
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                ⚖️ Statuts réglementaires
+              </h3>
+              <div className="h-80">
+                <StatusTreemap codeInsee={codeInsee} />
+              </div>
             </div>
           </div>
 

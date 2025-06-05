@@ -152,138 +152,143 @@ export default function Sidebar() {
   }, [setCommuneData, setSpeciesData])
 
   return (
-    <div className="w-96 flex flex-col gap-6 overflow-hidden">
+    <div className="w-96 flex flex-col gap-6 overflow-visible">
       {/* Section Communes CCPM */}
-      <div className="modern-card p-6 fade-in-scale overflow-hidden">
-        {/* Titre */}
-        <h3 className="text-xl font-bold text-gradient mb-6 flex items-center gap-2">
-          <span className="w-3 h-3 bg-gradient-primary rounded-full"></span>
-          🏘️ Communes CCPM
-        </h3>
+      <div className="container-hover-safe">
+        <div className="modern-card p-6 fade-in-scale overflow-hidden">
+          {/* Titre avec icône plus lisible */}
+          <h3 className="text-xl font-bold text-gradient mb-6 flex items-center gap-3">
+            <span className="text-2xl">🏛️</span>
+            Communes CCPM
+          </h3>
 
-        {/* Fiche commune sélectionnée */}
-        {selectedCommune && communeData?.has(selectedCommune) && (
-          <div className="mb-6 p-4 bg-gradient-primary rounded-2xl text-white shadow-lg">
-            <div className="flex items-center justify-between mb-3">
-              <h4 className="font-bold text-lg truncate pr-2">
-                {communeNames.get(selectedCommune) || selectedCommune}
-              </h4>
-              <button
-                onClick={() => setSelectedCommune(null)}
-                className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 flex-shrink-0"
-                title="Fermer"
-              >
-                ✕
-              </button>
+          {/* Fiche commune sélectionnée */}
+          {selectedCommune && communeData?.has(selectedCommune) && (
+            <div className="mb-6 p-4 bg-gradient-primary rounded-2xl text-white shadow-lg">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="font-bold text-lg truncate pr-2 flex items-center gap-2">
+                  <span className="text-xl">🏘️</span>
+                  {communeNames.get(selectedCommune) || selectedCommune}
+                </h4>
+                <button
+                  onClick={() => setSelectedCommune(null)}
+                  className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 flex-shrink-0 text-lg"
+                  title="Fermer"
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="bg-white/20 rounded-lg p-3 text-center">
+                  <div className="font-bold text-xl flex items-center justify-center gap-1">
+                    <span className="text-sm">👁️</span>
+                    {formatNumber(communeData.get(selectedCommune)?.totalObs || 0)}
+                  </div>
+                  <div className="opacity-90">Observations</div>
+                </div>
+                <div className="bg-white/20 rounded-lg p-3 text-center">
+                  <div className="font-bold text-xl flex items-center justify-center gap-1">
+                    <span className="text-sm">🦋</span>
+                    {formatNumber(communeData.get(selectedCommune)?.totalEsp || 0)}
+                  </div>
+                  <div className="opacity-90">Espèces</div>
+                </div>
+              </div>
             </div>
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div className="bg-white/20 rounded-lg p-3 text-center">
-                <div className="font-bold text-xl">
-                  {formatNumber(communeData.get(selectedCommune)?.totalObs || 0)}
-                </div>
-                <div className="opacity-90">Observations</div>
-              </div>
-              <div className="bg-white/20 rounded-lg p-3 text-center">
-                <div className="font-bold text-xl">
-                  {formatNumber(communeData.get(selectedCommune)?.totalEsp || 0)}
-                </div>
-                <div className="opacity-90">Espèces</div>
-              </div>
+          )}
+
+          {/* Champ de recherche moderne */}
+          <div className="mb-6">
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg">🔍</span>
+              <input
+                type="text"
+                placeholder="Nom de la commune"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="input-modern w-full pl-10 pr-4"
+              />
             </div>
           </div>
-        )}
 
-        {/* Champ de recherche moderne */}
-        <div className="mb-6">
-          <div className="relative">
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Nom de la commune"
-              className="input-modern w-full pl-10"
-            />
-            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-              🔍
+          {/* Indicateur de chargement */}
+          {isLoading && (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-3"></div>
+              <p className="text-gray-600 text-sm">Chargement des communes...</p>
             </div>
-          </div>
-          {searchTerm && (
-            <div className="mt-2">
-              <span className="badge-modern text-xs">
-                {filteredCommuneNames.length} commune(s) trouvée(s)
-              </span>
+          )}
+
+          {/* Liste des communes */}
+          {!isLoading && filteredCommuneNames.length > 0 && (
+            <div className="space-y-2 max-h-80 overflow-y-auto overflow-x-hidden">
+              {filteredCommuneNames.map(([codeInsee, name]) => {
+                const commune = communeData?.get(codeInsee)
+                const isSelected = selectedCommune === codeInsee
+                
+                return (
+                  <button
+                    key={codeInsee}
+                    onClick={() => setSelectedCommune(codeInsee)}
+                    className={`w-full text-left p-3 rounded-xl transition-all duration-200 overflow-hidden ${
+                      isSelected 
+                        ? 'bg-gradient-primary text-white shadow-lg' 
+                        : 'bg-white/50 hover:bg-white/70 text-gray-700'
+                    } transform hover:scale-[1.02]`}
+                  >
+                    <div className="font-medium mb-1 truncate pr-2 flex items-center gap-2">
+                      <span className="text-sm">🏘️</span>
+                      {name}
+                    </div>
+                    {commune && (
+                      <div className="text-xs opacity-80 flex items-center justify-between gap-2 min-w-0">
+                        <div className="flex items-center gap-3 min-w-0 flex-shrink">
+                          <span className="whitespace-nowrap flex items-center gap-1">
+                            <span className="text-xs">👁️</span>
+                            {formatNumber(commune.totalObs)} obs.
+                          </span>
+                          <span className="whitespace-nowrap flex items-center gap-1">
+                            <span className="text-xs">🦋</span>
+                            {formatNumber(commune.totalEsp)} esp.
+                          </span>
+                        </div>
+                        <FicheIcon isSelected={isSelected} codeInsee={codeInsee} />
+                      </div>
+                    )}
+                  </button>
+                )
+              })}
             </div>
           )}
         </div>
-
-        {/* Liste des communes */}
-        {isLoading ? (
-          <div className="flex items-center justify-center py-8">
-            <div className="flex items-center gap-3 text-gray-500">
-              <div className="w-5 h-5 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
-              <span>Chargement des communes...</span>
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-2 max-h-80 overflow-y-auto overflow-x-hidden">
-            {filteredCommuneNames.map(([codeInsee, name]) => {
-              const commune = communeData?.get(codeInsee)
-              const isSelected = selectedCommune === codeInsee
-              
-              return (
-                <button
-                  key={codeInsee}
-                  onClick={() => setSelectedCommune(codeInsee)}
-                  className={`w-full text-left p-3 rounded-xl transition-all duration-200 overflow-hidden ${
-                    isSelected 
-                      ? 'bg-gradient-primary text-white shadow-lg' 
-                      : 'bg-white/50 hover:bg-white/70 text-gray-700'
-                  } transform hover:scale-[1.02]`}
-                >
-                  <div className="font-medium mb-1 truncate pr-2">{name}</div>
-                  {commune && (
-                    <div className="text-xs opacity-80 flex items-center justify-between gap-2 min-w-0">
-                      <div className="flex items-center gap-3 min-w-0 flex-shrink">
-                        <span className="whitespace-nowrap">{formatNumber(commune.totalObs)} obs.</span>
-                        <span className="whitespace-nowrap">{formatNumber(commune.totalEsp)} esp.</span>
-                      </div>
-                      <FicheIcon isSelected={isSelected} codeInsee={codeInsee} />
-                    </div>
-                  )}
-                </button>
-              )
-            })}
-          </div>
-        )}
       </div>
 
       {/* Section Carte */}
-      <div className="modern-card p-6 fade-in-scale overflow-hidden" style={{ animationDelay: '0.1s' }}>
-        {/* Titre */}
-        <h3 className="text-xl font-bold text-gradient mb-6 text-center flex items-center justify-center gap-2">
-          <span className="w-3 h-3 bg-gradient-secondary rounded-full"></span>
-          🗺️ Carte
-        </h3>
-        
-        <div className="space-y-6">
-          {/* Toggles modernes */}
+      <div className="container-hover-safe">
+        <div className="modern-card p-6 fade-in-scale">
+          <h4 className="text-lg font-bold text-gradient mb-4 flex items-center gap-3">
+            <span className="text-xl">🗺️</span>
+            Carte
+          </h4>
+
+          {/* Toggles */}
           <div className="space-y-4">
             <ToggleSwitch
+              label="🏘️ Communes"
               checked={showCommunes}
               onChange={setShowCommunes}
-              label="Communes"
             />
-
             <ToggleSwitch
+              label="🏢 Bâtiments 3D"
               checked={show3D}
               onChange={setShow3D}
-              label="Bâtiments 3D"
             />
           </div>
 
-          {/* Sélecteur de style moderne */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">
+          {/* Sélecteur de fond de carte */}
+          <div className="mt-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+              <span className="text-base">🌍</span>
               Fond de carte
             </label>
             <select
@@ -291,8 +296,8 @@ export default function Sidebar() {
               onChange={(e) => setMapStyle(e.target.value)}
               className="input-modern w-full"
             >
-              {Object.entries(MAPBOX_STYLES).map(([value, label]) => (
-                <option key={value} value={value}>
+              {Object.entries(MAPBOX_STYLES).map(([key, label]) => (
+                <option key={key} value={key}>
                   {label}
                 </option>
               ))}
