@@ -157,18 +157,34 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
       useMesh={true}
       defs={[
         {
-          id: 'gradientA',
+          id: 'gradient-green-brown-line',
           type: 'linearGradient',
+          x1: 0,
+          y1: 0,
+          x2: 1,
+          y2: 1,
           colors: [
-            { offset: 0, color: '#2D5016', opacity: 0.3 },
-            { offset: 100, color: '#2D5016', opacity: 0 }
+            { offset: 0, color: '#2d5016', opacity: 0.8 },
+            { offset: 100, color: '#cd853f', opacity: 0.1 }
+          ]
+        },
+        {
+          id: 'gradient-green-brown-stroke',
+          type: 'linearGradient',
+          x1: 0,
+          y1: 0,
+          x2: 1,
+          y2: 1,
+          colors: [
+            { offset: 0, color: '#2d5016' },
+            { offset: 100, color: '#cd853f' }
           ]
         }
       ]}
       fill={[
-        { match: '*', id: 'gradientA' }
+        { match: '*', id: 'gradient-green-brown-line' }
       ]}
-      colors={['#2D5016']}
+      colors={['url(#gradient-green-brown-stroke)']}
       animate={true}
       motionConfig="gentle"
       markers={filters.selectedMois ? [{

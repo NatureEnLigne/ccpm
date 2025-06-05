@@ -21,16 +21,19 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
   const [data, setData] = useState<BubbleData | null>(null)
 
   // Générer une rampe de couleurs cohérente du vert au marron
-  const generateColorRamp = (count: number) => {
-    const colors = []
+  const generateColorRamp = (count: number): string[] => {
+    const colors: string[] = []
+    const startColor = { r: 45, g: 80, b: 22 }    // #2d5016 (vert foncé)
+    const endColor = { r: 205, g: 133, b: 63 }    // #cd853f (marron doré)
+    
     for (let i = 0; i < count; i++) {
       const ratio = count === 1 ? 0 : i / (count - 1)
-      // Interpolation du vert forêt (#2d5016) vers le brun doré (#cd853f)
-      const r = Math.round(45 + (205 - 45) * ratio)
-      const g = Math.round(80 + (133 - 80) * ratio)
-      const b = Math.round(22 + (63 - 22) * ratio)
+      const r = Math.round(startColor.r + (endColor.r - startColor.r) * ratio)
+      const g = Math.round(startColor.g + (endColor.g - startColor.g) * ratio)
+      const b = Math.round(startColor.b + (endColor.b - startColor.b) * ratio)
       colors.push(`rgb(${r}, ${g}, ${b})`)
     }
+    
     return colors
   }
 
@@ -211,70 +214,95 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
   }
 
   return (
-    <ResponsiveCirclePacking
-      data={data}
-      margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
-      id="id"
-      value="value"
-      colors={generateColorRamp(data.children.length)}
-      padding={1}
-      enableLabels={true}
-      labelsSkipRadius={8}
-      labelsFilter={(label) => label.node.id !== 'root'}
-      labelTextColor="#ffffff"
-      borderWidth={2}
-      borderColor={{
-        from: 'color',
-        modifiers: [
-          ['darker', 0.6]
-        ]
-      }}
-      animate={true}
-      motionConfig="gentle"
-      tooltip={({ id, value }) => {
-        // Filtrer la valeur "root" qui correspond au nœud racine de la hiérarchie
-        if (id === 'root') return <div></div>
-        
-        return (
-          <div className="bg-white/90 backdrop-blur-md rounded-lg p-4 text-sm shadow-xl border border-green-800/30">
-            <div className="font-semibold text-green-800 flex items-center gap-2 mb-2">
-              <span>{id}</span>
-              {isFiltered('bubble', taxonomicLevel.field === 'groupe' ? 'group' : taxonomicLevel.field, id) && (
-                <span className="bg-green-700/20 text-green-700 px-2 py-1 rounded-full text-xs">Filtré</span>
-              )}
+    <div className="h-full">
+      <ResponsiveCirclePacking
+        data={data}
+        margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
+        id="id"
+        value="value"
+        colors={(node) => {
+          // Bulle parente avec dégradé, bulles enfants avec rampe de couleurs
+          if (node.depth === 0) {
+            return 'url(#gradient-green-brown)'
+          } else {
+            const colors = generateColorRamp(data?.children?.length || 0)
+            const nodeIndex = data?.children?.findIndex(child => child.id === node.id) || 0
+            return colors[nodeIndex] || colors[0]
+          }
+        }}
+        defs={[
+          {
+            id: 'gradient-green-brown',
+            type: 'linearGradient',
+            x1: 0,
+            y1: 0,
+            x2: 1,
+            y2: 1,
+            colors: [
+              { offset: 0, color: '#2d5016' },    // Vert foncé
+              { offset: 100, color: '#cd853f' }   // Marron doré
+            ]
+          }
+        ]}
+        padding={1}
+        enableLabels={true}
+        labelsSkipRadius={8}
+        labelsFilter={(label) => label.node.id !== 'root'}
+        labelTextColor="#ffffff"
+        borderWidth={2}
+        borderColor={{
+          from: 'color',
+          modifiers: [
+            ['darker', 0.6]
+          ]
+        }}
+        animate={true}
+        motionConfig="gentle"
+        tooltip={({ id, value }) => {
+          // Filtrer la valeur "root" qui correspond au nœud racine de la hiérarchie
+          if (id === 'root') return <div></div>
+          
+          return (
+            <div className="bg-white/90 backdrop-blur-md rounded-lg p-4 text-sm shadow-xl border border-green-800/30">
+              <div className="font-semibold text-green-800 flex items-center gap-2 mb-2">
+                <span>{id}</span>
+                {isFiltered('bubble', taxonomicLevel.field === 'groupe' ? 'group' : taxonomicLevel.field, id) && (
+                  <span className="bg-green-700/20 text-green-700 px-2 py-1 rounded-full text-xs">Filtré</span>
+                )}
+              </div>
+              <div className="text-green-700 mb-2">
+                <span className="font-medium text-green-800">{value}</span> observations
+              </div>
+              <div className="text-xs text-green-600 border-t border-green-800/20 pt-2">
+                Cliquez pour filtrer par {taxonomicLevel.level === 'group1' ? 'groupe' : taxonomicLevel.level === 'group2' ? 'sous-groupe' : taxonomicLevel.level}
+              </div>
             </div>
-            <div className="text-green-700 mb-2">
-              <span className="font-medium text-green-800">{value}</span> observations
-            </div>
-            <div className="text-xs text-green-600 border-t border-green-800/20 pt-2">
-              Cliquez pour filtrer par {taxonomicLevel.level === 'group1' ? 'groupe' : taxonomicLevel.level === 'group2' ? 'sous-groupe' : taxonomicLevel.level}
-            </div>
-          </div>
-        )
-      }}
-      onClick={(node) => {
-        // Filtrer la valeur "root" pour éviter qu'elle devienne un filtre
-        if (node.id === 'root') return
-        handleChartClick({
-          chartType: 'bubble',
-          dataKey: taxonomicLevel.field === 'groupe' ? 'group' : taxonomicLevel.field,
-          value: node.id as string,
-          action: 'click'
-        })
-      }}
-      onMouseEnter={(node) => {
-        // Filtrer la valeur "root" 
-        if (node.id === 'root') return
-        handleChartHover({
-          chartType: 'bubble',
-          dataKey: taxonomicLevel.field === 'groupe' ? 'group' : taxonomicLevel.field,
-          value: node.id as string,
-          action: 'hover'
-        })
-      }}
-      onMouseLeave={() => {
-        handleChartHover(null)
-      }}
-    />
+          )
+        }}
+        onClick={(node) => {
+          // Filtrer la valeur "root" pour éviter qu'elle devienne un filtre
+          if (node.id === 'root') return
+          handleChartClick({
+            chartType: 'bubble',
+            dataKey: taxonomicLevel.field === 'groupe' ? 'group' : taxonomicLevel.field,
+            value: node.id as string,
+            action: 'click'
+          })
+        }}
+        onMouseEnter={(node) => {
+          // Filtrer la valeur "root" 
+          if (node.id === 'root') return
+          handleChartHover({
+            chartType: 'bubble',
+            dataKey: taxonomicLevel.field === 'groupe' ? 'group' : taxonomicLevel.field,
+            value: node.id as string,
+            action: 'hover'
+          })
+        }}
+        onMouseLeave={() => {
+          handleChartHover(null)
+        }}
+      />
+    </div>
   )
 } 
