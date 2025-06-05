@@ -263,12 +263,12 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* Section Carte */}
+      {/* Section Couches */}
       <div className="container-hover-safe">
         <div className="modern-card p-6 fade-in-scale">
           <h4 className="text-xl font-bold mb-6 flex items-center gap-3">
             <span className="text-2xl">🗺️</span>
-            <span className="text-gradient">Carte</span>
+            <span className="text-gradient">Couches</span>
           </h4>
         
           {/* Toggles */}
@@ -285,11 +285,11 @@ export default function Sidebar() {
             />
           </div>
 
-          {/* Sélecteur de fond de carte */}
+          {/* Sélecteur de fonds de plan */}
           <div className="mt-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-              <span className="text-base">🌍</span>
-              Fond de carte
+            <label className="block text-xl font-bold mb-6 flex items-center gap-3">
+              <span className="text-2xl">🌍</span>
+              <span className="text-gradient">Fonds de plan</span>
             </label>
             <select
               value={mapStyle}
