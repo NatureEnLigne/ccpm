@@ -280,6 +280,11 @@ export default function Map() {
   // Gestion de la 3D
   useEffect(() => {
     if (map.current && isMapLoaded) {
+      // Supprimer la couche existante si elle existe
+      if (map.current.getLayer('building-3d')) {
+        map.current.removeLayer('building-3d')
+      }
+      
       if (show3D) {
         map.current.addLayer({
           id: 'building-3d',
@@ -307,13 +312,45 @@ export default function Map() {
             'fill-extrusion-opacity': 0.6
           }
         })
+        console.log('🏢 Couche bâtiments 3D ajoutée')
       } else {
-        if (map.current.getLayer('building-3d')) {
-          map.current.removeLayer('building-3d')
-        }
+        console.log('🏢 Couche bâtiments 3D supprimée')
       }
     }
   }, [show3D, isMapLoaded])
+
+  // Initialiser les bâtiments 3D au chargement de la carte si show3D est true
+  useEffect(() => {
+    if (isMapLoaded && show3D && map.current && !map.current.getLayer('building-3d')) {
+      map.current.addLayer({
+        id: 'building-3d',
+        source: 'composite',
+        'source-layer': 'building',
+        filter: ['==', 'extrude', 'true'],
+        type: 'fill-extrusion',
+        minzoom: 15,
+        paint: {
+          'fill-extrusion-color': '#aaa',
+          'fill-extrusion-height': [
+            'interpolate',
+            ['linear'],
+            ['zoom'],
+            15, 0,
+            15.05, ['get', 'height']
+          ],
+          'fill-extrusion-base': [
+            'interpolate',
+            ['linear'],
+            ['zoom'],
+            15, 0,
+            15.05, ['get', 'min_height']
+          ],
+          'fill-extrusion-opacity': 0.6
+        }
+      })
+      console.log('🏢 Couche bâtiments 3D initialisée au chargement')
+    }
+  }, [isMapLoaded])
 
   return (
     <div className="relative w-full h-full">

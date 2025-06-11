@@ -202,7 +202,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
     const communeName = communes?.features.find(f => f.properties.insee === codeInsee)?.properties.nom || `Code INSEE ${codeInsee}`
     
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-emerald-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="glass rounded-2xl p-8 text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <h2 className="text-xl font-semibold text-gray-800 mb-2">Chargement des données...</h2>
@@ -214,7 +214,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-emerald-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="glass rounded-2xl p-8 text-center">
           <div className="text-red-500 text-6xl mb-4">⚠️</div>
           <h2 className="text-xl font-semibold text-gray-800 mb-2">Erreur</h2>
@@ -232,7 +232,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
 
   if (!currentCommune) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-emerald-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="glass rounded-2xl p-8 text-center">
           <div className="text-gray-500 text-6xl mb-4">🏘️</div>
           <h2 className="text-xl font-semibold text-gray-800 mb-2">Commune non trouvée</h2>
@@ -249,7 +249,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-green-50 to-emerald-50">
+    <div className="min-h-screen">
       
       {/* Contenu principal */}
       <main className="container mx-auto px-6 py-8">
