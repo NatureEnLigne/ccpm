@@ -460,52 +460,52 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
         <div className="flex items-center gap-4 mb-8 fade-in-up">
           {/* Bouton retour à l'accueil */}
           <div className="modern-card shadow-xl">
-            <button 
-              onClick={() => router.push('/')}
+              <button 
+                onClick={() => router.push('/')}
               className="p-3 text-center min-w-[120px] hover:bg-white/10 transition-colors rounded-lg"
-              title="Retour à l'accueil"
-            >
+                title="Retour à l'accueil"
+              >
               <div className="text-xl font-bold text-gradient mb-1">
-                ←
+                ← 
               </div>
               <div className="text-gray-600 font-medium text-sm">
                 Retour à l'accueil
               </div>
-            </button>
+              </button>
           </div>
           
           {/* Nom de la commune et code INSEE */}
           <div className="modern-card shadow-xl flex-1">
             <div className="p-3 text-left">
               <h1 className="text-2xl font-bold mb-1">
-                <span className="text-gradient">{currentCommune.nom || `Commune ${codeInsee}`}</span>
-              </h1>
+                    <span className="text-gradient">{currentCommune.nom || `Commune ${codeInsee}`}</span>
+                </h1>
               <p className="species-count-title">
-                Code INSEE: {codeInsee}
-              </p>
+                    Code INSEE: {codeInsee}
+                  </p>
+              </div>
             </div>
-          </div>
-          
+            
           {/* Observations */}
           <div className="modern-card shadow-xl">
             <div className="p-3 text-center min-w-[120px]">
               <div className="text-xl font-bold text-gradient mb-1">
-                {formatNumberFull(filteredStats.totalObs)}
-              </div>
+                  {formatNumberFull(filteredStats.totalObs)}
+                </div>
               <div className="text-gray-600 font-medium text-sm">
-                Observations
+                      Observations
+                    </div>
+                  </div>
               </div>
-            </div>
-          </div>
           
           {/* Espèces */}
           <div className="modern-card shadow-xl">
             <div className="p-3 text-center min-w-[120px]">
               <div className="text-xl font-bold text-gradient mb-1">
-                {formatNumberFull(filteredStats.totalEsp)}
-              </div>
+                  {formatNumberFull(filteredStats.totalEsp)}
+                </div>
               <div className="text-gray-600 font-medium text-sm">
-                Espèces
+                      Espèces
               </div>
             </div>
           </div>
@@ -550,7 +550,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
             </button>
           </div>
         </div>
-
+        
         {/* Barre de filtres */}
         <FilterBar />
 
@@ -560,11 +560,11 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
           <div className="container-hover-safe">
             <div className="modern-card z-middle shadow-xl fade-in-up">
               <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                <span className="text-xl">🦋</span>
-                <span className="text-gradient">Groupes taxonomiques</span>
-              </h3>
+              <span className="text-xl">🦋</span>
+              <span className="text-gradient">Groupes taxonomiques</span>
+            </h3>
               <div className="h-80 flex-1">
-                <GroupBubble codeInsee={codeInsee} />
+              <GroupBubble codeInsee={codeInsee} />
               </div>
             </div>
           </div>
@@ -573,11 +573,11 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
           <div className="container-hover-safe">
             <div className="modern-card z-middle shadow-xl fade-in-up">
               <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                <span className="text-xl">📅</span>
-                <span className="text-gradient">Phénologie mensuelle</span>
-              </h3>
+              <span className="text-xl">📅</span>
+              <span className="text-gradient">Phénologie mensuelle</span>
+            </h3>
               <div className="h-80 flex-1">
-                <PhenoLine codeInsee={codeInsee} />
+              <PhenoLine codeInsee={codeInsee} />
               </div>
             </div>
           </div>
@@ -586,11 +586,11 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
           <div className="container-hover-safe">
             <div className="modern-card z-middle shadow-xl fade-in-up">
               <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                <span className="text-xl">🚨</span>
-                <span className="text-gradient">Statuts listes rouges</span>
-              </h3>
+              <span className="text-xl">🚨</span>
+              <span className="text-gradient">Statuts listes rouges</span>
+            </h3>
               <div className="h-80 flex-1">
-                <RedListBar codeInsee={codeInsee} />
+              <RedListBar codeInsee={codeInsee} />
               </div>
             </div>
           </div>
@@ -599,11 +599,11 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
           <div className="container-hover-safe">
             <div className="modern-card z-middle shadow-xl fade-in-up">
               <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                <span className="text-xl">⚖️</span>
-                <span className="text-gradient">Statuts réglementaires</span>
-              </h3>
+              <span className="text-xl">⚖️</span>
+              <span className="text-gradient">Statuts réglementaires</span>
+            </h3>
               <div className="h-80 flex-1">
-                <StatusTreemap codeInsee={codeInsee} />
+              <StatusTreemap codeInsee={codeInsee} />
               </div>
             </div>
           </div>

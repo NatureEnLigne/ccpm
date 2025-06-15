@@ -18,6 +18,7 @@ import {
 } from '../../../../utils/csvLoader'
 import { joinCommuneData, joinSpeciesData, enrichCommuneDataWithNames } from '../../../../utils/dataJoiner'
 import { loadCommunesGeoJSON } from '../../../../utils/geojsonLoader'
+import { formatNumber } from '../../../../utils/formatters'
 
 interface ComparisonPageClientProps {
   codeInseeBase: string
@@ -43,6 +44,8 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
   const [showCommuneSelector, setShowCommuneSelector] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [communeNames, setCommuneNames] = useState<Map<string, string>>(new Map())
 
   useEffect(() => {
     loadAllData()
@@ -93,6 +96,13 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
       // Enrichir avec les noms des communes
       communeDataMap = enrichCommuneDataWithNames(communeDataMap, communesGeoJSON)
 
+      // Créer une map des noms des communes (insee -> nom)
+      const namesMap = new Map<string, string>()
+      communesGeoJSON.features.forEach(feature => {
+        namesMap.set(feature.properties.insee, feature.properties.nom)
+      })
+      setCommuneNames(namesMap)
+
       // Mettre à jour le store
       setCommunes(communesGeoJSON)
       setCommuneData(communeDataMap)
@@ -108,6 +118,13 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
 
   const communeBase = communes?.features.find(f => f.properties.insee === codeInseeBase)
   const communeComparison = communes?.features.find(f => f.properties.insee === selectedCommune)
+  
+  // Filtrer les communes par nom
+  const filteredCommuneNames = Array.from(communeNames.entries())
+    .filter(([, name]) => 
+      name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => a[1].localeCompare(b[1]))
   
   // Calculer les statistiques filtrées pour chaque commune
   const getFilteredStats = (codeInsee: string) => {
@@ -415,42 +432,89 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
                 </div>
               </>
             ) : (
-              /* Sélecteur de commune */
-              <div className="modern-card shadow-xl fade-in-up relative">
-                <button 
-                  onClick={() => setShowCommuneSelector(!showCommuneSelector)}
-                  className="w-full p-8 text-center hover:bg-white/10 transition-colors rounded-lg"
-                  title="Choisir la commune à comparer"
-                >
-                  <div className="text-gray-400 text-6xl mb-4">🏘️</div>
-                  <h3 className="text-xl font-semibold text-gray-600 mb-2">
-                    Sélectionnez une commune
-                  </h3>
-                  <p className="text-gray-500">
-                    Choisissez une commune à comparer avec {communeBase.properties.nom}
+              /* Panneau de sélection de commune - reprend exactement le contenu de 🏛️ Communes CCPM */
+              <div className="modern-card shadow-xl fade-in-up h-full flex flex-col">
+                {/* Titre avec icône */}
+                <h3 className="text-xl font-bold mb-6 flex items-center gap-3 flex-shrink-0">
+                  <span className="text-2xl">🏛️</span>
+                  <span className="text-gradient">Communes CCPM</span>
+                </h3>
+
+                {/* Message d'instruction */}
+                <div className="mb-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
+                  <p className="text-blue-800 text-center font-medium">
+                    Sélectionner une commune pour commencer la comparaison
                   </p>
-                </button>
-                
-                {showCommuneSelector && (
-                  <div className="absolute top-full left-0 mt-2 w-full max-h-60 overflow-y-auto bg-white/90 backdrop-blur-md rounded-lg shadow-xl border border-white/20 z-50">
-                    {communes?.features
-                      .filter(f => f.properties.insee !== codeInseeBase)
-                      .sort((a, b) => a.properties.nom.localeCompare(b.properties.nom))
-                      .map((commune) => (
-                        <button
-                          key={commune.properties.insee}
-                          onClick={() => {
-                            setSelectedCommune(commune.properties.insee)
-                            setShowCommuneSelector(false)
-                          }}
-                          className="w-full p-3 text-left hover:bg-white/20 transition-colors first:rounded-t-lg last:rounded-b-lg"
-                        >
-                          <div className="text-gray-700 font-medium">{commune.properties.nom}</div>
-                          <div className="text-gray-500 text-sm">Code INSEE: {commune.properties.insee}</div>
-                        </button>
-                      ))}
+                </div>
+
+                {/* Contenu scrollable */}
+                <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
+                  {/* Champ de recherche moderne */}
+                  <div className="mb-6">
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg">🔍</span>
+                      <input
+                        type="text"
+                        placeholder="Nom de la commune"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="input-modern w-full pl-10 pr-4"
+                      />
+                    </div>
                   </div>
-                )}
+
+                  {/* Indicateur de chargement */}
+                  {isLoading && (
+                    <div className="text-center py-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-3"></div>
+                      <p className="text-gray-600 text-sm">Chargement des communes...</p>
+                    </div>
+                  )}
+
+                  {/* Liste des communes */}
+                  {!isLoading && filteredCommuneNames.length > 0 && (
+                    <div className="space-y-2">
+                      {filteredCommuneNames.map(([codeInsee, name]) => {
+                        const commune = communeData?.get(codeInsee)
+                        const isSelected = selectedCommune === codeInsee
+                        
+                        // Ne pas afficher la commune de base
+                        if (codeInsee === codeInseeBase) return null
+                        
+                        return (
+                          <button
+                            key={codeInsee}
+                            onClick={() => setSelectedCommune(codeInsee)}
+                            className={`w-full text-left p-3 rounded-xl transition-all duration-200 overflow-hidden ${
+                              isSelected 
+                                ? 'bg-gradient-primary text-white shadow-lg' 
+                                : 'bg-white/50 hover:bg-white/70 text-gray-700'
+                            } transform hover:scale-[1.02]`}
+                          >
+                            <div className="font-medium mb-1 truncate pr-2 flex items-center gap-2">
+                              <span className="text-sm">🏘️</span>
+                              {name}
+                            </div>
+                            {commune && (
+                              <div className="text-xs opacity-80 flex items-center justify-between gap-2 min-w-0">
+                                <div className="flex items-center gap-3 min-w-0 flex-shrink">
+                                  <span className="whitespace-nowrap flex items-center gap-1">
+                                    <span className="text-xs">👁️</span>
+                                    {formatNumber(commune.totalObs)} obs.
+                                  </span>
+                                  <span className="whitespace-nowrap flex items-center gap-1">
+                                    <span className="text-xs">🦋</span>
+                                    {formatNumber(commune.totalEsp)} esp.
+                                  </span>
+                                </div>
+                              </div>
+                            )}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
