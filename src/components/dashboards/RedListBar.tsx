@@ -198,7 +198,7 @@ export default function RedListBar({ codeInsee }: RedListBarProps) {
         tickSize: 5,
         tickPadding: 5,
         tickRotation: -45,
-        legend: 'Statut liste rouge',
+        legend: null,
         legendPosition: 'middle',
         legendOffset: 100
       }}

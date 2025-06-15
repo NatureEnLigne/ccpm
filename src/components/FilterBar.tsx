@@ -41,9 +41,6 @@ export default function FilterBar() {
         
         {/* Filtre Règne */}
         <div className="flex items-center space-x-3">
-          <label className="text-sm font-medium text-gray-700">
-            Règne :
-          </label>
           <select
             value="Tous"
             onChange={(e) => handleRegneChange(e.target.value)}
