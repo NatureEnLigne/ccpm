@@ -27,22 +27,55 @@ const MONTH_NAMES = [
 export default function FilterBar() {
   const { speciesData, setFilter, filters, removeFilter, clearFilters } = useAppStore()
   const [availableRegnes, setAvailableRegnes] = useState<string[]>([])
+  const [availableRedListCategories, setAvailableRedListCategories] = useState<string[]>([])
+  const [availableStatutsReglementaires, setAvailableStatutsReglementaires] = useState<string[]>([])
 
   useEffect(() => {
     if (speciesData) {
       // Récupérer tous les règnes disponibles depuis les données réelles
       const regnes = new Set<string>()
+      const redListCategories = new Set<string>()
+      const statutsReglementaires = new Set<string>()
       
       speciesData.forEach(species => {
         // Utiliser le vrai règne depuis les données taxonomiques
         const regne = species.regne || 'Inconnu'
         regnes.add(regne)
+        
+        // Récupérer les statuts de liste rouge
+        if (species.listeRouge) {
+          const statut = species.listeRouge['Label Statut']
+          if (statut) {
+            redListCategories.add(statut)
+          }
+        } else {
+          redListCategories.add('Non évalué')
+        }
+        
+        // Récupérer les statuts réglementaires
+        if (species.statuts && species.statuts.length > 0) {
+          species.statuts.forEach(statut => {
+            const statutLabel = statut['LABEL STATUT (statuts)']
+            if (statutLabel) {
+              statutsReglementaires.add(statutLabel)
+            }
+          })
+        } else {
+          statutsReglementaires.add('Non réglementé')
+        }
       })
       
       const regnesList = Array.from(regnes).sort()
-      setAvailableRegnes(regnesList)
+      const redListList = Array.from(redListCategories).sort()
+      const statutsList = Array.from(statutsReglementaires).sort()
       
-      console.log('🔍 Règnes détectés depuis les données:', regnesList)
+      setAvailableRegnes(regnesList)
+      setAvailableRedListCategories(redListList)
+      setAvailableStatutsReglementaires(statutsList)
+      
+      console.log('🔍 Règnes détectés:', regnesList)
+      console.log('🚨 Statuts liste rouge détectés:', redListList)
+      console.log('⚖️ Statuts réglementaires détectés:', statutsList)
     }
   }, [speciesData])
 
@@ -70,6 +103,18 @@ export default function FilterBar() {
     }
   }
 
+  const handleRedListCategoryChange = (category: string) => {
+    if (category !== 'Tous') {
+      setFilter('selectedRedListCategory', category, 'FilterBar')
+    }
+  }
+
+  const handleStatutReglementaireChange = (statut: string) => {
+    if (statut !== 'Tous') {
+      setFilter('selectedStatutReglementaire', statut, 'FilterBar')
+    }
+  }
+
   const activeFilterEntries = Object.entries(filters).filter(
     ([key, value]) => value !== null && key !== 'activeFilters'
   )
@@ -90,7 +135,7 @@ export default function FilterBar() {
           <span className="text-lg font-bold text-gradient">Filtres</span>
         </div>
         
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <select
             value="Tous"
             onChange={(e) => handleRegneChange(e.target.value)}
@@ -104,12 +149,38 @@ export default function FilterBar() {
             ))}
           </select>
           
+          <select
+            value="Tous"
+            onChange={(e) => handleRedListCategoryChange(e.target.value)}
+            className="bg-white/10 backdrop-blur-md border border-white/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 text-gray-700"
+          >
+            <option value="Tous">Statuts listes rouges</option>
+            {availableRedListCategories.map(category => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+          
+          <select
+            value="Tous"
+            onChange={(e) => handleStatutReglementaireChange(e.target.value)}
+            className="bg-white/10 backdrop-blur-md border border-white/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 text-gray-700 w-auto min-w-fit"
+          >
+            <option value="Tous">Statuts réglementaires</option>
+            {availableStatutsReglementaires.map(statut => (
+              <option key={statut} value={statut}>
+                {statut}
+              </option>
+            ))}
+          </select>
+          
           <input
             type="number"
             placeholder="A partir de l'année"
             value={filters.anneeDebut || ''}
             onChange={(e) => handleAnneeDebutChange(e.target.value)}
-            className="bg-white/10 backdrop-blur-md border border-white/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 text-gray-700 w-36"
+            className="bg-white/10 backdrop-blur-md border border-white/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 text-gray-700 w-44"
             min="1900"
             max="2030"
           />
