@@ -8,6 +8,7 @@ import GroupBubble from '../../../../components/dashboards/GroupBubble'
 import PhenoLine from '../../../../components/dashboards/PhenoLine'
 import RedListBar from '../../../../components/dashboards/RedListBar'
 import StatusTreemap from '../../../../components/dashboards/StatusTreemap'
+import SpeciesTable from '../../../../components/SpeciesTable'
 import { 
   loadSyntheseInsee,
   loadPhenoMoisInsee,
@@ -21,15 +22,6 @@ import { loadCommunesGeoJSON } from '../../../../utils/geojsonLoader'
 interface ComparisonPageClientProps {
   codeInseeBase: string
 }
-
-type StatisticType = 'groupes' | 'phenologie' | 'listes_rouges' | 'statuts_reglementaires'
-
-const statisticOptions = [
-  { value: 'groupes', label: 'Groupes taxonomiques', icon: '🦋' },
-  { value: 'phenologie', label: 'Phénologie mensuelle', icon: '📅' },
-  { value: 'listes_rouges', label: 'Statuts listes rouges', icon: '🚨' },
-  { value: 'statuts_reglementaires', label: 'Statuts réglementaires', icon: '⚖️' }
-]
 
 function formatNumberFull(num: number): string {
   return new Intl.NumberFormat('fr-FR').format(num)
@@ -47,10 +39,8 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
     filters
   } = useAppStore()
 
-  const [selectedStatistic, setSelectedStatistic] = useState<StatisticType>('groupes')
   const [selectedCommune, setSelectedCommune] = useState<string>('')
   const [showCommuneSelector, setShowCommuneSelector] = useState(false)
-  const [showStatisticSelector, setShowStatisticSelector] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -154,7 +144,9 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
           if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) return
         }
         
-        totalObservations += (obs as any)['Nb Donnees']
+        // Correction du problème NaN
+        const nbDonnees = (obs as any)['Nb Donnees']
+        totalObservations += Number(nbDonnees) || 0
         uniqueSpecies.add(cdRef)
       }
     })
@@ -167,31 +159,6 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
   
   const filteredStatsBase = getFilteredStats(codeInseeBase)
   const filteredStatsComparison = selectedCommune ? getFilteredStats(selectedCommune) : null
-
-  const renderStatistic = (codeInsee: string) => {
-    const commonProps = { codeInsee }
-    
-    switch (selectedStatistic) {
-      case 'groupes':
-        return <GroupBubble {...commonProps} />
-      case 'phenologie':
-        return <PhenoLine {...commonProps} />
-      case 'listes_rouges':
-        return <RedListBar {...commonProps} />
-      case 'statuts_reglementaires':
-        return <StatusTreemap {...commonProps} />
-      default:
-        return <GroupBubble {...commonProps} />
-    }
-  }
-
-  const getStatisticLabel = () => {
-    return statisticOptions.find(opt => opt.value === selectedStatistic)?.label || 'Statistique'
-  }
-
-  const getStatisticIcon = () => {
-    return statisticOptions.find(opt => opt.value === selectedStatistic)?.icon || '📊'
-  }
 
   if (isLoading) {
     return (
@@ -262,85 +229,11 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
             </button>
           </div>
           
-          {/* Barre de filtres */}
-          <div className="flex-1">
-            <FilterBar />
-          </div>
-        </div>
-
-        {/* Sélecteurs de statistique et commune */}
-        <div className="flex items-center gap-4 mb-8 fade-in-up">
-          {/* Sélecteur de statistique */}
-          <div className="modern-card shadow-xl relative">
-            <button 
-              onClick={() => setShowStatisticSelector(!showStatisticSelector)}
-              className="p-3 text-center min-w-[200px] hover:bg-white/10 transition-colors rounded-lg"
-              title="Choisir la statistique à comparer"
-            >
-              <div className="text-xl font-bold text-gradient mb-1">
-                {getStatisticIcon()}
-              </div>
-              <div className="text-gray-600 font-medium text-sm">
-                {getStatisticLabel()}
-              </div>
-            </button>
-            
-            {showStatisticSelector && (
-              <div className="absolute top-full left-0 mt-2 w-full bg-white/90 backdrop-blur-md rounded-lg shadow-xl border border-white/20 z-50">
-                {statisticOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => {
-                      setSelectedStatistic(option.value as StatisticType)
-                      setShowStatisticSelector(false)
-                    }}
-                    className="w-full p-3 text-left hover:bg-white/20 transition-colors first:rounded-t-lg last:rounded-b-lg"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-lg">{option.icon}</span>
-                      <span className="text-gray-700 font-medium">{option.label}</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Sélecteur de commune */}
-          <div className="modern-card shadow-xl relative">
-            <button 
-              onClick={() => setShowCommuneSelector(!showCommuneSelector)}
-              className="p-3 text-center min-w-[200px] hover:bg-white/10 transition-colors rounded-lg"
-              title="Choisir la commune à comparer"
-            >
-              <div className="text-xl font-bold text-gradient mb-1">
-                🏘️
-              </div>
-              <div className="text-gray-600 font-medium text-sm">
-                {communeComparison ? communeComparison.properties.nom : 'Choisir une commune'}
-              </div>
-            </button>
-            
-            {showCommuneSelector && (
-              <div className="absolute top-full left-0 mt-2 w-full max-h-60 overflow-y-auto bg-white/90 backdrop-blur-md rounded-lg shadow-xl border border-white/20 z-50">
-                {communes?.features
-                  .filter(f => f.properties.insee !== codeInseeBase)
-                  .sort((a, b) => a.properties.nom.localeCompare(b.properties.nom))
-                  .map((commune) => (
-                    <button
-                      key={commune.properties.insee}
-                      onClick={() => {
-                        setSelectedCommune(commune.properties.insee)
-                        setShowCommuneSelector(false)
-                      }}
-                      className="w-full p-3 text-left hover:bg-white/20 transition-colors first:rounded-t-lg last:rounded-b-lg"
-                    >
-                      <div className="text-gray-700 font-medium">{commune.properties.nom}</div>
-                      <div className="text-gray-500 text-sm">Code INSEE: {commune.properties.insee}</div>
-                    </button>
-                  ))}
-              </div>
-            )}
+          {/* Barre de filtres - même taille que le bouton retour */}
+          <div className="modern-card shadow-xl flex-1">
+            <div className="p-3">
+              <FilterBar />
+            </div>
           </div>
         </div>
 
@@ -375,16 +268,65 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
               </div>
             </div>
 
-            {/* Graphique commune de base */}
-            <div className="modern-card shadow-xl fade-in-up">
-              <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
-                <span className="text-lg">{getStatisticIcon()}</span>
-                <span className="text-gradient">{getStatisticLabel()}</span>
-              </h3>
-              <div className="h-80 p-4">
-                {renderStatistic(codeInseeBase)}
-              </div>
-            </div>
+            {/* Graphiques commune de base */}
+            {selectedCommune && (
+              <>
+                {/* Groupes taxonomiques */}
+                <div className="modern-card shadow-xl fade-in-up">
+                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                    <span className="text-lg">🦋</span>
+                    <span className="text-gradient">Groupes taxonomiques</span>
+                  </h3>
+                  <div className="h-80 p-4">
+                    <GroupBubble codeInsee={codeInseeBase} />
+                  </div>
+                </div>
+
+                {/* Phénologie mensuelle */}
+                <div className="modern-card shadow-xl fade-in-up">
+                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                    <span className="text-lg">📅</span>
+                    <span className="text-gradient">Phénologie mensuelle</span>
+                  </h3>
+                  <div className="h-80 p-4">
+                    <PhenoLine codeInsee={codeInseeBase} />
+                  </div>
+                </div>
+
+                {/* Statuts listes rouges */}
+                <div className="modern-card shadow-xl fade-in-up">
+                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                    <span className="text-lg">🚨</span>
+                    <span className="text-gradient">Statuts listes rouges</span>
+                  </h3>
+                  <div className="h-80 p-4">
+                    <RedListBar codeInsee={codeInseeBase} />
+                  </div>
+                </div>
+
+                {/* Statuts réglementaires */}
+                <div className="modern-card shadow-xl fade-in-up">
+                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                    <span className="text-lg">⚖️</span>
+                    <span className="text-gradient">Statuts réglementaires</span>
+                  </h3>
+                  <div className="h-80 p-4">
+                    <StatusTreemap codeInsee={codeInseeBase} />
+                  </div>
+                </div>
+
+                {/* Liste des espèces */}
+                <div className="modern-card shadow-xl fade-in-up">
+                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                    <span className="text-lg">📋</span>
+                    <span className="text-gradient">Liste des espèces</span>
+                  </h3>
+                  <div className="p-4">
+                    <SpeciesTable codeInsee={codeInseeBase} />
+                  </div>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Commune de comparaison (droite) */}
@@ -417,21 +359,70 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
                   </div>
                 </div>
 
-                {/* Graphique commune de comparaison */}
+                {/* Graphiques commune de comparaison - en miroir */}
+                {/* Groupes taxonomiques */}
                 <div className="modern-card shadow-xl fade-in-up">
                   <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
-                    <span className="text-lg">{getStatisticIcon()}</span>
-                    <span className="text-gradient">{getStatisticLabel()}</span>
+                    <span className="text-lg">🦋</span>
+                    <span className="text-gradient">Groupes taxonomiques</span>
                   </h3>
                   <div className="h-80 p-4">
-                    {renderStatistic(selectedCommune)}
+                    <GroupBubble codeInsee={selectedCommune} />
+                  </div>
+                </div>
+
+                {/* Phénologie mensuelle */}
+                <div className="modern-card shadow-xl fade-in-up">
+                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                    <span className="text-lg">📅</span>
+                    <span className="text-gradient">Phénologie mensuelle</span>
+                  </h3>
+                  <div className="h-80 p-4">
+                    <PhenoLine codeInsee={selectedCommune} />
+                  </div>
+                </div>
+
+                {/* Statuts listes rouges */}
+                <div className="modern-card shadow-xl fade-in-up">
+                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                    <span className="text-lg">🚨</span>
+                    <span className="text-gradient">Statuts listes rouges</span>
+                  </h3>
+                  <div className="h-80 p-4">
+                    <RedListBar codeInsee={selectedCommune} />
+                  </div>
+                </div>
+
+                {/* Statuts réglementaires */}
+                <div className="modern-card shadow-xl fade-in-up">
+                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                    <span className="text-lg">⚖️</span>
+                    <span className="text-gradient">Statuts réglementaires</span>
+                  </h3>
+                  <div className="h-80 p-4">
+                    <StatusTreemap codeInsee={selectedCommune} />
+                  </div>
+                </div>
+
+                {/* Liste des espèces */}
+                <div className="modern-card shadow-xl fade-in-up">
+                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                    <span className="text-lg">📋</span>
+                    <span className="text-gradient">Liste des espèces</span>
+                  </h3>
+                  <div className="p-4">
+                    <SpeciesTable codeInsee={selectedCommune} />
                   </div>
                 </div>
               </>
             ) : (
-              /* Placeholder pour sélection de commune */
-              <div className="modern-card shadow-xl fade-in-up">
-                <div className="p-8 text-center">
+              /* Sélecteur de commune */
+              <div className="modern-card shadow-xl fade-in-up relative">
+                <button 
+                  onClick={() => setShowCommuneSelector(!showCommuneSelector)}
+                  className="w-full p-8 text-center hover:bg-white/10 transition-colors rounded-lg"
+                  title="Choisir la commune à comparer"
+                >
                   <div className="text-gray-400 text-6xl mb-4">🏘️</div>
                   <h3 className="text-xl font-semibold text-gray-600 mb-2">
                     Sélectionnez une commune
@@ -439,7 +430,28 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
                   <p className="text-gray-500">
                     Choisissez une commune à comparer avec {communeBase.properties.nom}
                   </p>
-                </div>
+                </button>
+                
+                {showCommuneSelector && (
+                  <div className="absolute top-full left-0 mt-2 w-full max-h-60 overflow-y-auto bg-white/90 backdrop-blur-md rounded-lg shadow-xl border border-white/20 z-50">
+                    {communes?.features
+                      .filter(f => f.properties.insee !== codeInseeBase)
+                      .sort((a, b) => a.properties.nom.localeCompare(b.properties.nom))
+                      .map((commune) => (
+                        <button
+                          key={commune.properties.insee}
+                          onClick={() => {
+                            setSelectedCommune(commune.properties.insee)
+                            setShowCommuneSelector(false)
+                          }}
+                          className="w-full p-3 text-left hover:bg-white/20 transition-colors first:rounded-t-lg last:rounded-b-lg"
+                        >
+                          <div className="text-gray-700 font-medium">{commune.properties.nom}</div>
+                          <div className="text-gray-500 text-sm">Code INSEE: {commune.properties.insee}</div>
+                        </button>
+                      ))}
+                  </div>
+                )}
               </div>
             )}
           </div>
