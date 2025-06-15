@@ -398,6 +398,14 @@
   .bg-gradient-secondary {
     background: linear-gradient(135deg, var(--color-secondary), var(--color-accent));
   }
+
+  /* Force l'utilisation de toute la largeur disponible */
+  .full-width-layout {
+    width: 100% !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
 }
 
 /* Animations keyframes */

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { ResponsiveCirclePacking } from '@nivo/circle-packing'
 import { useAppStore } from '../../store/useAppStore'
 import { useChartInteractions } from '../../hooks/useChartInteractions'
+import { generateGreenColorRamp, GREEN_PALETTE } from '../../utils/colors'
 
 interface GroupBubbleProps {
   codeInsee: string
@@ -19,23 +20,6 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
   const { communeData, speciesData, filters } = useAppStore()
   const { handleChartClick, handleChartHover, isFiltered, isHovered } = useChartInteractions()
   const [data, setData] = useState<BubbleData | null>(null)
-
-  // Générer une rampe de couleurs cohérente du vert au marron
-  const generateColorRamp = (count: number): string[] => {
-    const colors: string[] = []
-    const startColor = { r: 45, g: 80, b: 22 }    // #2d5016 (vert foncé)
-    const endColor = { r: 205, g: 133, b: 63 }    // #cd853f (marron doré)
-    
-    for (let i = 0; i < count; i++) {
-      const ratio = count === 1 ? 0 : i / (count - 1)
-      const r = Math.round(startColor.r + (endColor.r - startColor.r) * ratio)
-      const g = Math.round(startColor.g + (endColor.g - startColor.g) * ratio)
-      const b = Math.round(startColor.b + (endColor.b - startColor.b) * ratio)
-      colors.push(`rgb(${r}, ${g}, ${b})`)
-    }
-    
-    return colors
-  }
 
   // Déterminer quel niveau taxonomique afficher selon les filtres actifs
   const getTaxonomicLevel = () => {
@@ -88,7 +72,13 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
             
             // Appliquer les filtres du store global
             if (filters.selectedRedListCategory) {
-              if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
+              if (filters.selectedRedListCategory === 'Non évalué') {
+                // Pour "Non évalué", inclure seulement les espèces sans statut de liste rouge
+                if (species.listeRouge) return
+              } else {
+                // Pour les autres statuts, filtrer par le statut spécifique
+                if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
+              }
             }
             
             if (filters.selectedGroupe && species.groupe !== filters.selectedGroupe) return
@@ -139,7 +129,13 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
           
           // Appliquer les filtres du store global
           if (filters.selectedRedListCategory) {
+            if (filters.selectedRedListCategory === 'Non évalué') {
+              // Pour "Non évalué", inclure seulement les espèces sans statut de liste rouge
+              if (species.listeRouge) return
+            } else {
+              // Pour les autres statuts, filtrer par le statut spécifique
               if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
+            }
           }
           
             if (filters.selectedGroupe && species.groupe !== filters.selectedGroupe) return
@@ -225,29 +221,15 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
         id="id"
         value="value"
         colors={(node) => {
-          // Bulle parente avec dégradé, bulles enfants avec rampe de couleurs
+          // Utiliser la nouvelle palette de couleurs verts
           if (node.depth === 0) {
-            return 'url(#gradient-green-brown)'
+            return GREEN_PALETTE.secondary  // Vert mousse pour le root
           } else {
-            const colors = generateColorRamp(data?.children?.length || 0)
+            const colors = generateGreenColorRamp(data?.children?.length || 0)
             const nodeIndex = data?.children?.findIndex(child => child.id === node.id) || 0
             return colors[nodeIndex] || colors[0]
           }
         }}
-        defs={[
-          {
-            id: 'gradient-green-brown',
-            type: 'linearGradient',
-            x1: 0,
-            y1: 0,
-            x2: 1,
-            y2: 1,
-            colors: [
-              { offset: 0, color: '#2d5016' },    // Vert foncé
-              { offset: 100, color: '#cd853f' }   // Marron doré
-            ]
-          }
-        ]}
         padding={1}
         enableLabels={true}
         labelsSkipRadius={8}

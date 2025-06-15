@@ -48,10 +48,8 @@ export default function RedListBar({ codeInsee }: RedListBarProps) {
             if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) return
             if (filters.selectedFamille && species.famille !== filters.selectedFamille) return
             
-            if (filters.selectedRedListCategory) {
-              const speciesStatus = species.listeRouge?.['Label Statut'] || 'Non évalué'
-              if (speciesStatus !== filters.selectedRedListCategory) return
-            }
+            // Ne pas appliquer le filtre selectedRedListCategory ici car on veut voir tous les statuts
+            // Le filtre sera appliqué visuellement par la mise en évidence
             
             if (filters.selectedStatutReglementaire) {
               const hasStatus = species.statuts.some(statut => 
@@ -107,10 +105,8 @@ export default function RedListBar({ codeInsee }: RedListBarProps) {
             if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) return
             if (filters.selectedFamille && species.famille !== filters.selectedFamille) return
             
-            if (filters.selectedRedListCategory) {
-              const speciesStatus = species.listeRouge?.['Label Statut'] || 'Non évalué'
-              if (speciesStatus !== filters.selectedRedListCategory) return
-            }
+            // Ne pas appliquer le filtre selectedRedListCategory ici car on veut voir tous les statuts
+            // Le filtre sera appliqué visuellement par la mise en évidence
           
           if (filters.selectedStatutReglementaire) {
             const hasStatus = species.statuts.some(statut => 
@@ -134,6 +130,7 @@ export default function RedListBar({ codeInsee }: RedListBarProps) {
 
       // Convertir en format pour Nivo Bar
       const barData: BarData[] = Array.from(statusStats.entries()).map(([statut, count]) => ({
+        id: statut,
         category: statut,
         value: count
       }))
@@ -166,7 +163,19 @@ export default function RedListBar({ codeInsee }: RedListBarProps) {
       padding={0.3}
       valueScale={{ type: 'linear' }}
       indexScale={{ type: 'band', round: true }}
-      colors={generateGreenColorRamp(data.length)}
+      colors={(bar) => {
+        // Si un filtre de liste rouge est actif, mettre en évidence la barre correspondante
+        if (filters.selectedRedListCategory) {
+          if (bar.indexValue === filters.selectedRedListCategory) {
+            return GREEN_PALETTE.primary // Couleur principale pour la barre filtrée
+          } else {
+            return GREEN_PALETTE.light + '40' // Couleur atténuée pour les autres barres
+          }
+        }
+        // Sinon, utiliser la palette normale
+        const colors = generateGreenColorRamp(data.length)
+        return colors[bar.index % colors.length]
+      }}
       borderColor={{
         from: 'color',
         modifiers: [
@@ -197,15 +206,15 @@ export default function RedListBar({ codeInsee }: RedListBarProps) {
       labelTextColor="#ffffff"
       animate={true}
       motionConfig="gentle"
-      tooltip={({ id, value, color }) => (
+      tooltip={({ indexValue, value, color }) => (
         <div className="bg-white/90 backdrop-blur-md rounded-lg p-4 text-sm shadow-xl border border-green-800/30">
           <div className="font-semibold text-green-800 flex items-center gap-2 mb-2">
             <div 
               className="w-3 h-3 rounded-full" 
               style={{ backgroundColor: color }}
             />
-            <span>{id}</span>
-            {isFiltered('bar', 'status', id) && (
+            <span>{indexValue}</span>
+            {isFiltered('bar', 'status', indexValue) && (
               <span className="bg-green-700/20 text-green-700 px-2 py-1 rounded-full text-xs">Filtré</span>
             )}
           </div>
@@ -221,7 +230,7 @@ export default function RedListBar({ codeInsee }: RedListBarProps) {
         handleChartClick({
           chartType: 'bar',
           dataKey: 'status',
-          value: data.id as string,
+          value: data.indexValue as string,
           action: 'click'
         })
       }}
@@ -229,7 +238,7 @@ export default function RedListBar({ codeInsee }: RedListBarProps) {
         handleChartHover({
           chartType: 'bar',
           dataKey: 'status',
-          value: data.id as string,
+          value: data.indexValue as string,
           action: 'hover'
         })
       }}

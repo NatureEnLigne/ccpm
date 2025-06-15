@@ -65,7 +65,15 @@ export default function SpeciesTable({ codeInsee }: SpeciesTableProps) {
         if (selectedRegne && species.regne !== selectedRegne) return
         if (filters?.selectedGroupe && species.groupe !== filters.selectedGroupe) return
         if (filters?.selectedGroup2 && species.group2 !== filters.selectedGroup2) return
-        if (filters?.selectedRedListCategory && species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
+        if (filters?.selectedRedListCategory) {
+          if (filters.selectedRedListCategory === 'Non évalué') {
+            // Pour "Non évalué", inclure seulement les espèces sans statut de liste rouge
+            if (species.listeRouge) return
+          } else {
+            // Pour les autres statuts, filtrer par le statut spécifique
+            if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
+          }
+        }
         if (filters?.selectedOrdre && species.ordre !== filters.selectedOrdre) return
         if (filters?.selectedFamille && species.famille !== filters.selectedFamille) return
         
@@ -118,7 +126,15 @@ export default function SpeciesTable({ codeInsee }: SpeciesTableProps) {
       // Appliquer les filtres du store global
       if (filters?.selectedGroupe && species.groupe !== filters.selectedGroupe) return
       if (filters?.selectedGroup2 && species.group2 !== filters.selectedGroup2) return
-      if (filters?.selectedRedListCategory && species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
+      if (filters?.selectedRedListCategory) {
+        if (filters.selectedRedListCategory === 'Non évalué') {
+          // Pour "Non évalué", inclure seulement les espèces sans statut de liste rouge
+          if (species.listeRouge) return
+        } else {
+          // Pour les autres statuts, filtrer par le statut spécifique
+          if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
+        }
+      }
       if (filters?.selectedOrdre && species.ordre !== filters.selectedOrdre) return
       if (filters?.selectedFamille && species.famille !== filters.selectedFamille) return
       

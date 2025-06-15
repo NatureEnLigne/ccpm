@@ -143,7 +143,15 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
         if (selectedRegne && species.regne !== selectedRegne) return
         if (filters?.selectedGroupe && species.groupe !== filters.selectedGroupe) return
         if (filters?.selectedGroup2 && species.group2 !== filters.selectedGroup2) return
-        if (filters?.selectedRedListCategory && species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
+        if (filters?.selectedRedListCategory) {
+          if (filters.selectedRedListCategory === 'Non évalué') {
+            // Pour "Non évalué", inclure seulement les espèces sans statut de liste rouge
+            if (species.listeRouge) return
+          } else {
+            // Pour les autres statuts, filtrer par le statut spécifique
+            if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
+          }
+        }
         if (filters?.selectedOrdre && species.ordre !== filters.selectedOrdre) return
         if (filters?.selectedFamille && species.famille !== filters.selectedFamille) return
         
@@ -173,7 +181,15 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
       // Appliquer les filtres globaux sur les espèces
       if (filters?.selectedGroupe && species.groupe !== filters.selectedGroupe) return
       if (filters?.selectedGroup2 && species.group2 !== filters.selectedGroup2) return
-      if (filters?.selectedRedListCategory && species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
+      if (filters?.selectedRedListCategory) {
+        if (filters.selectedRedListCategory === 'Non évalué') {
+          // Pour "Non évalué", inclure seulement les espèces sans statut de liste rouge
+          if (species.listeRouge) return
+        } else {
+          // Pour les autres statuts, filtrer par le statut spécifique
+          if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
+        }
+      }
       if (filters?.selectedOrdre && species.ordre !== filters.selectedOrdre) return
       if (filters?.selectedFamille && species.famille !== filters.selectedFamille) return
       
@@ -253,13 +269,13 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen w-full full-width-layout">
       
       {/* Contenu principal */}
-      <main className="container mx-auto px-6 py-8">
+      <main className="w-full full-width-layout px-6 py-8">
         
         {/* Header dans un cadre moderne - même style que CCPM Cartographie */}
-        <header className="modern-card shadow-xl mb-8 fade-in-up">
+        <header className="modern-card shadow-xl mb-8 fade-in-up w-full">
           <div className="p-6">
           <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4 fade-in-scale">
@@ -314,7 +330,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
         {/* Barre de filtres */}
         <FilterBar />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 overflow-hover-safe">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 overflow-hover-safe w-full">
           
           {/* Groupes taxonomiques - Bubble chart */}
           <div className="container-hover-safe">
@@ -371,7 +387,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
         </div>
         
         {/* Tableau des espèces */}
-        <div className="mt-8">
+        <div className="mt-8 w-full">
           <SpeciesTable codeInsee={codeInsee} />
         </div>
       </main>

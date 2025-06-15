@@ -47,7 +47,13 @@ export default function StatusTreemap({ codeInsee }: StatusTreemapProps) {
             if (filters.selectedGroupe && species.groupe !== filters.selectedGroupe) return
             if (filters.selectedGroup2 && species.group2 !== filters.selectedGroup2) return
             if (filters.selectedRedListCategory) {
-              if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
+              if (filters.selectedRedListCategory === 'Non évalué') {
+                // Pour "Non évalué", inclure seulement les espèces sans statut de liste rouge
+                if (species.listeRouge) return
+              } else {
+                // Pour les autres statuts, filtrer par le statut spécifique
+                if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
+              }
             }
             if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) return
             if (filters.selectedFamille && species.famille !== filters.selectedFamille) return
@@ -112,8 +118,14 @@ export default function StatusTreemap({ codeInsee }: StatusTreemapProps) {
             if (filters.selectedGroupe && species.groupe !== filters.selectedGroupe) return
             if (filters.selectedGroup2 && species.group2 !== filters.selectedGroup2) return
           if (filters.selectedRedListCategory) {
+            if (filters.selectedRedListCategory === 'Non évalué') {
+              // Pour "Non évalué", inclure seulement les espèces sans statut de liste rouge
+              if (species.listeRouge) return
+            } else {
+              // Pour les autres statuts, filtrer par le statut spécifique
               if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
             }
+          }
             if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) return
             if (filters.selectedFamille && species.famille !== filters.selectedFamille) return
           
@@ -166,32 +178,43 @@ export default function StatusTreemap({ codeInsee }: StatusTreemapProps) {
     }
   }, [communeData, speciesData, codeInsee, filters])
 
-  // Générer un mélange harmonieux de couleurs vert-marron pour le treemap
-  const generateColorMix = (count: number): string[] => {
+  // Générer des couleurs basées sur la gamme de la rampe des titres (brun doré vers vert forêt)
+  const generateTitleGradientColors = (count: number): string[] => {
     const colors: string[] = []
-    const baseColors = [
-      { r: 45, g: 80, b: 22 },     // #2d5016 (vert foncé)
-      { r: 107, g: 142, b: 35 },   // #6b8e23 (olive)
-      { r: 139, g: 69, b: 19 },    // #8b4513 (brun selle)
-      { r: 205, g: 133, b: 63 },   // #cd853f (marron doré)
-      { r: 160, g: 82, b: 45 },    // #a0522d (sienna)
-      { r: 34, g: 139, b: 34 },    // #228b22 (vert forêt)
+    
+    // Couleurs de base de la rampe des titres
+    const startColor = { r: 205, g: 133, b: 63 }  // --color-accent: #cd853f (Brun doré)
+    const endColor = { r: 45, g: 80, b: 22 }      // --color-primary: #2d5016 (Vert forêt foncé)
+    
+    // Couleurs intermédiaires pour enrichir la palette
+    const intermediateColors = [
+      { r: 139, g: 69, b: 19 },    // Brun selle
+      { r: 160, g: 82, b: 45 },    // Sienna
+      { r: 107, g: 142, b: 35 },   // Vert olive
+      { r: 74, g: 123, b: 89 },    // Vert mousse
+      { r: 34, g: 139, b: 34 },    // Vert forêt
     ]
     
-    // Mélanger les couleurs de base de manière harmonieuse
+    // Créer une palette étendue
+    const allColors = [startColor, ...intermediateColors, endColor]
+    
     for (let i = 0; i < count; i++) {
-      const baseIndex = i % baseColors.length
-      const nextIndex = (i + 1) % baseColors.length
-      const ratio = (i / count) * 0.3 // Variation subtile
-      
-      const baseColor = baseColors[baseIndex]
-      const nextColor = baseColors[nextIndex]
-      
-      const r = Math.round(baseColor.r + (nextColor.r - baseColor.r) * ratio)
-      const g = Math.round(baseColor.g + (nextColor.g - baseColor.g) * ratio)
-      const b = Math.round(baseColor.b + (nextColor.b - baseColor.b) * ratio)
-      
-      colors.push(`rgb(${r}, ${g}, ${b})`)
+      if (i < allColors.length) {
+        // Utiliser les couleurs définies
+        const color = allColors[i]
+        colors.push(`rgb(${color.r}, ${color.g}, ${color.b})`)
+      } else {
+        // Interpoler entre les couleurs existantes
+        const ratio = (i - allColors.length) / Math.max(1, count - allColors.length)
+        const fromColor = allColors[i % allColors.length]
+        const toColor = allColors[(i + 1) % allColors.length]
+        
+        const r = Math.round(fromColor.r + (toColor.r - fromColor.r) * ratio)
+        const g = Math.round(fromColor.g + (toColor.g - fromColor.g) * ratio)
+        const b = Math.round(fromColor.b + (toColor.b - fromColor.b) * ratio)
+        
+        colors.push(`rgb(${r}, ${g}, ${b})`)
+      }
     }
     
     return colors
@@ -215,12 +238,7 @@ export default function StatusTreemap({ codeInsee }: StatusTreemapProps) {
       value="value"
       margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
       labelSkipSize={12}
-      labelTextColor={{
-        from: 'color',
-        modifiers: [
-          ['darker', 1.2]
-        ]
-      }}
+      labelTextColor="white"
       parentLabelPosition="left"
       parentLabelSize={0}
       parentLabelTextColor="transparent"
@@ -230,7 +248,7 @@ export default function StatusTreemap({ codeInsee }: StatusTreemapProps) {
           ['darker', 0.1]
         ]
       }}
-      colors={generateColorMix(data.children.length)}
+      colors={generateTitleGradientColors(data.children.length)}
       animate={true}
       motionConfig="gentle"
       tooltip={({ node }) => {

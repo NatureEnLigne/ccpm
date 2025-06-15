@@ -153,12 +153,25 @@ export const useAppStore = create<AppState>((set, get) => ({
   applyFilterEvent: (event) => {
     const { filterKey, value, source } = event
     set((state) => {
-      const newFilters = { ...state.filters, [filterKey]: value }
+      // Si la valeur est la même que celle déjà active, désactiver le filtre (toggle)
+      const currentValue = state.filters[filterKey]
+      const newValue = currentValue === value ? null : value
+      
+      const newFilters = { ...state.filters, [filterKey]: newValue }
       
       // Mettre à jour la liste des filtres actifs
       const activeFilters = Object.entries(newFilters)
         .filter(([key, val]) => val !== null && key !== 'activeFilters')
         .map(([key]) => key)
+      
+      console.log(`🔄 Filtre appliqué par ${source}:`, { 
+        filterKey, 
+        oldValue: currentValue, 
+        newValue, 
+        valueType: typeof value,
+        event,
+        newFilters 
+      })
       
       return {
         filters: {
@@ -167,8 +180,6 @@ export const useAppStore = create<AppState>((set, get) => ({
         }
       }
     })
-    
-    console.log(`🔄 Filtre appliqué par ${source}:`, event)
   },
   
   setHoverState: (state) => set({ hoverState: state }),
@@ -198,6 +209,18 @@ export const useFilteredSpeciesData = () => {
   
   if (filters.selectedGroupe) {
     filtered = filtered.filter(species => species.groupe === filters.selectedGroupe)
+  }
+  
+  if (filters.selectedRedListCategory) {
+    if (filters.selectedRedListCategory === 'Non évalué') {
+      // Pour "Non évalué", inclure toutes les espèces qui n'ont PAS de statut de liste rouge
+      filtered = filtered.filter(species => !species.listeRouge)
+    } else {
+      // Pour les autres statuts, filtrer par le statut spécifique
+      filtered = filtered.filter(species => 
+        species.listeRouge?.['Label Statut'] === filters.selectedRedListCategory
+      )
+    }
   }
   
   if (filters.selectedStatut) {

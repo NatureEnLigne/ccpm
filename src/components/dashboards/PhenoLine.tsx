@@ -53,8 +53,12 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
           }
           
           if (filters.selectedRedListCategory) {
-            if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) {
-              return
+            if (filters.selectedRedListCategory === 'Non évalué') {
+              // Pour "Non évalué", inclure seulement les espèces sans statut de liste rouge
+              if (species.listeRouge) return
+            } else {
+              // Pour les autres statuts, filtrer par le statut spécifique
+              if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
             }
           }
           
@@ -146,8 +150,7 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
         legendOffset: -60,
         legendPosition: 'middle'
       }}
-      enableArea={true}
-      areaOpacity={0.15}
+      enableArea={false}
       lineWidth={3}
       pointSize={6}
       pointColor={{ theme: 'background' }}
@@ -155,36 +158,7 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
       pointBorderColor={{ from: 'serieColor' }}
       pointLabelYOffset={-12}
       useMesh={true}
-      defs={[
-        {
-          id: 'gradient-green-brown-line',
-          type: 'linearGradient',
-          x1: 0,
-          y1: 0,
-          x2: 1,
-          y2: 1,
-          colors: [
-            { offset: 0, color: '#2d5016', opacity: 0.8 },
-            { offset: 100, color: '#cd853f', opacity: 0.1 }
-          ]
-        },
-        {
-          id: 'gradient-green-brown-stroke',
-          type: 'linearGradient',
-          x1: 0,
-          y1: 0,
-          x2: 1,
-          y2: 1,
-          colors: [
-            { offset: 0, color: '#2d5016' },
-            { offset: 100, color: '#cd853f' }
-          ]
-        }
-      ]}
-      fill={[
-        { match: '*', id: 'gradient-green-brown-line' }
-      ]}
-      colors={['url(#gradient-green-brown-stroke)']}
+      colors={['#4a7c59']}  // Vert mousse uni
       animate={true}
       motionConfig="gentle"
       markers={filters.selectedMois ? [{
