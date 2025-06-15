@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "export": "next build && next export"
+    "export": "next build && next export",
+    "build:prod": "node scripts/remove-debug-logs.js && next build",
+    "security-check": "npm audit --audit-level moderate"
   },
   "dependencies": {
     "@nivo/bar": "^0.87.0",

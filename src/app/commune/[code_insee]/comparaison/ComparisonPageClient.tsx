@@ -228,12 +228,12 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
       <main className="w-full full-width-layout px-6 py-8">
         
         {/* En-tête avec bouton retour et barre de filtres */}
-        <div className="flex items-center gap-4 mb-8 fade-in-up">
-          {/* Bouton retour */}
-          <div className="modern-card shadow-xl">
+        <div className="flex items-stretch gap-4 mb-8 fade-in-up">
+          {/* Bouton retour - s'adapte exactement à la hauteur des filtres */}
+          <div className="modern-card shadow-xl p-0">
             <button 
               onClick={() => router.push(`/commune/${codeInseeBase}`)}
-              className="p-3 text-center min-w-[120px] hover:bg-white/10 transition-colors rounded-lg"
+              className="text-center min-w-[120px] hover:bg-white/10 transition-colors rounded-lg h-full w-full flex flex-col items-center justify-center p-6"
               title="Retour à la commune"
             >
               <div className="text-xl font-bold text-gradient mb-1">
@@ -245,7 +245,7 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
             </button>
           </div>
           
-          {/* Barre de filtres - même taille que le bouton retour */}
+          {/* Barre de filtres - définit la hauteur de référence */}
           <div className="flex-1">
             <FilterBar />
           </div>

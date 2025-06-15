@@ -46,7 +46,7 @@ npm run dev
 Créer un fichier `.env.local` :
 
 ```env
-NEXT_PUBLIC_MAPBOX_TOKEN=pk.eyJ1IjoibWJyb3V0aW4iLCJhIjoiY21iZzU4OHAxMjhqcTJscXUwNGp3ZXVwdCJ9.XHkFEC_OBMp7B0UqDkE8Tg
+NEXT_PUBLIC_MAPBOX_TOKEN=votre_clé_mapbox_ici
 ```
 
 ## 📁 Structure du projet

@@ -102,7 +102,7 @@
 ---
 
 ## 📝 Notes techniques
-- **Clé API Mapbox** : pk.eyJ1IjoibWJyb3V0aW4iLCJhIjoiY21iZzU4OHAxMjhqcTJscXUwNGp3ZXVwdCJ9.XHkFEC_OBMp7B0UqDkE8Tg
+- **Clé API Mapbox** : Configurée dans .env.local (non versionnée)
 - **Extension utilisée** : Live Server
 - **Framework** : Next.js 14 + TypeScript
 - **Priorité MVP** : Carte + Sidebar + Fiche commune + 2 graphiques minimum
