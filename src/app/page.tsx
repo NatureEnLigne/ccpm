@@ -41,48 +41,45 @@ export default function HomePage() {
       <div className="flex-1 flex min-h-0 p-4 gap-4 overflow-hover-safe">
         {/* Zone carte avec header et panneau de stats - maintenant à gauche */}
         <div className="flex-1 flex flex-col min-h-0 fade-in-up gap-4" style={{ animationDelay: '0.1s' }}>
-          {/* Header moderne - même largeur que la carte avec icônes plus lisibles */}
+          {/* Header moderne avec style cohérent */}
           <div className="container-hover-safe">
-            <header className="modern-card shadow-xl fade-in-up">
-              <div className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="fade-in-scale">
-                    <h1 className="text-3xl font-bold text-gradient mb-2">
-                      Observations naturalistes : Ponthieu-Marquenterre
-                    </h1>
-                    <p className="text-gray-600 text-lg font-medium">
-                      Données OpenOBS (Muséum national d'Histoire naturelle)
-                    </p>
+            <div className="flex items-center gap-4 fade-in-up">
+              {/* Titre principal */}
+              <div className="modern-card shadow-xl flex-1">
+                <div className="p-3 text-left">
+                  <h1 className="text-2xl font-bold mb-1">
+                    <span className="text-gradient">Observations naturalistes : Ponthieu-Marquenterre</span>
+                  </h1>
+                  <p className="species-count-title">
+                    Données OpenOBS (Muséum national d'Histoire naturelle)
+                  </p>
+                </div>
+              </div>
+              
+              {/* Observations */}
+              <div className="modern-card shadow-xl">
+                <div className="p-3 text-center min-w-[120px]">
+                  <div className="text-xl font-bold text-gradient mb-1">
+                    {formatNumberFull(globalStats.totalObs)}
                   </div>
-                  
-                  {/* Stats rapides modernes - même style pour les deux badges */}
-                  <div className="flex space-x-8 fade-in-scale">
-                    <div className="text-center">
-                      <div className="relative">
-                        <div className="text-2xl font-bold text-gradient mb-1">
-                          {formatNumberFull(globalStats.totalObs)}
-                        </div>
-                        <div className="badge-modern flex items-center gap-2">
-                          <span className="text-base">👁️</span>
-                          Observations
-                        </div>
-                      </div>
-                    </div>
-                    <div className="text-center">
-                      <div className="relative">
-                        <div className="text-2xl font-bold text-gradient mb-1">
-                          {formatNumberFull(globalStats.totalEsp)}
-                        </div>
-                        <div className="badge-modern flex items-center gap-2">
-                          <span className="text-base">🦋</span>
-                          Espèces
-                        </div>
-                      </div>
-                    </div>
+                  <div className="text-gray-600 font-medium text-sm">
+                    Observations
                   </div>
                 </div>
               </div>
-            </header>
+              
+              {/* Espèces */}
+              <div className="modern-card shadow-xl">
+                <div className="p-3 text-center min-w-[120px]">
+                  <div className="text-xl font-bold text-gradient mb-1">
+                    {formatNumberFull(globalStats.totalEsp)}
+                  </div>
+                  <div className="text-gray-600 font-medium text-sm">
+                    Espèces
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Zone carte avec icône plus lisible */}
