@@ -274,50 +274,47 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
       {/* Contenu principal */}
       <main className="w-full full-width-layout px-6 py-8">
         
-        {/* Header dans un cadre moderne - même style que CCPM Cartographie */}
-        <header className="modern-card shadow-xl mb-8 fade-in-up w-full">
-          <div className="p-6">
-          <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4 fade-in-scale">
-              <button 
-                onClick={() => router.push('/')}
-                  className="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition-colors text-lg"
-                title="Retour à l'accueil"
-              >
-                ← 
-              </button>
-              <div>
-                  <h1 className="text-3xl font-bold mb-2">
-                    <span className="text-gradient">{currentCommune.nom || `Commune ${codeInsee}`}</span>
-                </h1>
-                  <p className="species-count-title">
-                    Code INSEE: {codeInsee}
-                  </p>
-              </div>
+        {/* Header avec bouton retour et statistiques sur une seule ligne */}
+        <div className="flex items-center gap-4 mb-8 fade-in-up">
+          <button 
+            onClick={() => router.push('/')}
+            className="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition-colors text-lg"
+            title="Retour à l'accueil"
+          >
+            ← 
+          </button>
+          
+          {/* Nom de la commune et code INSEE */}
+          <div className="modern-card shadow-xl flex-1">
+            <div className="p-3 text-left">
+              <h1 className="text-2xl font-bold mb-1">
+                <span className="text-gradient">{currentCommune.nom || `Commune ${codeInsee}`}</span>
+              </h1>
+              <p className="species-count-title">
+                Code INSEE: {codeInsee}
+              </p>
             </div>
           </div>
-        </div>
-      </header>
-
-        {/* Statistiques dans des cadres séparés */}
-        <div className="flex gap-6 mb-8 fade-in-scale">
-          <div className="modern-card shadow-xl flex-1">
-            <div className="p-4 text-center">
-              <div className="text-2xl font-bold text-gradient mb-1">
+          
+          {/* Observations */}
+          <div className="modern-card shadow-xl">
+            <div className="p-3 text-center min-w-[120px]">
+              <div className="text-xl font-bold text-gradient mb-1">
                 {formatNumberFull(filteredStats.totalObs)}
               </div>
-              <div className="text-gray-600 font-medium">
+              <div className="text-gray-600 font-medium text-sm">
                 Observations
               </div>
             </div>
           </div>
           
-          <div className="modern-card shadow-xl flex-1">
-            <div className="p-4 text-center">
-              <div className="text-2xl font-bold text-gradient mb-1">
+          {/* Espèces */}
+          <div className="modern-card shadow-xl">
+            <div className="p-3 text-center min-w-[120px]">
+              <div className="text-xl font-bold text-gradient mb-1">
                 {formatNumberFull(filteredStats.totalEsp)}
               </div>
-              <div className="text-gray-600 font-medium">
+              <div className="text-gray-600 font-medium text-sm">
                 Espèces
               </div>
             </div>
