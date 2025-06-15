@@ -28,7 +28,189 @@ interface CommunePageClientProps {
 
 // Fonction pour formater les nombres sans abréviation (3300 au lieu de 3.3k)
 function formatNumberFull(num: number): string {
-  return num.toLocaleString('fr-FR')
+  return new Intl.NumberFormat('fr-FR').format(num)
+}
+
+// Fonction pour générer et télécharger le CSV des espèces filtrées
+function generateSpeciesCSV(codeInsee: string, speciesData: any, currentCommune: any, filters: any): void {
+  if (!speciesData || !currentCommune) return
+
+  const rows: any[] = []
+  const selectedRegne = filters.selectedRegne
+
+  // Si un filtre par mois est actif, utiliser les données phénologiques
+  if (filters?.selectedMois) {
+    // Grouper les données phénologiques par CD REF pour ce mois
+    const monthSpeciesData = new Map<string, number>()
+    
+    currentCommune.phenologie.forEach((pheno: any) => {
+      if (pheno['Mois Obs'] !== filters.selectedMois) return
+      
+      const cdRef = pheno['CD REF (pheno!mois!insee)']
+      const species = speciesData.get(cdRef)
+      if (!species) return
+
+      // Appliquer tous les filtres sur l'espèce
+      if (selectedRegne && species.regne !== selectedRegne) return
+      if (filters?.selectedGroupe && species.groupe !== filters.selectedGroupe) return
+      if (filters?.selectedGroup2 && species.group2 !== filters.selectedGroup2) return
+      if (filters?.selectedRedListCategory) {
+        if (filters.selectedRedListCategory === 'Non évalué') {
+          if (species.listeRouge) return
+        } else {
+          if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
+        }
+      }
+      if (filters?.selectedOrdre && species.ordre !== filters.selectedOrdre) return
+      if (filters?.selectedFamille && species.famille !== filters.selectedFamille) return
+      
+      if (filters?.selectedStatutReglementaire) {
+        const hasStatus = species.statuts.some((statut: any) => 
+          statut['LABEL STATUT (statuts)'] === filters.selectedStatutReglementaire
+        )
+        if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') return
+        if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) return
+      }
+
+      // Ajouter les observations de ce mois pour cette espèce
+      const current = monthSpeciesData.get(cdRef) || 0
+      monthSpeciesData.set(cdRef, current + pheno['Nb Donnees'])
+    })
+
+    // Créer les lignes du CSV avec les données du mois filtré
+    monthSpeciesData.forEach((totalObs, cdRef) => {
+      const species = speciesData.get(cdRef)
+      if (!species || totalObs === 0) return
+
+      rows.push({
+        cdRef,
+        nomComplet: species.nomComplet || species.nomValide || '',
+        nomVern: species.nomVern || '',
+        groupe: species.groupe || '',
+        group2: species.group2 || '',
+        regne: species.regne || '',
+        ordre: species.ordre || '',
+        famille: species.famille || '',
+        nombreObservations: totalObs,
+        statutListeRouge: species.listeRouge?.['Label Statut'] || 'Non évalué',
+        statutsReglementaires: species.statuts.map((s: any) => s['LABEL STATUT (statuts)']).join('; ') || 'Non réglementé',
+        urlInpn: species.urlInpn || `https://inpn.mnhn.fr/espece/cd_nom/${cdRef}`
+      })
+    })
+  } else {
+    // Logique normale sans filtre par mois
+    const communeCdRefs = new Set(currentCommune.observations.map((obs: any) => obs['Cd Ref']))
+    
+    communeCdRefs.forEach(cdRef => {
+      const species = speciesData.get(cdRef)
+      if (!species) return
+
+      // Appliquer tous les filtres
+      if (selectedRegne && species.regne !== selectedRegne) return
+      if (filters?.selectedGroupe && species.groupe !== filters.selectedGroupe) return
+      if (filters?.selectedGroup2 && species.group2 !== filters.selectedGroup2) return
+      if (filters?.selectedRedListCategory) {
+        if (filters.selectedRedListCategory === 'Non évalué') {
+          if (species.listeRouge) return
+        } else {
+          if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
+        }
+      }
+      if (filters?.selectedOrdre && species.ordre !== filters.selectedOrdre) return
+      if (filters?.selectedFamille && species.famille !== filters.selectedFamille) return
+      
+      if (filters?.selectedStatutReglementaire) {
+        const hasStatus = species.statuts.some((statut: any) => 
+          statut['LABEL STATUT (statuts)'] === filters.selectedStatutReglementaire
+        )
+        if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') return
+        if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) return
+      }
+
+      // Calculer le nombre total d'observations pour cette espèce dans cette commune
+      let totalObs = 0
+      
+      currentCommune.observations.forEach((obs: any) => {
+        if (obs['Cd Ref'] !== cdRef) return
+        
+        // Appliquer les filtres d'années
+        if (filters?.anneeDebut && obs['An Obs'] < filters.anneeDebut) return
+        if (filters?.anneeFin && obs['An Obs'] > filters.anneeFin) return
+        
+        totalObs += obs['Nb Obs']
+      })
+
+      if (totalObs > 0) {
+        rows.push({
+          cdRef,
+          nomComplet: species.nomComplet || species.nomValide || '',
+          nomVern: species.nomVern || '',
+          groupe: species.groupe || '',
+          group2: species.group2 || '',
+          regne: species.regne || '',
+          ordre: species.ordre || '',
+          famille: species.famille || '',
+          nombreObservations: totalObs,
+          statutListeRouge: species.listeRouge?.['Label Statut'] || 'Non évalué',
+          statutsReglementaires: species.statuts.map((s: any) => s['LABEL STATUT (statuts)']).join('; ') || 'Non réglementé',
+          urlInpn: species.urlInpn || `https://inpn.mnhn.fr/espece/cd_nom/${cdRef}`
+        })
+      }
+    })
+  }
+
+  // Trier par nombre d'observations décroissant
+  rows.sort((a, b) => b.nombreObservations - a.nombreObservations)
+
+  // Générer le CSV
+  const headers = [
+    'CD_REF',
+    'Nom_scientifique',
+    'Nom_vernaculaire', 
+    'Groupe_1',
+    'Groupe_2',
+    'Regne',
+    'Ordre',
+    'Famille',
+    'Nombre_observations',
+    'Statut_liste_rouge',
+    'Statuts_reglementaires',
+    'URL_INPN'
+  ]
+
+  const csvContent = [
+    headers.join(','),
+    ...rows.map(row => [
+      row.cdRef,
+      `"${row.nomComplet.replace(/"/g, '""')}"`,
+      `"${row.nomVern.replace(/"/g, '""')}"`,
+      `"${row.groupe.replace(/"/g, '""')}"`,
+      `"${row.group2.replace(/"/g, '""')}"`,
+      `"${row.regne.replace(/"/g, '""')}"`,
+      `"${row.ordre.replace(/"/g, '""')}"`,
+      `"${row.famille.replace(/"/g, '""')}"`,
+      row.nombreObservations,
+      `"${row.statutListeRouge.replace(/"/g, '""')}"`,
+      `"${row.statutsReglementaires.replace(/"/g, '""')}"`,
+      row.urlInpn
+    ].join(','))
+  ].join('\n')
+
+  // Télécharger le fichier
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+  const link = document.createElement('a')
+  const url = URL.createObjectURL(blob)
+  link.setAttribute('href', url)
+  
+  // Nom du fichier avec filtres appliqués
+  const filterSuffix = filters.selectedRegne ? `_${filters.selectedRegne}` : ''
+  const monthSuffix = filters.selectedMois ? `_${filters.selectedMois}` : ''
+  link.setAttribute('download', `especes_commune_${codeInsee}${filterSuffix}${monthSuffix}.csv`)
+  
+  link.style.visibility = 'hidden'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
 }
 
 export default function CommunePageClient({ codeInsee }: CommunePageClientProps) {
@@ -276,13 +458,21 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
         
         {/* Header avec bouton retour et statistiques sur une seule ligne */}
         <div className="flex items-center gap-4 mb-8 fade-in-up">
-          <button 
-            onClick={() => router.push('/')}
-            className="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition-colors text-lg"
-            title="Retour à l'accueil"
-          >
-            ← 
-          </button>
+          {/* Bouton retour à l'accueil */}
+          <div className="modern-card shadow-xl">
+            <button 
+              onClick={() => router.push('/')}
+              className="p-3 text-center min-w-[120px] hover:bg-white/10 transition-colors rounded-lg"
+              title="Retour à l'accueil"
+            >
+              <div className="text-xl font-bold text-gradient mb-1">
+                ←
+              </div>
+              <div className="text-gray-600 font-medium text-sm">
+                Retour à l'accueil
+              </div>
+            </button>
+          </div>
           
           {/* Nom de la commune et code INSEE */}
           <div className="modern-card shadow-xl flex-1">
@@ -318,6 +508,22 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
                 Espèces
               </div>
             </div>
+          </div>
+          
+          {/* Téléchargement CSV */}
+          <div className="modern-card shadow-xl">
+            <button 
+              onClick={() => generateSpeciesCSV(codeInsee, speciesData, currentCommune, filters)}
+              className="p-3 text-center min-w-[120px] hover:bg-white/10 transition-colors rounded-lg"
+              title="Télécharger la liste des espèces en CSV"
+            >
+              <div className="text-xl font-bold text-gradient mb-1">
+                ⬇️
+              </div>
+              <div className="text-gray-600 font-medium text-sm">
+                Télécharger CSV
+              </div>
+            </button>
           </div>
         </div>
 
