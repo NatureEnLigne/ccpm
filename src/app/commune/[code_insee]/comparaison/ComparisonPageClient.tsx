@@ -161,10 +161,8 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
           if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) return
         }
         
-        // Correction du problème NaN - vérifier plusieurs noms de champs possibles
-        const obsAny = obs as any
-        const nbDonnees = obsAny['Nb Donnees'] || obsAny['nb_donnees'] || obsAny['NB_DONNEES'] || obsAny['Nb_Donnees'] || 1
-        totalObservations += Number(nbDonnees) || 0
+        // Utiliser le bon nom de champ pour les observations (cohérent avec la page commune)
+        totalObservations += obs['Nb Obs']
         uniqueSpecies.add(cdRef)
       }
     })
