@@ -144,8 +144,9 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
           if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) return
         }
         
-        // Correction du problème NaN
-        const nbDonnees = (obs as any)['Nb Donnees']
+        // Correction du problème NaN - vérifier plusieurs noms de champs possibles
+        const obsAny = obs as any
+        const nbDonnees = obsAny['Nb Donnees'] || obsAny['nb_donnees'] || obsAny['NB_DONNEES'] || obsAny['Nb_Donnees'] || 1
         totalObservations += Number(nbDonnees) || 0
         uniqueSpecies.add(cdRef)
       }
@@ -230,10 +231,8 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
           </div>
           
           {/* Barre de filtres - même taille que le bouton retour */}
-          <div className="modern-card shadow-xl flex-1">
-            <div className="p-3">
-              <FilterBar />
-            </div>
+          <div className="flex-1">
+            <FilterBar />
           </div>
         </div>
 
