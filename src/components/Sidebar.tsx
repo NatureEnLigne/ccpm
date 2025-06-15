@@ -152,120 +152,123 @@ export default function Sidebar() {
   }, [setCommuneData, setSpeciesData])
 
   return (
-    <div className="w-96 flex flex-col gap-6 overflow-visible">
-      {/* Section Communes CCPM */}
-      <div className="container-hover-safe">
-      <div className="modern-card p-6 fade-in-scale overflow-hidden">
+    <div className="w-96 h-screen flex flex-col gap-6 overflow-hidden py-6">
+      {/* Section Communes CCPM - Hauteur fixe */}
+      <div className="container-hover-safe flex-1 min-h-0">
+        <div className="modern-card fade-in-scale h-full flex flex-col">
           {/* Titre avec icône plus lisible */}
-          <h3 className="text-xl font-bold mb-6 flex items-center gap-3">
+          <h3 className="text-xl font-bold mb-6 flex items-center gap-3 flex-shrink-0">
             <span className="text-2xl">🏛️</span>
             <span className="text-gradient">Communes CCPM</span>
-        </h3>
+          </h3>
 
-        {/* Fiche commune sélectionnée */}
-        {selectedCommune && communeData?.has(selectedCommune) && (
-          <div className="mb-6 p-4 bg-gradient-primary rounded-2xl text-white shadow-lg">
-            <div className="flex items-center justify-between mb-3">
-                <h4 className="font-bold text-lg truncate pr-2 flex items-center gap-2">
-                  <span className="text-xl">🏘️</span>
-                {communeNames.get(selectedCommune) || selectedCommune}
-              </h4>
-              <button
-                onClick={() => setSelectedCommune(null)}
-                  className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 flex-shrink-0 text-lg"
-                title="Fermer"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div className="bg-white/20 rounded-lg p-3 text-center">
-                  <div className="font-bold text-xl flex items-center justify-center gap-1">
-                    <span className="text-sm">👁️</span>
-                  {formatNumber(communeData.get(selectedCommune)?.totalObs || 0)}
+          {/* Contenu scrollable */}
+          <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
+            {/* Fiche commune sélectionnée */}
+            {selectedCommune && communeData?.has(selectedCommune) && (
+              <div className="mb-6 p-4 bg-gradient-primary rounded-2xl text-white shadow-lg">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-bold text-lg truncate pr-2 flex items-center gap-2">
+                    <span className="text-xl">🏘️</span>
+                    {communeNames.get(selectedCommune) || selectedCommune}
+                  </h4>
+                  <button
+                    onClick={() => setSelectedCommune(null)}
+                    className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 flex-shrink-0 text-lg"
+                    title="Fermer"
+                  >
+                    ✕
+                  </button>
                 </div>
-                <div className="opacity-90">Observations</div>
-              </div>
-              <div className="bg-white/20 rounded-lg p-3 text-center">
-                  <div className="font-bold text-xl flex items-center justify-center gap-1">
-                    <span className="text-sm">🦋</span>
-                  {formatNumber(communeData.get(selectedCommune)?.totalEsp || 0)}
-                </div>
-                <div className="opacity-90">Espèces</div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Champ de recherche moderne */}
-        <div className="mb-6">
-          <div className="relative">
-              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg">🔍</span>
-            <input
-              type="text"
-                placeholder="Nom de la commune"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-                className="input-modern w-full pl-10 pr-4"
-            />
-            </div>
-          </div>
-
-          {/* Indicateur de chargement */}
-          {isLoading && (
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-3"></div>
-              <p className="text-gray-600 text-sm">Chargement des communes...</p>
-            </div>
-          )}
-
-        {/* Liste des communes */}
-          {!isLoading && filteredCommuneNames.length > 0 && (
-          <div className="space-y-2 max-h-80 overflow-y-auto overflow-x-hidden">
-            {filteredCommuneNames.map(([codeInsee, name]) => {
-              const commune = communeData?.get(codeInsee)
-              const isSelected = selectedCommune === codeInsee
-              
-              return (
-                <button
-                  key={codeInsee}
-                  onClick={() => setSelectedCommune(codeInsee)}
-                  className={`w-full text-left p-3 rounded-xl transition-all duration-200 overflow-hidden ${
-                    isSelected 
-                      ? 'bg-gradient-primary text-white shadow-lg' 
-                      : 'bg-white/50 hover:bg-white/70 text-gray-700'
-                  } transform hover:scale-[1.02]`}
-                >
-                    <div className="font-medium mb-1 truncate pr-2 flex items-center gap-2">
-                      <span className="text-sm">🏘️</span>
-                      {name}
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div className="bg-white/20 rounded-lg p-3 text-center">
+                    <div className="font-bold text-xl flex items-center justify-center gap-1">
+                      <span className="text-sm">👁️</span>
+                      {formatNumber(communeData.get(selectedCommune)?.totalObs || 0)}
                     </div>
-                  {commune && (
-                    <div className="text-xs opacity-80 flex items-center justify-between gap-2 min-w-0">
-                      <div className="flex items-center gap-3 min-w-0 flex-shrink">
-                          <span className="whitespace-nowrap flex items-center gap-1">
-                            <span className="text-xs">👁️</span>
-                            {formatNumber(commune.totalObs)} obs.
-                          </span>
-                          <span className="whitespace-nowrap flex items-center gap-1">
-                            <span className="text-xs">🦋</span>
-                            {formatNumber(commune.totalEsp)} esp.
-                          </span>
+                    <div className="opacity-90">Observations</div>
+                  </div>
+                  <div className="bg-white/20 rounded-lg p-3 text-center">
+                    <div className="font-bold text-xl flex items-center justify-center gap-1">
+                      <span className="text-sm">🦋</span>
+                      {formatNumber(communeData.get(selectedCommune)?.totalEsp || 0)}
+                    </div>
+                    <div className="opacity-90">Espèces</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Champ de recherche moderne */}
+            <div className="mb-6">
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg">🔍</span>
+                <input
+                  type="text"
+                  placeholder="Nom de la commune"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="input-modern w-full pl-10 pr-4"
+                />
+              </div>
+            </div>
+
+            {/* Indicateur de chargement */}
+            {isLoading && (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-3"></div>
+                <p className="text-gray-600 text-sm">Chargement des communes...</p>
+              </div>
+            )}
+
+            {/* Liste des communes */}
+            {!isLoading && filteredCommuneNames.length > 0 && (
+              <div className="space-y-2">
+                {filteredCommuneNames.map(([codeInsee, name]) => {
+                  const commune = communeData?.get(codeInsee)
+                  const isSelected = selectedCommune === codeInsee
+                  
+                  return (
+                    <button
+                      key={codeInsee}
+                      onClick={() => setSelectedCommune(codeInsee)}
+                      className={`w-full text-left p-3 rounded-xl transition-all duration-200 overflow-hidden ${
+                        isSelected 
+                          ? 'bg-gradient-primary text-white shadow-lg' 
+                          : 'bg-white/50 hover:bg-white/70 text-gray-700'
+                      } transform hover:scale-[1.02]`}
+                    >
+                      <div className="font-medium mb-1 truncate pr-2 flex items-center gap-2">
+                        <span className="text-sm">🏘️</span>
+                        {name}
                       </div>
-                      <FicheIcon isSelected={isSelected} codeInsee={codeInsee} />
-                    </div>
-                  )}
-                </button>
-              )
-            })}
+                      {commune && (
+                        <div className="text-xs opacity-80 flex items-center justify-between gap-2 min-w-0">
+                          <div className="flex items-center gap-3 min-w-0 flex-shrink">
+                            <span className="whitespace-nowrap flex items-center gap-1">
+                              <span className="text-xs">👁️</span>
+                              {formatNumber(commune.totalObs)} obs.
+                            </span>
+                            <span className="whitespace-nowrap flex items-center gap-1">
+                              <span className="text-xs">🦋</span>
+                              {formatNumber(commune.totalEsp)} esp.
+                            </span>
+                          </div>
+                          <FicheIcon isSelected={isSelected} codeInsee={codeInsee} />
+                        </div>
+                      )}
+                    </button>
+                  )
+                })}
+              </div>
+            )}
           </div>
-        )}
         </div>
       </div>
 
-      {/* Section Couches */}
-      <div className="container-hover-safe">
-        <div className="modern-card p-6 fade-in-scale">
+      {/* Section Couches - Hauteur fixe */}
+      <div className="container-hover-safe flex-shrink-0">
+        <div className="modern-card fade-in-scale">
           <h4 className="text-xl font-bold mb-6 flex items-center gap-3">
             <span className="text-2xl">🗺️</span>
             <span className="text-gradient">Couches</span>
