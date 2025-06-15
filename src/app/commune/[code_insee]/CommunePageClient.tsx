@@ -287,46 +287,43 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
                 ← 
               </button>
               <div>
-                  <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
-                    <span className="text-4xl">🏘️</span>
+                  <h1 className="text-3xl font-bold mb-2">
                     <span className="text-gradient">{currentCommune.nom || `Commune ${codeInsee}`}</span>
                 </h1>
-                  <p className="text-gray-600 text-lg font-medium flex items-center gap-2">
-                    <span className="text-xl">📍</span>
+                  <p className="species-count-title">
                     Code INSEE: {codeInsee}
                   </p>
-              </div>
-            </div>
-            
-              {/* Stats rapides modernes - même style que l'accueil */}
-              <div className="flex space-x-8 fade-in-scale">
-              <div className="text-center">
-                  <div className="relative">
-                    <div className="text-2xl font-bold text-gradient mb-1">
-                  {formatNumberFull(filteredStats.totalObs)}
-                </div>
-                    <div className="badge-modern flex items-center gap-2">
-                      <span className="text-base">👁️</span>
-                      Observations
-                    </div>
-                  </div>
-              </div>
-              <div className="text-center">
-                  <div className="relative">
-                    <div className="text-2xl font-bold text-gradient mb-1">
-                  {formatNumberFull(filteredStats.totalEsp)}
-                </div>
-                    <div className="badge-modern flex items-center gap-2">
-                      <span className="text-base">🦋</span>
-                      Espèces
-                    </div>
-                  </div>
               </div>
             </div>
           </div>
         </div>
       </header>
-        
+
+        {/* Statistiques dans des cadres séparés */}
+        <div className="flex gap-6 mb-8 fade-in-scale">
+          <div className="modern-card shadow-xl flex-1">
+            <div className="p-4 text-center">
+              <div className="text-2xl font-bold text-gradient mb-1">
+                {formatNumberFull(filteredStats.totalObs)}
+              </div>
+              <div className="text-gray-600 font-medium">
+                Observations
+              </div>
+            </div>
+          </div>
+          
+          <div className="modern-card shadow-xl flex-1">
+            <div className="p-4 text-center">
+              <div className="text-2xl font-bold text-gradient mb-1">
+                {formatNumberFull(filteredStats.totalEsp)}
+              </div>
+              <div className="text-gray-600 font-medium">
+                Espèces
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Barre de filtres */}
         <FilterBar />
 
