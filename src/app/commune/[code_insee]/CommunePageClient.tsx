@@ -318,12 +318,9 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
           {/* Groupes taxonomiques - Bubble chart */}
           <div className="container-hover-safe">
             <div className="bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 p-6 shadow-lg hover:bg-white/25 transition-all duration-300">
-              <h3 className="text-xl font-bold mb-4 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">🦋</span>
-                  <span className="text-gradient">Groupes taxonomiques</span>
-                </div>
-                <div className="text-sm font-medium opacity-75">Bubble</div>
+              <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                <span className="text-xl">🦋</span>
+                <span className="text-gradient">Groupes taxonomiques</span>
               </h3>
               <div className="h-80 flex-1">
                 <GroupBubble codeInsee={codeInsee} />
@@ -334,12 +331,9 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
           {/* Phénologie mensuelle - Line chart */}
           <div className="container-hover-safe">
             <div className="bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 p-6 shadow-lg hover:bg-white/25 transition-all duration-300">
-              <h3 className="text-xl font-bold mb-4 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">📅</span>
-                  <span className="text-gradient">Phénologie mensuelle</span>
-                </div>
-                <div className="text-sm font-medium opacity-75">Line</div>
+              <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                <span className="text-xl">📅</span>
+                <span className="text-gradient">Phénologie mensuelle</span>
               </h3>
               <div className="h-80 flex-1">
                 <PhenoLine codeInsee={codeInsee} />
@@ -350,12 +344,9 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
           {/* Listes rouges - Bar chart */}
           <div className="container-hover-safe">
             <div className="bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 p-6 shadow-lg hover:bg-white/25 transition-all duration-300">
-              <h3 className="text-xl font-bold mb-4 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">🚨</span>
-                  <span className="text-gradient">Statuts listes rouges</span>
-                </div>
-                <div className="text-sm font-medium opacity-75">Bar</div>
+              <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                <span className="text-xl">🚨</span>
+                <span className="text-gradient">Statuts listes rouges</span>
               </h3>
               <div className="h-80 flex-1">
                 <RedListBar codeInsee={codeInsee} />
@@ -366,12 +357,9 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
           {/* Statuts réglementaires - Treemap */}
           <div className="container-hover-safe">
             <div className="bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 p-6 shadow-lg hover:bg-white/25 transition-all duration-300">
-              <h3 className="text-xl font-bold mb-4 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">⚖️</span>
-                  <span className="text-gradient">Statuts réglementaires</span>
-                </div>
-                <div className="text-sm font-medium opacity-75">Tree</div>
+              <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                <span className="text-xl">⚖️</span>
+                <span className="text-gradient">Statuts réglementaires</span>
               </h3>
               <div className="h-80 flex-1">
                 <StatusTreemap codeInsee={codeInsee} />

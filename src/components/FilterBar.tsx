@@ -38,7 +38,6 @@ export default function FilterBar() {
           <span className="text-lg">🔍</span>
           <span className="text-gradient">Filtres</span>
         </h3>
-        <div className="text-xs font-medium opacity-75">Filter</div>
       </div>
       
       {/* Filtre Règne */}
