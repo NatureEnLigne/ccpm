@@ -456,8 +456,8 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
       {/* Contenu principal */}
       <main className="w-full full-width-layout px-6 py-8">
         
-        {/* Header avec bouton retour et statistiques - responsive */}
-        <div className="flex flex-wrap items-center gap-4 mb-8 fade-in-up">
+        {/* Header avec bouton retour et statistiques sur une seule ligne */}
+        <div className="flex items-center gap-4 mb-8 fade-in-up">
           {/* Bouton retour à l'accueil */}
           <div className="modern-card shadow-xl">
             <button 
@@ -475,9 +475,9 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
           </div>
           
           {/* Nom de la commune et code INSEE */}
-          <div className="modern-card shadow-xl flex-1 min-w-[280px]">
+          <div className="modern-card shadow-xl flex-1">
             <div className="p-3 text-left">
-              <h1 className="text-xl sm:text-2xl font-bold mb-1">
+              <h1 className="text-2xl font-bold mb-1">
                 <span className="text-gradient">{currentCommune.nom || `Commune ${codeInsee}`}</span>
               </h1>
               <p className="species-count-title">
@@ -488,11 +488,11 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
           
           {/* Observations */}
           <div className="modern-card shadow-xl">
-            <div className="p-3 text-center min-w-[100px] sm:min-w-[120px]">
-              <div className="text-lg sm:text-xl font-bold text-gradient mb-1">
+            <div className="p-3 text-center min-w-[120px]">
+              <div className="text-xl font-bold text-gradient mb-1">
                 {formatNumberFull(filteredStats.totalObs)}
               </div>
-              <div className="text-gray-600 font-medium text-xs sm:text-sm">
+              <div className="text-gray-600 font-medium text-sm">
                 Observations
               </div>
             </div>
@@ -500,11 +500,11 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
           
           {/* Espèces */}
           <div className="modern-card shadow-xl">
-            <div className="p-3 text-center min-w-[100px] sm:min-w-[120px]">
-              <div className="text-lg sm:text-xl font-bold text-gradient mb-1">
+            <div className="p-3 text-center min-w-[120px]">
+              <div className="text-xl font-bold text-gradient mb-1">
                 {formatNumberFull(filteredStats.totalEsp)}
               </div>
-              <div className="text-gray-600 font-medium text-xs sm:text-sm">
+              <div className="text-gray-600 font-medium text-sm">
                 Espèces
               </div>
             </div>
@@ -514,18 +514,38 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
           <div className="modern-card shadow-xl">
             <button 
               onClick={() => generateSpeciesCSV(codeInsee, speciesData, currentCommune, filters)}
-              className="p-3 text-center min-w-[100px] sm:min-w-[120px] hover:bg-white/10 transition-colors rounded-lg"
+              className="p-3 text-center min-w-[120px] hover:bg-white/10 transition-colors rounded-lg"
               title="Télécharger la liste des espèces en CSV"
             >
-              <div className="text-lg sm:text-xl font-bold mb-1 flex justify-center">
-                <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-br from-amber-600 to-green-800 rounded flex items-center justify-center">
-                  <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <div className="text-xl font-bold mb-1 flex justify-center">
+                <div className="w-6 h-6 bg-gradient-to-br from-amber-600 to-green-800 rounded flex items-center justify-center">
+                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
                   </svg>
                 </div>
               </div>
-              <div className="text-gray-600 font-medium text-xs sm:text-sm">
+              <div className="text-gray-600 font-medium text-sm">
                 Télécharger CSV
+              </div>
+            </button>
+          </div>
+          
+          {/* Comparaison */}
+          <div className="modern-card shadow-xl">
+            <button 
+              onClick={() => router.push(`/commune/${codeInsee}/comparaison`)}
+              className="p-3 text-center min-w-[120px] hover:bg-white/10 transition-colors rounded-lg"
+              title="Comparer avec une autre commune"
+            >
+              <div className="text-xl font-bold mb-1 flex justify-center">
+                <div className="w-6 h-6 bg-gradient-to-br from-blue-600 to-purple-800 rounded flex items-center justify-center">
+                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M3 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3zM13 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1V4zM13 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-3z" clipRule="evenodd" />
+                  </svg>
+                </div>
+              </div>
+              <div className="text-gray-600 font-medium text-sm">
+                Comparaison
               </div>
             </button>
           </div>
