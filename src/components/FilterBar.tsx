@@ -165,7 +165,7 @@ export default function FilterBar() {
           <select
             value="Tous"
             onChange={(e) => handleStatutReglementaireChange(e.target.value)}
-            className="bg-white/10 backdrop-blur-md border border-white/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 text-gray-700 w-auto min-w-fit"
+            className="bg-white/10 backdrop-blur-md border border-white/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 text-gray-700 w-48"
           >
             <option value="Tous">Statuts réglementaires</option>
             {availableStatutsReglementaires.map(statut => (
