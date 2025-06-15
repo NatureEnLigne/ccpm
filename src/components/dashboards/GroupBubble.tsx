@@ -155,6 +155,10 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
               if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) return
           }
           
+          // Appliquer les filtres d'années
+          if (filters.anneeDebut && obs['An Obs'] < filters.anneeDebut) return
+          if (filters.anneeFin && obs['An Obs'] > filters.anneeFin) return
+          
           // Récupérer la valeur du champ taxonomique approprié
           let groupValue: string
           switch (taxonomicLevel.field) {

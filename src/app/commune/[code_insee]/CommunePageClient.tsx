@@ -185,6 +185,10 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
         if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) return
       }
 
+      // Appliquer les filtres d'années
+      if (filters?.anneeDebut && obs['An Obs'] < filters.anneeDebut) return
+      if (filters?.anneeFin && obs['An Obs'] > filters.anneeFin) return
+
       // Cette observation passe tous les filtres
         totalObservations += obs['Nb Obs']
         uniqueSpecies.add(cdRef)

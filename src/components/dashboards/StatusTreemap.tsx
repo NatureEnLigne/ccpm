@@ -95,6 +95,10 @@ export default function StatusTreemap({ codeInsee }: StatusTreemapProps) {
       commune.observations.forEach(obs => {
         const cdRef = obs['Cd Ref']
         
+        // Appliquer les filtres d'années en premier
+        if (filters.anneeDebut && obs['An Obs'] < filters.anneeDebut) return
+        if (filters.anneeFin && obs['An Obs'] > filters.anneeFin) return
+        
         // Éviter de compter la même espèce plusieurs fois
         if (processedSpecies.has(cdRef)) return
         processedSpecies.add(cdRef)

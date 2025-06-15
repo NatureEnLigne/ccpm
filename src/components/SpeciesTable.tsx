@@ -135,7 +135,12 @@ export default function SpeciesTable({ codeInsee }: SpeciesTableProps) {
       
       currentCommune.observations.forEach(obs => {
         if (obs['Cd Ref'] !== cdRef) return
-          totalObs += obs['Nb Obs']
+        
+        // Appliquer les filtres d'années
+        if (filters?.anneeDebut && obs['An Obs'] < filters.anneeDebut) return
+        if (filters?.anneeFin && obs['An Obs'] > filters.anneeFin) return
+        
+        totalObs += obs['Nb Obs']
       })
 
       if (totalObs > 0) {
