@@ -120,10 +120,24 @@ export default function FilterBar() {
   )
 
   const formatFilterValue = (key: string, value: any) => {
+    console.log(`🎨 formatFilterValue appelé avec:`, { key, value, valueType: typeof value, rawValue: JSON.stringify(value) })
+    
     if (key === 'selectedMois' && typeof value === 'number') {
-      return MONTH_NAMES[value - 1] || value
+      const result = MONTH_NAMES[value - 1] || value
+      console.log(`🎨 formatFilterValue mois résultat:`, { key, value, result })
+      return result
     }
-    return value
+    
+    // Vérifier si la valeur est null, undefined ou une chaîne vide
+    if (value === null || value === undefined || value === '') {
+      console.log(`🎨 formatFilterValue valeur vide:`, { key, value })
+      return 'Valeur vide'
+    }
+    
+    // Retourner la valeur telle quelle pour tous les autres cas
+    const result = String(value)
+    console.log(`🎨 formatFilterValue résultat final:`, { key, value, result, stringified: JSON.stringify(value) })
+    return result
   }
 
   return (
