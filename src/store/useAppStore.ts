@@ -71,6 +71,8 @@ export const useAppStore = create<AppState>((set, get) => ({
     selectedAnnee: null,
     selectedRedListCategory: null,
     selectedStatutReglementaire: null,
+    anneeDebut: null,
+    anneeFin: null,
     activeFilters: [],
   },
   hoverState: {
@@ -124,6 +126,8 @@ export const useAppStore = create<AppState>((set, get) => ({
       selectedAnnee: null,
       selectedRedListCategory: null,
       selectedStatutReglementaire: null,
+      anneeDebut: null,
+      anneeFin: null,
       activeFilters: [],
     }
   }),
@@ -140,6 +144,8 @@ export const useAppStore = create<AppState>((set, get) => ({
       selectedAnnee: null,
       selectedRedListCategory: null,
       selectedStatutReglementaire: null,
+      anneeDebut: null,
+      anneeFin: null,
       activeFilters: [],
     }
   }),

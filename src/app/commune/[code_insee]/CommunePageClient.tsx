@@ -19,7 +19,7 @@ import RedListBar from '../../../components/dashboards/RedListBar'
 import StatusTreemap from '../../../components/dashboards/StatusTreemap'
 import FilterBar from '../../../components/FilterBar'
 import SpeciesTable from '../../../components/SpeciesTable'
-import ActiveFilters from '../../../components/ActiveFilters'
+
 import type { SyntheseInsee, PhenoMoisInsee, Taxonomie, ListeRouge, Statut } from '../../../types'
 
 interface CommunePageClientProps {
@@ -309,9 +309,6 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
         
         {/* Barre de filtres */}
         <FilterBar />
-
-        {/* Filtres actifs */}
-        <ActiveFilters />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 overflow-hover-safe">
           

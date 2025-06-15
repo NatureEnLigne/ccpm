@@ -96,6 +96,8 @@ export interface FilterState {
   selectedAnnee: number | null
   selectedRedListCategory: string | null
   selectedStatutReglementaire: string | null
+  anneeDebut: number | null
+  anneeFin: number | null
   activeFilters: string[] // Liste des filtres actifs pour l'affichage
 }
 
