@@ -538,7 +538,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
               title="Comparer avec une autre commune"
             >
               <div className="text-xl font-bold mb-1 flex justify-center">
-                <div className="w-6 h-6 bg-gradient-to-br from-blue-600 to-purple-800 rounded flex items-center justify-center">
+                <div className="w-6 h-6 bg-gradient-to-br from-amber-600 to-green-800 rounded flex items-center justify-center">
                   <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M3 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3zM13 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1V4zM13 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-3z" clipRule="evenodd" />
                   </svg>

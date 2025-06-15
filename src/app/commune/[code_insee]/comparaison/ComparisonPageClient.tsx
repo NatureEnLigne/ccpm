@@ -439,8 +439,15 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
                 </h3>
 
                 {/* Message d'instruction */}
-                <div className="mb-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
-                  <p className="text-blue-800 text-center font-medium">
+                <div className="mb-6 p-4 rounded-xl border border-amber-200/50" style={{
+                  background: 'linear-gradient(135deg, rgba(205, 133, 63, 0.1), rgba(45, 80, 22, 0.1))'
+                }}>
+                  <p className="text-center font-medium" style={{
+                    background: 'linear-gradient(135deg, #cd853f, #2d5016)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text'
+                  }}>
                     Sélectionner une commune pour commencer la comparaison
                   </p>
                 </div>
