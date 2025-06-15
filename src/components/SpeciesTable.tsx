@@ -273,12 +273,12 @@ export default function SpeciesTable({ codeInsee }: SpeciesTableProps) {
 
       {/* Tableau */}
       <div className="overflow-x-auto">
-        <div className="min-w-full">
-          <table className="w-full">
+        <div className="min-w-full" style={{ direction: 'ltr' }}>
+          <table className="w-full min-w-[800px]">
             <thead>
               <tr className="border-b border-gray-200/50">
                 <th 
-                  className="text-left py-3 px-2 font-medium text-gray-700 cursor-pointer hover:bg-white/20 rounded"
+                  className="text-left py-3 px-2 font-medium text-gray-700 cursor-pointer hover:bg-white/20 rounded min-w-[100px]"
                   onClick={() => handleSort('group2Inpn')}
                 >
                   <div className="flex items-center gap-2">
@@ -287,7 +287,7 @@ export default function SpeciesTable({ codeInsee }: SpeciesTableProps) {
                   </div>
                 </th>
                 <th 
-                  className="text-left py-3 px-2 font-medium text-gray-700 cursor-pointer hover:bg-white/20 rounded"
+                  className="text-left py-3 px-2 font-medium text-gray-700 cursor-pointer hover:bg-white/20 rounded min-w-[200px]"
                   onClick={() => handleSort('nomComplet')}
                 >
                   <div className="flex items-center gap-2">
@@ -296,7 +296,7 @@ export default function SpeciesTable({ codeInsee }: SpeciesTableProps) {
                   </div>
                 </th>
                 <th 
-                  className="text-left py-3 px-2 font-medium text-gray-700 cursor-pointer hover:bg-white/20 rounded"
+                  className="text-left py-3 px-2 font-medium text-gray-700 cursor-pointer hover:bg-white/20 rounded min-w-[150px]"
                   onClick={() => handleSort('nomVern')}
                 >
                   <div className="flex items-center gap-2">
@@ -305,7 +305,7 @@ export default function SpeciesTable({ codeInsee }: SpeciesTableProps) {
                   </div>
                 </th>
                 <th 
-                  className="text-left py-3 px-2 font-medium text-gray-700 cursor-pointer hover:bg-white/20 rounded"
+                  className="text-left py-3 px-2 font-medium text-gray-700 cursor-pointer hover:bg-white/20 rounded min-w-[120px]"
                   onClick={() => handleSort('nombreObservations')}
                 >
                   <div className="flex items-center gap-2">
@@ -313,7 +313,7 @@ export default function SpeciesTable({ codeInsee }: SpeciesTableProps) {
                     <SortIcon field="nombreObservations" />
                   </div>
                 </th>
-                <th className="text-left py-3 px-2 font-medium text-gray-700 w-20">
+                <th className="text-left py-3 px-2 font-medium text-gray-700 w-20 min-w-[80px]">
                   INPN
                 </th>
               </tr>
@@ -381,19 +381,19 @@ export default function SpeciesTable({ codeInsee }: SpeciesTableProps) {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200/30">
-          <div className="text-sm text-gray-600">
+        <div className="flex flex-col sm:flex-row items-center justify-between mt-4 pt-4 border-t border-gray-200/30 gap-4">
+          <div className="text-xs sm:text-sm text-gray-600 text-center sm:text-left">
             Page {currentPage} sur {totalPages} • 
             Affichage {startIndex + 1}-{Math.min(startIndex + itemsPerPage, sortedData.length)} sur {sortedData.length}
           </div>
           
-          <div className="flex gap-2">
+          <div className="flex gap-1 sm:gap-2">
             <button
               onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
               disabled={currentPage === 1}
-              className="px-3 py-1 bg-white/20 hover:bg-white/30 disabled:bg-gray-200/20 disabled:text-gray-400 text-gray-700 rounded-lg transition-colors text-sm"
+              className="px-2 sm:px-3 py-1 bg-white/20 hover:bg-white/30 disabled:bg-gray-200/20 disabled:text-gray-400 text-gray-700 rounded-lg transition-colors text-xs sm:text-sm"
             >
-              ← Précédent
+              ← Préc.
             </button>
             
             <div className="flex gap-1">
@@ -413,7 +413,7 @@ export default function SpeciesTable({ codeInsee }: SpeciesTableProps) {
                   <button
                     key={pageNum}
                     onClick={() => setCurrentPage(pageNum)}
-                    className={`px-3 py-1 rounded-lg transition-colors text-sm ${
+                    className={`px-2 sm:px-3 py-1 rounded-lg transition-colors text-xs sm:text-sm ${
                       currentPage === pageNum
                         ? 'bg-green-500/30 text-green-700 font-medium'
                         : 'bg-white/20 hover:bg-white/30 text-gray-700'
@@ -428,9 +428,9 @@ export default function SpeciesTable({ codeInsee }: SpeciesTableProps) {
             <button
               onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
               disabled={currentPage === totalPages}
-              className="px-3 py-1 bg-white/20 hover:bg-white/30 disabled:bg-gray-200/20 disabled:text-gray-400 text-gray-700 rounded-lg transition-colors text-sm"
+              className="px-2 sm:px-3 py-1 bg-white/20 hover:bg-white/30 disabled:bg-gray-200/20 disabled:text-gray-400 text-gray-700 rounded-lg transition-colors text-xs sm:text-sm"
             >
-              Suivant →
+              Suiv. →
             </button>
           </div>
         </div>
