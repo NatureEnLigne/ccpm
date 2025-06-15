@@ -143,11 +143,18 @@
     box-shadow: var(--shadow-soft);
   }
 
-  /* Cartes modernes nature */
+  /* Cartes modernes nature - Style glass inspiré */
   .modern-card {
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 245, 0.8));
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(139, 195, 74, 0.3);
+    --blur: 12px;
+    --glass-primary: rgba(45, 80, 22, 0.6);     /* Vert foncé */
+    --glass-secondary: rgba(34, 197, 94, 0.5);  /* Vert clair */
+    --glass-accent: rgba(205, 133, 63, 0.3);    /* Marron doré */
+    --glass-white: rgba(255, 255, 255, 0.2);
+    --glass-white-light: rgba(255, 255, 255, 0.05);
+    
+    background: linear-gradient(90deg, var(--glass-white), var(--glass-white-light));
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
     border-radius: var(--border-radius-large);
     box-shadow: var(--shadow-soft);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -155,11 +162,97 @@
     z-index: 1;
   }
 
+  .modern-card::before,
+  .modern-card::after {
+    border-radius: inherit;
+    content: "";
+    display: block;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .modern-card::before {
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    mask-image: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0) 50%);
+  }
+
+  .modern-card::after {
+    border: 1px solid var(--color-primary);
+    mask-image: linear-gradient(135deg, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 1));
+  }
+
   .modern-card:hover {
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 245, 0.9));
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
     box-shadow: var(--shadow-large);
     transform: translateY(-4px) scale(1.02);
     z-index: 10;
+  }
+
+  /* Card content avec glass effect */
+  .card-glass {
+    --blur: 16px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    border-radius: 1em;
+    box-shadow: 0 0.25em 0.375em rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card-glass::before,
+  .card-glass::after {
+    border-radius: inherit;
+    content: "";
+    display: block;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .card-glass::before {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    mask-image: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0) 50%);
+  }
+
+  .card-glass::after {
+    border: 1px solid var(--color-primary);
+    mask-image: linear-gradient(135deg, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 1));
+  }
+
+  .card-glass__content {
+    background: linear-gradient(
+      rgba(255, 255, 255, 0) 3.125em,
+      var(--color-primary) 3.375em,
+      var(--color-secondary) 4.5em
+    ) 0 0 / 100% 50%,
+    linear-gradient(
+      90deg,
+      var(--color-secondary) 80%,
+      var(--color-primary) 100%
+    ) 0 100% / 100% 50%,
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.2) 30%,
+      rgba(255, 255, 255, 0.1)
+    ) 0 0 / 100% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    padding: 1.5em;
+    position: relative;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .card-glass:hover {
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.1));
+    transform: translateY(-2px);
+    box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.15);
   }
   
   /* Boutons modernes nature */

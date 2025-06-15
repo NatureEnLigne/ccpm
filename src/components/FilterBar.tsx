@@ -32,28 +32,29 @@ export default function FilterBar() {
   }
 
   return (
-    <div className="glass rounded-lg p-4 mb-6">
-      <div className="flex items-center space-x-6">
-        <h3 className="text-lg font-semibold flex items-center gap-2">
+    <div className="bg-white/20 backdrop-blur-md rounded-lg border border-white/30 p-4 mb-6 shadow-lg">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-bold flex items-center gap-2">
           <span className="text-lg">🔍</span>
           <span className="text-gradient">Filtres</span>
         </h3>
-        
-        {/* Filtre Règne */}
-        <div className="flex items-center space-x-3">
-          <select
-            value="Tous"
-            onChange={(e) => handleRegneChange(e.target.value)}
-            className="glass border border-white/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50"
-          >
-            <option value="Tous">Tous les règnes</option>
-            {availableRegnes.map(regne => (
-              <option key={regne} value={regne}>
-                {regne}
-              </option>
-            ))}
-          </select>
-        </div>
+        <div className="text-xs font-medium opacity-75">Filter</div>
+      </div>
+      
+      {/* Filtre Règne */}
+      <div className="flex items-center space-x-3">
+        <select
+          value="Tous"
+          onChange={(e) => handleRegneChange(e.target.value)}
+          className="bg-white/10 backdrop-blur-md border border-white/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 text-gray-700"
+        >
+          <option value="Tous">Tous les règnes</option>
+          {availableRegnes.map(regne => (
+            <option key={regne} value={regne}>
+              {regne}
+            </option>
+          ))}
+        </select>
       </div>
     </div>
   )

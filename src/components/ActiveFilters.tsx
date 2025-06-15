@@ -40,9 +40,10 @@ export default function ActiveFilters() {
   }
   
   return (
-    <div className="bg-white/20 backdrop-blur-md rounded-xl border border-white/30 p-4 mb-4">
-      <div className="flex items-center justify-between mb-2">
-        <h3 className="text-sm font-medium">
+    <div className="bg-white/20 backdrop-blur-md rounded-xl border border-white/30 p-4 mb-4 shadow-lg">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-sm font-bold flex items-center gap-2">
+          <span className="text-sm">✨</span>
           <span className="text-gradient">Filtres actifs</span>
         </h3>
         <button
