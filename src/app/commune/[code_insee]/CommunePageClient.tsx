@@ -334,7 +334,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
           
           {/* Groupes taxonomiques - Bubble chart */}
           <div className="container-hover-safe">
-            <div className="bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 p-6 shadow-lg hover:bg-white/25 transition-all duration-300">
+            <div className="modern-card z-middle shadow-xl fade-in-up">
               <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                 <span className="text-xl">🦋</span>
                 <span className="text-gradient">Groupes taxonomiques</span>
@@ -347,7 +347,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
 
           {/* Phénologie mensuelle - Line chart */}
           <div className="container-hover-safe">
-            <div className="bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 p-6 shadow-lg hover:bg-white/25 transition-all duration-300">
+            <div className="modern-card z-middle shadow-xl fade-in-up">
               <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                 <span className="text-xl">📅</span>
                 <span className="text-gradient">Phénologie mensuelle</span>
@@ -360,7 +360,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
 
           {/* Listes rouges - Bar chart */}
           <div className="container-hover-safe">
-            <div className="bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 p-6 shadow-lg hover:bg-white/25 transition-all duration-300">
+            <div className="modern-card z-middle shadow-xl fade-in-up">
               <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                 <span className="text-xl">🚨</span>
                 <span className="text-gradient">Statuts listes rouges</span>
@@ -373,7 +373,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
 
           {/* Statuts réglementaires - Treemap */}
           <div className="container-hover-safe">
-            <div className="bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 p-6 shadow-lg hover:bg-white/25 transition-all duration-300">
+            <div className="modern-card z-middle shadow-xl fade-in-up">
               <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                 <span className="text-xl">⚖️</span>
                 <span className="text-gradient">Statuts réglementaires</span>

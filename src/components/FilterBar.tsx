@@ -141,7 +141,7 @@ export default function FilterBar() {
   }
 
   return (
-    <div className="bg-white/20 backdrop-blur-md rounded-lg border border-white/30 p-4 mb-6 shadow-lg">
+    <div className="modern-card z-top shadow-xl mb-8 fade-in-up">
       {/* Première ligne : Titre et contrôles alignés */}
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-2">

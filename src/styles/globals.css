@@ -160,6 +160,7 @@
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     z-index: 1;
+    padding: 1.5rem; /* 24px - même padding que l'en-tête */
   }
 
   .modern-card::before,
@@ -185,8 +186,33 @@
   .modern-card:hover {
     background: linear-gradient(90deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
     box-shadow: var(--shadow-large);
-    transform: translateY(-4px) scale(1.02);
+    transform: translateY(-6px) scale(1.005);
+    z-index: 5;
+  }
+
+  /* Hiérarchie z-index pour éviter les chevauchements */
+  .modern-card.z-top {
+    z-index: 20;
+  }
+
+  .modern-card.z-top:hover {
+    z-index: 25;
+  }
+
+  .modern-card.z-middle {
     z-index: 10;
+  }
+
+  .modern-card.z-middle:hover {
+    z-index: 15;
+  }
+
+  .modern-card.z-bottom {
+    z-index: 1;
+  }
+
+  .modern-card.z-bottom:hover {
+    z-index: 5;
   }
 
   /* Card content avec glass effect */
@@ -251,7 +277,7 @@
 
   .card-glass:hover {
     background: linear-gradient(90deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.1));
-    transform: translateY(-2px);
+    transform: translateY(-3px) scale(1.005);
     box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.15);
   }
   
@@ -381,6 +407,16 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  /* Style inspiré du titre "Transforming technology to serve the people" */
+  .species-count-title {
+    font-family: 'Caladea', serif, system-ui, -apple-system, sans-serif;
+    font-size: 1.2em;
+    font-weight: 700;
+    line-height: 1.17;
+    color: rgba(0, 0, 0, 0.4);
+    opacity: 0.8;
   }
   
   .text-shadow-soft {

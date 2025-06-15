@@ -244,7 +244,7 @@ export default function SpeciesTable({ codeInsee }: SpeciesTableProps) {
 
   if (!currentCommune || tableData.length === 0) {
     return (
-      <div className="bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 p-6 shadow-lg hover:bg-white/25 transition-all duration-300">
+      <div className="modern-card z-bottom shadow-xl fade-in-up">
         <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
           <span className="text-xl">📋</span>
           <span className="text-gradient">Liste des espèces</span>
@@ -259,13 +259,13 @@ export default function SpeciesTable({ codeInsee }: SpeciesTableProps) {
   }
 
   return (
-    <div className="bg-white/20 backdrop-blur-md rounded-2xl border border-white/30 p-6 shadow-lg hover:bg-white/25 transition-all duration-300">
+    <div className="modern-card z-bottom shadow-xl fade-in-up">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-xl font-semibold flex items-center gap-2">
           <span className="text-xl">📋</span>
           <span className="text-gradient">Liste des espèces</span>
         </h3>
-        <div className="text-sm text-gray-600">
+        <div className="species-count-title">
           {formatNumber(tableData.length)} espèces • {formatNumber(tableData.reduce((sum, row) => sum + row.nombreObservations, 0))} observations
           {filters.selectedRegne && <span className="ml-2 text-green-600">• Filtre: {filters.selectedRegne}</span>}
         </div>
