@@ -118,6 +118,24 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
     )
   }
 
+  // Calculer les valeurs de graduations pour l'axe Y
+  const getTickValues = () => {
+    if (data.length === 0) return []
+    
+    const maxValue = Math.max(...data[0].data.map(d => d.y))
+    if (maxValue === 0) return [0]
+    
+    // Créer des graduations intelligentes
+    if (maxValue <= 5) {
+      return Array.from({ length: maxValue + 1 }, (_, i) => i)
+    } else if (maxValue <= 10) {
+      return [0, Math.ceil(maxValue / 2), maxValue]
+    } else {
+      const step = Math.ceil(maxValue / 3)
+      return [0, step, step * 2, maxValue].filter((v, i, arr) => arr.indexOf(v) === i)
+    }
+  }
+
   return (
     <ResponsiveLine
       data={data}
@@ -125,7 +143,7 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
       xScale={{ type: 'point' }}
       yScale={{
         type: 'linear',
-        min: 'auto',
+        min: 0,
         max: 'auto',
         stacked: false,
         reverse: false
@@ -148,7 +166,9 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
         tickRotation: 0,
         legend: 'Nombre d\'observations',
         legendOffset: -60,
-        legendPosition: 'middle'
+        legendPosition: 'middle',
+        format: (value) => Math.floor(value).toString(),
+        tickValues: getTickValues()
       }}
       enableArea={false}
       lineWidth={3}
