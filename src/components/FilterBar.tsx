@@ -159,8 +159,8 @@ export default function FilterBar({ noBottomMargin = false, compactPadding = fal
       {/* Première ligne : Titre et contrôles alignés */}
       <div className="flex items-center justify-between gap-4 min-h-[72px]">
         <div className="flex items-center gap-2">
-          <span className="text-lg">🔍</span>
-          <span className="text-lg font-bold text-gradient">Filtres</span>
+          <span className="text-xl">🔍</span>
+          <span className="text-xl font-bold text-gradient">Filtres</span>
         </div>
         
         <div className="flex items-center gap-3 flex-wrap">
