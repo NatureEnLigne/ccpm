@@ -552,7 +552,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
         </div>
         
         {/* Barre de filtres */}
-        <FilterBar />
+        <FilterBar compactPadding={true} />
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 overflow-hover-safe w-full">
           
