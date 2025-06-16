@@ -150,7 +150,7 @@ export default function FilterBar() {
   }
 
   return (
-    <div className="modern-card z-filters shadow-xl mb-8 fade-in-up">
+    <div className="modern-card z-filters shadow-xl fade-in-up">
       {/* Première ligne : Titre et contrôles alignés */}
       <div className="flex items-center justify-between gap-4 min-h-[72px]">
         <div className="flex items-center gap-2">

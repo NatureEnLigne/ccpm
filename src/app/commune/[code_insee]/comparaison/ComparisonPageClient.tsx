@@ -228,7 +228,7 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
       <main className="w-full full-width-layout px-6 py-8">
         
         {/* En-tête avec bouton retour et barre de filtres */}
-        <div className="flex items-start gap-4 mb-8 fade-in-up">
+        <div className="flex items-start gap-4 mb-6 fade-in-up">
           {/* Bouton retour - hauteur fixe pour correspondre à la première ligne des filtres */}
           <div className="modern-card shadow-xl">
             <button 
