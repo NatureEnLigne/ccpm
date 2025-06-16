@@ -167,11 +167,15 @@ export default function FilterBar({ noBottomMargin = false, compactPadding = fal
           <select
             value="Tous"
             onChange={(e) => handleRegneChange(e.target.value)}
-            className="bg-white/10 backdrop-blur-md border border-white/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 text-black"
+            className="rounded-xl border border-amber-200/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 font-medium"
+            style={{
+              background: 'linear-gradient(135deg, rgba(205, 133, 63, 0.1), rgba(45, 80, 22, 0.1))',
+              color: '#cd853f'
+            }}
           >
-            <option value="Tous">Tous les règnes</option>
+            <option value="Tous" style={{ color: '#333' }}>Tous les règnes</option>
             {availableRegnes.map(regne => (
-              <option key={regne} value={regne}>
+              <option key={regne} value={regne} style={{ color: '#333' }}>
                 {translateRegne(regne)}
               </option>
             ))}
@@ -180,11 +184,15 @@ export default function FilterBar({ noBottomMargin = false, compactPadding = fal
           <select
             value="Tous"
             onChange={(e) => handleRedListCategoryChange(e.target.value)}
-            className="bg-white/10 backdrop-blur-md border border-white/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 text-black"
+            className="rounded-xl border border-amber-200/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 font-medium"
+            style={{
+              background: 'linear-gradient(135deg, rgba(205, 133, 63, 0.1), rgba(45, 80, 22, 0.1))',
+              color: '#cd853f'
+            }}
           >
-            <option value="Tous">Statuts listes rouges</option>
+            <option value="Tous" style={{ color: '#333' }}>Statuts listes rouges</option>
             {availableRedListCategories.map(category => (
-              <option key={category} value={category}>
+              <option key={category} value={category} style={{ color: '#333' }}>
                 {category}
               </option>
             ))}
@@ -193,11 +201,15 @@ export default function FilterBar({ noBottomMargin = false, compactPadding = fal
           <select
             value="Tous"
             onChange={(e) => handleStatutReglementaireChange(e.target.value)}
-            className="bg-white/10 backdrop-blur-md border border-white/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 text-black w-52"
+            className="rounded-xl border border-amber-200/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 font-medium w-52"
+            style={{
+              background: 'linear-gradient(135deg, rgba(205, 133, 63, 0.1), rgba(45, 80, 22, 0.1))',
+              color: '#cd853f'
+            }}
           >
-            <option value="Tous">Statuts réglementaires</option>
+            <option value="Tous" style={{ color: '#333' }}>Statuts réglementaires</option>
             {availableStatutsReglementaires.map(statut => (
-              <option key={statut} value={statut}>
+              <option key={statut} value={statut} style={{ color: '#333' }}>
                 {statut}
               </option>
             ))}
@@ -208,7 +220,11 @@ export default function FilterBar({ noBottomMargin = false, compactPadding = fal
             placeholder="A partir de l'année"
             value={filters.anneeDebut || ''}
             onChange={(e) => handleAnneeDebutChange(e.target.value)}
-            className="bg-white/10 backdrop-blur-md border border-white/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 text-black w-44"
+            className="rounded-xl border border-amber-200/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 font-medium w-44 placeholder-gray-500"
+            style={{
+              background: 'linear-gradient(135deg, rgba(205, 133, 63, 0.1), rgba(45, 80, 22, 0.1))',
+              color: '#cd853f'
+            }}
             min="1900"
             max="2030"
           />
@@ -218,7 +234,11 @@ export default function FilterBar({ noBottomMargin = false, compactPadding = fal
             placeholder="Jusque l'année"
             value={filters.anneeFin || ''}
             onChange={(e) => handleAnneeFinChange(e.target.value)}
-            className="bg-white/10 backdrop-blur-md border border-white/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 text-black w-36"
+            className="rounded-xl border border-amber-200/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 font-medium w-36 placeholder-gray-500"
+            style={{
+              background: 'linear-gradient(135deg, rgba(205, 133, 63, 0.1), rgba(45, 80, 22, 0.1))',
+              color: '#cd853f'
+            }}
             min="1900"
             max="2030"
           />
