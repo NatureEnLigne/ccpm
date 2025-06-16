@@ -150,7 +150,7 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
         tickSize: 5,
         tickPadding: 5,
         tickRotation: -45,
-        legend: 'Mois',
+        legend: null,
         legendOffset: 50,
         legendPosition: 'middle'
       }}
