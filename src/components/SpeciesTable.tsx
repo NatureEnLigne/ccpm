@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { useAppStore } from '../store/useAppStore'
-import { formatNumber } from '../utils/formatters'
+import { formatNumber, translateRegne } from '../utils/formatters'
 import type { Taxonomie } from '../types'
 
 interface SpeciesTableProps {
@@ -156,7 +156,7 @@ export default function SpeciesTable({ codeInsee }: SpeciesTableProps) {
         if (filters?.anneeDebut && obs['An Obs'] < filters.anneeDebut) return
         if (filters?.anneeFin && obs['An Obs'] > filters.anneeFin) return
         
-        totalObs += obs['Nb Obs']
+          totalObs += obs['Nb Obs']
       })
 
       if (totalObs > 0) {
@@ -252,7 +252,7 @@ export default function SpeciesTable({ codeInsee }: SpeciesTableProps) {
         <div className="text-center py-8 text-gray-500">
           <div className="text-4xl mb-2">🔍</div>
           <p>Aucune donnée d'espèce disponible pour cette commune</p>
-          {filters.selectedRegne && <p className="text-sm mt-1">Filtre: {filters.selectedRegne}</p>}
+          {filters.selectedRegne && <p className="text-sm mt-1">Filtre: {translateRegne(filters.selectedRegne)}</p>}
         </div>
       </div>
     )
@@ -267,7 +267,7 @@ export default function SpeciesTable({ codeInsee }: SpeciesTableProps) {
         </h3>
         <div className="species-count-title">
           {formatNumber(tableData.length)} espèces • {formatNumber(tableData.reduce((sum, row) => sum + row.nombreObservations, 0))} observations
-          {filters.selectedRegne && <span className="ml-2 text-green-600">• Filtre: {filters.selectedRegne}</span>}
+          {filters.selectedRegne && <span className="ml-2 text-green-600">• Filtre: {translateRegne(filters.selectedRegne)}</span>}
         </div>
       </div>
 

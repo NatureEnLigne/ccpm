@@ -52,7 +52,7 @@ export default function StatusTreemap({ codeInsee }: StatusTreemapProps) {
                 if (species.listeRouge) return
               } else {
                 // Pour les autres statuts, filtrer par le statut spécifique
-                if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
+              if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
               }
             }
             if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) return
@@ -125,7 +125,7 @@ export default function StatusTreemap({ codeInsee }: StatusTreemapProps) {
               // Pour les autres statuts, filtrer par le statut spécifique
               if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
             }
-          }
+            }
             if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) return
             if (filters.selectedFamille && species.famille !== filters.selectedFamille) return
           
@@ -208,12 +208,12 @@ export default function StatusTreemap({ codeInsee }: StatusTreemapProps) {
         const ratio = (i - allColors.length) / Math.max(1, count - allColors.length)
         const fromColor = allColors[i % allColors.length]
         const toColor = allColors[(i + 1) % allColors.length]
-        
+      
         const r = Math.round(fromColor.r + (toColor.r - fromColor.r) * ratio)
         const g = Math.round(fromColor.g + (toColor.g - fromColor.g) * ratio)
         const b = Math.round(fromColor.b + (toColor.b - fromColor.b) * ratio)
-        
-        colors.push(`rgb(${r}, ${g}, ${b})`)
+      
+      colors.push(`rgb(${r}, ${g}, ${b})`)
       }
     }
     

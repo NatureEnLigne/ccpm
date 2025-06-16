@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useAppStore } from '../store/useAppStore'
 import { X } from 'lucide-react'
+import { translateRegne } from '../utils/formatters'
 
 const FILTER_LABELS: Record<string, string> = {
   selectedGroupe: 'Groupe',
@@ -23,6 +24,8 @@ const MONTH_NAMES = [
   'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
   'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
 ]
+
+
 
 export default function FilterBar() {
   const { speciesData, setFilter, filters, removeFilter, clearFilters } = useAppStore()
@@ -128,6 +131,12 @@ export default function FilterBar() {
       return result
     }
     
+    if (key === 'selectedRegne' && typeof value === 'string') {
+      const result = translateRegne(value)
+      console.log(`🎨 formatFilterValue règne résultat:`, { key, value, result })
+      return result
+    }
+    
     // Vérifier si la valeur est null, undefined ou une chaîne vide
     if (value === null || value === undefined || value === '') {
       console.log(`🎨 formatFilterValue valeur vide:`, { key, value })
@@ -153,12 +162,12 @@ export default function FilterBar() {
           <select
             value="Tous"
             onChange={(e) => handleRegneChange(e.target.value)}
-            className="bg-white/10 backdrop-blur-md border border-white/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 text-gray-700"
+            className="bg-white/10 backdrop-blur-md border border-white/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 text-black"
           >
             <option value="Tous">Tous les règnes</option>
             {availableRegnes.map(regne => (
               <option key={regne} value={regne}>
-                {regne}
+                {translateRegne(regne)}
               </option>
             ))}
           </select>
@@ -166,7 +175,7 @@ export default function FilterBar() {
           <select
             value="Tous"
             onChange={(e) => handleRedListCategoryChange(e.target.value)}
-            className="bg-white/10 backdrop-blur-md border border-white/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 text-gray-700"
+            className="bg-white/10 backdrop-blur-md border border-white/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 text-black"
           >
             <option value="Tous">Statuts listes rouges</option>
             {availableRedListCategories.map(category => (
@@ -179,7 +188,7 @@ export default function FilterBar() {
           <select
             value="Tous"
             onChange={(e) => handleStatutReglementaireChange(e.target.value)}
-            className="bg-white/10 backdrop-blur-md border border-white/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 text-gray-700 w-52"
+            className="bg-white/10 backdrop-blur-md border border-white/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 text-black w-52"
           >
             <option value="Tous">Statuts réglementaires</option>
             {availableStatutsReglementaires.map(statut => (
@@ -194,7 +203,7 @@ export default function FilterBar() {
             placeholder="A partir de l'année"
             value={filters.anneeDebut || ''}
             onChange={(e) => handleAnneeDebutChange(e.target.value)}
-            className="bg-white/10 backdrop-blur-md border border-white/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 text-gray-700 w-44"
+            className="bg-white/10 backdrop-blur-md border border-white/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 text-black w-44"
             min="1900"
             max="2030"
           />
@@ -204,7 +213,7 @@ export default function FilterBar() {
             placeholder="Jusque l'année"
             value={filters.anneeFin || ''}
             onChange={(e) => handleAnneeFinChange(e.target.value)}
-            className="bg-white/10 backdrop-blur-md border border-white/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 text-gray-700 w-36"
+            className="bg-white/10 backdrop-blur-md border border-white/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 text-black w-36"
             min="1900"
             max="2030"
           />

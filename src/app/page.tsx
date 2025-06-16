@@ -49,37 +49,37 @@ export default function HomePage() {
                 <div className="p-3 text-left">
                   <h1 className="text-2xl font-bold mb-1">
                     <span className="text-gradient">Observations naturalistes : Ponthieu-Marquenterre</span>
-                  </h1>
+                    </h1>
                   <p className="species-count-title">
-                    Données OpenOBS (Muséum national d'Histoire naturelle)
-                  </p>
+                      Données OpenOBS (Muséum national d'Histoire naturelle)
+                    </p>
                 </div>
-              </div>
-              
+                  </div>
+                  
               {/* Observations */}
               <div className="modern-card shadow-xl">
                 <div className="p-3 text-center min-w-[120px]">
                   <div className="text-xl font-bold text-gradient mb-1">
-                    {formatNumberFull(globalStats.totalObs)}
-                  </div>
+                          {formatNumberFull(globalStats.totalObs)}
+                        </div>
                   <div className="text-gray-600 font-medium text-sm">
-                    Observations
-                  </div>
-                </div>
-              </div>
+                          Observations
+                        </div>
+                      </div>
+                    </div>
               
               {/* Espèces */}
               <div className="modern-card shadow-xl">
                 <div className="p-3 text-center min-w-[120px]">
                   <div className="text-xl font-bold text-gradient mb-1">
-                    {formatNumberFull(globalStats.totalEsp)}
-                  </div>
+                          {formatNumberFull(globalStats.totalEsp)}
+                        </div>
                   <div className="text-gray-600 font-medium text-sm">
-                    Espèces
+                          Espèces
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Zone carte avec icône plus lisible */}

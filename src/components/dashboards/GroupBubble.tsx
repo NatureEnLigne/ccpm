@@ -77,7 +77,7 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
                 if (species.listeRouge) return
               } else {
                 // Pour les autres statuts, filtrer par le statut spécifique
-                if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
+              if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
               }
             }
             
