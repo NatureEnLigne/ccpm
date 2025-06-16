@@ -131,7 +131,6 @@
   .glass:hover {
     background: rgba(255, 255, 255, 0.9);
     box-shadow: var(--shadow-medium);
-    transform: translateY(-2px) scale(1.01);
     z-index: 10;
   }
   
@@ -186,7 +185,6 @@
   .modern-card:hover {
     background: linear-gradient(90deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
     box-shadow: var(--shadow-large);
-    transform: translateY(-6px) scale(1.005);
     z-index: 5;
   }
 
@@ -285,7 +283,6 @@
 
   .card-glass:hover {
     background: linear-gradient(90deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.1));
-    transform: translateY(-3px) scale(1.005);
     box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.15);
   }
   
@@ -321,7 +318,6 @@
   }
 
   .btn-modern:hover {
-    transform: translateY(-2px);
     box-shadow: 0 8px 32px rgba(45, 80, 22, 0.4);
   }
 
@@ -341,7 +337,6 @@
     background: rgba(255, 255, 255, 0.95);
     border-color: var(--color-primary);
     box-shadow: 0 0 0 4px rgba(45, 80, 22, 0.1);
-    transform: scale(1.02);
   }
 
   /* Animations modernes */
@@ -371,7 +366,6 @@
 
   .chart-container:hover {
     box-shadow: var(--shadow-medium);
-    transform: translateY(-2px) scale(1.01);
     z-index: 10;
   }
 

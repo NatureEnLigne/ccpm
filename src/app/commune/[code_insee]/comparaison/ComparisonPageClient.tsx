@@ -40,7 +40,7 @@ const FicheIcon = ({ codeInsee }: { codeInsee: string }) => {
   return (
     <button
       onClick={handleClick}
-      className="flex-shrink-0 p-2 rounded-lg transition-all duration-300 hover:scale-110 hover:drop-shadow-lg bg-white/20 hover:bg-white/30"
+      className="flex-shrink-0 p-2 rounded-lg transition-all duration-300 hover:drop-shadow-lg bg-white/20 hover:bg-white/30"
       title="Ouvrir la fiche de la commune"
     >
       <svg 
@@ -543,7 +543,7 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
                               isSelected 
                                 ? 'bg-gradient-primary text-white shadow-lg' 
                                 : 'bg-white/50 hover:bg-white/70 text-gray-700'
-                            } transform hover:scale-[1.02]`}
+                            }`}
                           >
                             <div className="font-medium mb-1 truncate pr-2 flex items-center gap-2">
                               <span className="text-sm">🏘️</span>

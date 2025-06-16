@@ -36,7 +36,7 @@ const FicheIcon = ({ isSelected, codeInsee }: { isSelected: boolean, codeInsee: 
   return (
     <button
       onClick={handleClick}
-      className={`flex-shrink-0 p-1.5 rounded-lg transition-all duration-300 hover:scale-110 hover:drop-shadow-lg ${
+      className={`flex-shrink-0 p-1.5 rounded-lg transition-all duration-300 hover:drop-shadow-lg ${
         isSelected ? 'bg-white/20 hover:bg-white/30' : 'bg-gray-100 hover:bg-gray-200'
       }`}
       title="Ouvrir la fiche de la commune"
@@ -174,7 +174,7 @@ export default function Sidebar() {
               </h4>
               <button
                 onClick={() => setSelectedCommune(null)}
-                  className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 flex-shrink-0 text-lg"
+                  className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-all duration-200 flex-shrink-0 text-lg"
                 title="Fermer"
               >
                 ✕
@@ -236,7 +236,7 @@ export default function Sidebar() {
                     isSelected 
                       ? 'bg-gradient-primary text-white shadow-lg' 
                       : 'bg-white/50 hover:bg-white/70 text-gray-700'
-                  } transform hover:scale-[1.02]`}
+                  }`}
                 >
                     <div className="font-medium mb-1 truncate pr-2 flex items-center gap-2">
                       <span className="text-sm">🏘️</span>
