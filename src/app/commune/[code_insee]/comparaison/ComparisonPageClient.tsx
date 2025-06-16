@@ -48,18 +48,25 @@ const FicheIcon = ({ codeInsee }: { codeInsee: string }) => {
         height="20" 
         viewBox="0 0 24 24" 
         fill="none" 
-        className="stroke-white transition-all duration-300"
+        className="transition-all duration-300"
         strokeWidth="2"
       >
+        <defs>
+          <linearGradient id="gradient-stroke" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#cd853f" />
+            <stop offset="100%" stopColor="#2d5016" />
+          </linearGradient>
+        </defs>
         {/* Contour du document */}
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="url(#gradient-stroke)" />
         {/* Coin plié */}
-        <path d="M14,2 L14,8 L20,8" />
+        <path d="M14,2 L14,8 L20,8" stroke="url(#gradient-stroke)" />
         {/* Lignes de contenu */}
         <path 
           d="M16,13 L8,13 M16,17 L8,17 M10,9 L8,9"
-          className="stroke-white/90"
+          stroke="url(#gradient-stroke)"
           strokeWidth="1.5"
+          opacity="0.9"
         />
       </svg>
     </button>
