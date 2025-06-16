@@ -426,9 +426,12 @@ export default function SpeciesTable({ codeInsee, noCard = false }: SpeciesTable
                     onClick={() => setCurrentPage(pageNum)}
                     className={`px-3 py-1 rounded-lg transition-colors text-sm ${
                       currentPage === pageNum
-                        ? 'bg-green-500/30 text-green-700 font-medium'
+                        ? 'text-white font-medium shadow-md'
                         : 'bg-white/20 hover:bg-white/30 text-gray-700'
                     }`}
+                    style={currentPage === pageNum ? {
+                      background: 'linear-gradient(135deg, #cd853f 0%, #8b4513 25%, #6b8e23 50%, #4a7c59 75%, #2d5016 100%)'
+                    } : {}}
                   >
                     {pageNum}
                   </button>
