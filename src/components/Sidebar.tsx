@@ -180,20 +180,25 @@ export default function Sidebar() {
                 ✕
               </button>
             </div>
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div className="bg-white/20 rounded-lg p-3 text-center">
-                  <div className="font-bold text-xl flex items-center justify-center gap-1">
-                    <span className="text-sm">👁️</span>
-                  {formatNumber(communeData.get(selectedCommune)?.totalObs || 0)}
+            <div className="flex items-center gap-3">
+              <div className="flex-1 grid grid-cols-2 gap-3 text-sm">
+                <div className="bg-white/20 rounded-lg p-3 text-center">
+                    <div className="font-bold text-xl flex items-center justify-center gap-1">
+                      <span className="text-sm">👁️</span>
+                    {formatNumber(communeData.get(selectedCommune)?.totalObs || 0)}
+                  </div>
+                  <div className="opacity-90">Observations</div>
                 </div>
-                <div className="opacity-90">Observations</div>
+                <div className="bg-white/20 rounded-lg p-3 text-center">
+                    <div className="font-bold text-xl flex items-center justify-center gap-1">
+                      <span className="text-sm">🦋</span>
+                    {formatNumber(communeData.get(selectedCommune)?.totalEsp || 0)}
+                  </div>
+                  <div className="opacity-90">Espèces</div>
+                </div>
               </div>
-              <div className="bg-white/20 rounded-lg p-3 text-center">
-                  <div className="font-bold text-xl flex items-center justify-center gap-1">
-                    <span className="text-sm">🦋</span>
-                  {formatNumber(communeData.get(selectedCommune)?.totalEsp || 0)}
-                </div>
-                <div className="opacity-90">Espèces</div>
+              <div className="flex-shrink-0">
+                <FicheIcon isSelected={true} codeInsee={selectedCommune} />
               </div>
             </div>
           </div>
