@@ -492,7 +492,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
               <div className="text-xl font-bold text-gradient mb-1">
                   {formatNumberFull(filteredStats.totalObs)}
                 </div>
-              <div className="data-label">
+              <div className="data-label-unified">
                       Observations
                     </div>
                   </div>
@@ -504,7 +504,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
               <div className="text-xl font-bold text-gradient mb-1">
                   {formatNumberFull(filteredStats.totalEsp)}
                 </div>
-                            <div className="data-label">
+                            <div className="data-label-unified">
                       Espèces
                     </div>
             </div>
@@ -524,8 +524,8 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
                   </svg>
                 </div>
               </div>
-                            <div className="nav-button-label">
-                      Télécharger CSV
+                            <div className="data-label-unified">
+                      Télécharger
                     </div>
             </button>
           </div>
@@ -544,7 +544,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
                   </svg>
                 </div>
               </div>
-                            <div className="nav-button-label">
+                            <div className="data-label-unified">
                       Comparaison
                     </div>
             </button>

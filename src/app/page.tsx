@@ -48,7 +48,7 @@ export default function HomePage() {
               <div className="modern-card shadow-xl flex-1">
                 <div className="p-3 text-left">
                   <h1 className="text-2xl font-bold mb-1">
-                    <span className="text-gradient">Observations naturalistes : Ponthieu-Marquenterre</span>
+                    <span className="text-gradient whitespace-nowrap">Observations naturalistes : Ponthieu-Marquenterre</span>
                     </h1>
                   <p className="species-count-title">
                       Données OpenOBS (Muséum national d'Histoire naturelle)
@@ -62,7 +62,7 @@ export default function HomePage() {
                   <div className="text-xl font-bold text-gradient mb-1">
                           {formatNumberFull(globalStats.totalObs)}
                         </div>
-                  <div className="data-label">
+                  <div className="data-label-unified">
                           Observations
                         </div>
                       </div>
@@ -74,7 +74,7 @@ export default function HomePage() {
                   <div className="text-xl font-bold text-gradient mb-1">
                           {formatNumberFull(globalStats.totalEsp)}
                         </div>
-                  <div className="data-label">
+                  <div className="data-label-unified">
                           Espèces
                         </div>
                       </div>

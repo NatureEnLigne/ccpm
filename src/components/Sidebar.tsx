@@ -168,8 +168,8 @@ export default function Sidebar() {
         {selectedCommune && communeData?.has(selectedCommune) && (
           <div className="mb-6 p-4 bg-gradient-primary rounded-2xl text-white shadow-lg">
             <div className="flex items-center justify-between mb-3">
-                <h4 className="font-bold text-lg truncate pr-2 flex items-center gap-2">
-                  <span className="text-xl">🏘️</span>
+                <h4 className="font-bold text-base truncate pr-2 flex items-center gap-2">
+                  <span className="text-lg">🏘️</span>
                 {communeNames.get(selectedCommune) || selectedCommune}
               </h4>
               <button

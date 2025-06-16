@@ -465,7 +465,23 @@
     font-size: 0.875rem;
     font-weight: 600;
     line-height: 1.2;
-    color: #856D2C;
+    background: linear-gradient(135deg, #cd853f, #2d5016);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    opacity: 1;
+  }
+  
+  /* Style unifié pour tous les labels de données avec rampe de couleurs */
+  .data-label-unified {
+    font-family: var(--font-sora), 'Sora', sans-serif, system-ui, -apple-system;
+    font-size: 0.875rem; /* Taille unifiée */
+    font-weight: 600;
+    line-height: 1.2;
+    background: linear-gradient(135deg, #cd853f, #2d5016);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     opacity: 1;
   }
   

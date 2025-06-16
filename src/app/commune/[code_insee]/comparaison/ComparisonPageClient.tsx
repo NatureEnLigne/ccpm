@@ -316,13 +316,13 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
                     <div className="text-lg font-bold text-gradient">
                       {formatNumberFull(filteredStatsBase.totalObs)}
                     </div>
-                                            <div className="data-label">Observations</div>
+                                            <div className="data-label-unified">Observations</div>
                   </div>
                   <div className="text-center">
                     <div className="text-lg font-bold text-gradient">
                       {formatNumberFull(filteredStatsBase.totalEsp)}
                     </div>
-                                            <div className="data-label">Espèces</div>
+                                            <div className="data-label-unified">Espèces</div>
                   </div>
                 </div>
               </div>
@@ -407,13 +407,13 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
                         <div className="text-lg font-bold text-gradient">
                           {formatNumberFull(filteredStatsComparison.totalObs)}
                         </div>
-                        <div className="data-label">Observations</div>
+                        <div className="data-label-unified">Observations</div>
                       </div>
                       <div className="text-center">
                         <div className="text-lg font-bold text-gradient">
                           {formatNumberFull(filteredStatsComparison.totalEsp)}
                         </div>
-                        <div className="data-label">Espèces</div>
+                        <div className="data-label-unified">Espèces</div>
                       </div>
                       <div className="flex items-center">
                         <FicheIcon codeInsee={selectedCommune} />
