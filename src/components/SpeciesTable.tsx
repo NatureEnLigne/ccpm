@@ -267,7 +267,7 @@ export default function SpeciesTable({ codeInsee, noCard = false }: SpeciesTable
     )
   }
 
-  const content = (
+  const mainContent = (
     <>
       <div className="flex justify-between items-center mb-6">
         {!noCard && (
@@ -450,8 +450,8 @@ export default function SpeciesTable({ codeInsee, noCard = false }: SpeciesTable
   )
 
   return noCard ? (
-    <div className="fade-in-up">{content}</div>
+    <div className="fade-in-up">{mainContent}</div>
   ) : (
-    <div className="modern-card z-bottom shadow-xl fade-in-up">{content}</div>
+    <div className="modern-card z-bottom shadow-xl fade-in-up">{mainContent}</div>
   )
 } 
