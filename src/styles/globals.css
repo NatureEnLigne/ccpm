@@ -16,9 +16,9 @@
   --color-error: #8b4513;          /* Brun rouille */
   --color-surface: rgba(255, 255, 255, 0.85);
   --color-surface-dark: rgba(45, 80, 22, 0.9);
-  --shadow-soft: 0 1px 3px rgba(45, 80, 22, 0.01);
-  --shadow-medium: 0 1px 4px rgba(45, 80, 22, 0.015);
-  --shadow-large: 0 2px 6px rgba(45, 80, 22, 0.02);
+  --shadow-soft: 0 0px 1px rgba(45, 80, 22, 0.005);
+  --shadow-medium: 0 0px 1px rgba(45, 80, 22, 0.008);
+  --shadow-large: 0 1px 2px rgba(45, 80, 22, 0.01);
   --border-radius: 16px;
   --border-radius-large: 24px;
 }
@@ -228,7 +228,7 @@
     backdrop-filter: blur(var(--blur));
     -webkit-backdrop-filter: blur(var(--blur));
     border-radius: 1em;
-    box-shadow: 0 0.03em 0.06em rgba(0, 0, 0, 0.01);
+    box-shadow: 0 0em 0em rgba(0, 0, 0, 0.001);
     position: relative;
     overflow: hidden;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -283,7 +283,7 @@
 
   .card-glass:hover {
     background: linear-gradient(90deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.1));
-    box-shadow: 0 0.06em 0.12em rgba(0, 0, 0, 0.02);
+    box-shadow: 0 0em 0em rgba(0, 0, 0, 0.002);
   }
   
   /* Boutons modernes nature */
@@ -297,7 +297,7 @@
     font-size: 14px;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 0.5px 2px rgba(45, 80, 22, 0.04);
+    box-shadow: 0 0px 0px rgba(45, 80, 22, 0.002);
     position: relative;
     overflow: hidden;
   }
@@ -318,7 +318,7 @@
   }
 
   .btn-modern:hover {
-    box-shadow: 0 1px 3px rgba(45, 80, 22, 0.05);
+    box-shadow: 0 0px 1px rgba(45, 80, 22, 0.003);
   }
 
   /* Inputs modernes nature */
@@ -380,7 +380,7 @@
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    box-shadow: 0 0.25px 1px rgba(205, 133, 63, 0.04);
+    box-shadow: 0 0px 0px rgba(205, 133, 63, 0.002);
   }
 
   .badge-success {
