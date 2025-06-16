@@ -84,7 +84,7 @@ export default function HomePage() {
 
           {/* Zone carte avec icône plus lisible */}
           <div className="flex-1 relative min-h-0">
-            <div className="h-full modern-card overflow-hidden">
+            <div className="h-full modern-card shadow-xl overflow-hidden">
               <Map />
               <StatsPanel />
             </div>
