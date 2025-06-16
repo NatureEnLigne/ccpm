@@ -457,7 +457,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
       <main className="w-full full-width-layout px-6 py-8">
         
         {/* Header avec bouton retour et statistiques sur une seule ligne */}
-        <div className="flex items-center gap-4 mb-8 fade-in-up">
+        <div className="flex items-center gap-4 mb-6 fade-in-up">
           {/* Bouton retour à l'accueil */}
           <div className="modern-card shadow-xl">
               <button 
@@ -552,9 +552,9 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
         </div>
         
         {/* Barre de filtres */}
-        <FilterBar compactPadding={true} />
+        <FilterBar compactPadding={true} noBottomMargin={true} />
 
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 overflow-hover-safe w-full">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 overflow-hover-safe w-full mt-6">
           
           {/* Groupes taxonomiques - Bubble chart */}
           <div className="container-hover-safe">
@@ -611,7 +611,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
         </div>
         
         {/* Tableau des espèces */}
-        <div className="mt-8 w-full">
+        <div className="mt-6 w-full">
           <SpeciesTable codeInsee={codeInsee} />
         </div>
       </main>
