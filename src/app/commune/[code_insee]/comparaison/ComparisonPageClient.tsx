@@ -282,7 +282,7 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
               style={{ height: '72px' }}
               title="Retour à la commune"
             >
-              <div className="text-xl font-bold text-gradient mb-1">
+              <div className="text-3xl font-bold text-gradient mb-1">
                 ←
               </div>
               <div className="text-gray-600 font-medium text-sm">

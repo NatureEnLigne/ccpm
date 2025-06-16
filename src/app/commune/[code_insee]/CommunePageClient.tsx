@@ -465,7 +465,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
               className="p-3 text-center min-w-[120px] hover:bg-white/10 transition-colors rounded-lg"
                 title="Retour à l'accueil"
               >
-              <div className="text-xl font-bold text-gradient mb-1">
+              <div className="text-3xl font-bold text-gradient mb-1">
                 ← 
               </div>
               <div className="text-gray-600 font-medium text-sm">
