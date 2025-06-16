@@ -28,6 +28,44 @@ function formatNumberFull(num: number): string {
   return new Intl.NumberFormat('fr-FR').format(num)
 }
 
+// Composant icône de fiche optimisé
+const FicheIcon = ({ codeInsee }: { codeInsee: string }) => {
+  const router = useRouter()
+  
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    router.push(`/commune/${codeInsee}`)
+  }
+
+  return (
+    <button
+      onClick={handleClick}
+      className="flex-shrink-0 p-2 rounded-lg transition-all duration-300 hover:scale-110 hover:drop-shadow-lg bg-white/20 hover:bg-white/30"
+      title="Ouvrir la fiche de la commune"
+    >
+      <svg 
+        width="20" 
+        height="20" 
+        viewBox="0 0 24 24" 
+        fill="none" 
+        className="stroke-white transition-all duration-300"
+        strokeWidth="2"
+      >
+        {/* Contour du document */}
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+        {/* Coin plié */}
+        <path d="M14,2 L14,8 L20,8" />
+        {/* Lignes de contenu */}
+        <path 
+          d="M16,13 L8,13 M16,17 L8,17 M10,9 L8,9"
+          className="stroke-white/90"
+          strokeWidth="1.5"
+        />
+      </svg>
+    </button>
+  )
+}
+
 export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageClientProps) {
   const router = useRouter()
   const { 
@@ -370,15 +408,8 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
                         </div>
                         <div className="text-gray-600 text-sm">Espèces</div>
                       </div>
-                      <div className="text-center">
-                        <button 
-                          onClick={() => router.push(`/commune/${selectedCommune}`)}
-                          className="text-lg font-bold text-gradient hover:scale-110 transition-transform"
-                          title="Voir la fiche détaillée de cette commune"
-                        >
-                          📋
-                        </button>
-                        <div className="text-gray-600 text-sm">Fiche</div>
+                      <div className="flex items-center">
+                        <FicheIcon codeInsee={selectedCommune} />
                       </div>
                     </div>
                   </div>
@@ -500,11 +531,7 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
                         return (
                           <button
                             key={codeInsee}
-                            onClick={() => {
-                              setSelectedCommune(codeInsee)
-                              // Scroll vers le haut pour montrer la card de la commune sélectionnée
-                              window.scrollTo({ top: 0, behavior: 'smooth' })
-                            }}
+                            onClick={() => setSelectedCommune(codeInsee)}
                             className={`w-full text-left p-3 rounded-xl transition-all duration-200 overflow-hidden ${
                               isSelected 
                                 ? 'bg-gradient-primary text-white shadow-lg' 
