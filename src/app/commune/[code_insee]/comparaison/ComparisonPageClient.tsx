@@ -370,6 +370,16 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
                         </div>
                         <div className="text-gray-600 text-sm">Espèces</div>
                       </div>
+                      <div className="text-center">
+                        <button 
+                          onClick={() => router.push(`/commune/${selectedCommune}`)}
+                          className="text-lg font-bold text-gradient hover:scale-110 transition-transform"
+                          title="Voir la fiche détaillée de cette commune"
+                        >
+                          📋
+                        </button>
+                        <div className="text-gray-600 text-sm">Fiche</div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -490,7 +500,11 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
                         return (
                           <button
                             key={codeInsee}
-                            onClick={() => setSelectedCommune(codeInsee)}
+                            onClick={() => {
+                              setSelectedCommune(codeInsee)
+                              // Scroll vers le haut pour montrer la card de la commune sélectionnée
+                              window.scrollTo({ top: 0, behavior: 'smooth' })
+                            }}
                             className={`w-full text-left p-3 rounded-xl transition-all duration-200 overflow-hidden ${
                               isSelected 
                                 ? 'bg-gradient-primary text-white shadow-lg' 
