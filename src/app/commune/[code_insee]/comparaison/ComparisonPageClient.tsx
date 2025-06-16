@@ -248,7 +248,7 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
           
           {/* Barre de filtres */}
           <div className="flex-1">
-            <FilterBar />
+            <FilterBar noBottomMargin={true} />
           </div>
         </div>
 
@@ -260,7 +260,7 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
             {/* En-tête commune de base */}
             <div className="modern-card shadow-xl fade-in-up">
               <div className="p-4 text-center">
-                <h2 className="text-xl font-bold mb-1">
+                <h2 className="text-3xl font-bold mb-1">
                   <span className="text-gradient">{communeBase.properties.nom}</span>
                 </h2>
                 <p className="species-count-title mb-3">
@@ -351,7 +351,7 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
                 {/* En-tête commune de comparaison */}
                 <div className="modern-card shadow-xl fade-in-up">
                   <div className="p-4 text-center">
-                    <h2 className="text-xl font-bold mb-1">
+                    <h2 className="text-3xl font-bold mb-1">
                       <span className="text-gradient">{communeComparison.properties.nom}</span>
                     </h2>
                     <p className="species-count-title mb-3">

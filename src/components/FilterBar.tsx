@@ -27,7 +27,11 @@ const MONTH_NAMES = [
 
 
 
-export default function FilterBar() {
+interface FilterBarProps {
+  noBottomMargin?: boolean
+}
+
+export default function FilterBar({ noBottomMargin = false }: FilterBarProps) {
   const { speciesData, setFilter, filters, removeFilter, clearFilters } = useAppStore()
   const [availableRegnes, setAvailableRegnes] = useState<string[]>([])
   const [availableRedListCategories, setAvailableRedListCategories] = useState<string[]>([])
@@ -150,7 +154,7 @@ export default function FilterBar() {
   }
 
   return (
-    <div className="modern-card z-filters shadow-xl fade-in-up">
+    <div className={`modern-card z-filters shadow-xl fade-in-up ${noBottomMargin ? '' : 'mb-8'}`}>
       {/* Première ligne : Titre et contrôles alignés */}
       <div className="flex items-center justify-between gap-4 min-h-[72px]">
         <div className="flex items-center gap-2">
