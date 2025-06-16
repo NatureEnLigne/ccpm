@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react'
 import { useAppStore } from '../store/useAppStore'
 import { formatNumber, translateRegne } from '../utils/formatters'
 import type { Taxonomie } from '../types'
+import NoDataAnimation from '@/components/NoDataAnimation'
 
 interface SpeciesTableProps {
   codeInsee: string
@@ -247,15 +248,14 @@ export default function SpeciesTable({ codeInsee, noCard = false }: SpeciesTable
     const content = (
       <>
         {!noCard && (
-          <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-            <span className="text-xl">📋</span>
-            <span className="text-gradient">Liste des espèces</span>
-          </h3>
+        <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+          <span className="text-xl">📋</span>
+          <span className="text-gradient">Liste des espèces</span>
+        </h3>
         )}
-        <div className="text-center py-8 text-gray-500">
-          <div className="text-4xl mb-2">🔍</div>
-          <p>Aucune donnée d'espèce disponible pour cette commune</p>
-          {filters.selectedRegne && <p className="text-sm mt-1">Filtre: {translateRegne(filters.selectedRegne)}</p>}
+        <div className="py-8">
+          <NoDataAnimation message="Aucune donnée d'espèce disponible pour cette commune" />
+          {filters.selectedRegne && <p className="text-sm mt-4 text-center text-gray-500">Filtre: {translateRegne(filters.selectedRegne)}</p>}
         </div>
       </>
     )
@@ -271,10 +271,10 @@ export default function SpeciesTable({ codeInsee, noCard = false }: SpeciesTable
     <>
       <div className="flex justify-between items-center mb-6">
         {!noCard && (
-          <h3 className="text-xl font-semibold flex items-center gap-2">
-            <span className="text-xl">📋</span>
-            <span className="text-gradient">Liste des espèces</span>
-          </h3>
+        <h3 className="text-xl font-semibold flex items-center gap-2">
+          <span className="text-xl">📋</span>
+          <span className="text-gradient">Liste des espèces</span>
+        </h3>
         )}
         <div className={`species-count-title ${noCard ? 'w-full text-center' : ''}`}>
           {formatNumber(tableData.length)} espèces • {formatNumber(tableData.reduce((sum, row) => sum + row.nombreObservations, 0))} observations

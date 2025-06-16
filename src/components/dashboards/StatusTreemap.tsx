@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { ResponsiveTreeMap } from '@nivo/treemap'
 import { useAppStore } from '../../store/useAppStore'
 import { useChartInteractions } from '../../hooks/useChartInteractions'
+import NoDataAnimation from '@/components/NoDataAnimation'
 
 interface StatusTreemapProps {
   codeInsee: string
@@ -221,14 +222,7 @@ export default function StatusTreemap({ codeInsee }: StatusTreemapProps) {
   }
 
   if (!data || !data.children || data.children.length === 0) {
-    return (
-      <div className="h-full flex items-center justify-center text-gray-500">
-        <div className="text-center">
-          <div className="text-4xl mb-2">⚖️</div>
-          <p>Aucune donnée de statut réglementaire disponible</p>
-        </div>
-      </div>
-    )
+    return <NoDataAnimation message="Aucune donnée de statut réglementaire disponible" />
   }
 
   return (

@@ -2,6 +2,7 @@
 
 import { useAppStore } from '../store/useAppStore'
 import { formatNumber } from '../utils/formatters'
+import NoDataAnimation from '@/components/NoDataAnimation'
 
 export default function StatsPanel() {
   const {
@@ -135,9 +136,8 @@ export default function StatsPanel() {
           ) : (
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
-                <div className="text-6xl mb-4">📊</div>
-                <p className="text-xl text-gray-600 mb-4">Aucune donnée disponible</p>
-                <div className="text-sm text-gray-500">
+                <NoDataAnimation message="Aucune donnée disponible" size="large" />
+                <div className="text-sm text-gray-500 mt-4">
                   <p>Debug info:</p>
                   <p>statsPanelCommune: {statsPanelCommune || 'null'}</p>
                   <p>communeData: {communeData ? `${communeData.size} communes` : 'null'}</p>

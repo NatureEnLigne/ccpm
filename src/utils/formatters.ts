@@ -97,7 +97,7 @@ export function formatArea(area: number): string {
     return `${(area / 1000000).toFixed(1)} km²`
   }
   return `${(area / 10000).toFixed(1)} ha`
-}
+} 
 
 // Fonction pour traduire les noms latins des règnes en français
 export function translateRegne(regne: string): string {

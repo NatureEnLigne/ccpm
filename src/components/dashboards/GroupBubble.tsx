@@ -5,6 +5,7 @@ import { ResponsiveCirclePacking } from '@nivo/circle-packing'
 import { useAppStore } from '../../store/useAppStore'
 import { useChartInteractions } from '../../hooks/useChartInteractions'
 import { generateGreenColorRamp, GREEN_PALETTE } from '../../utils/colors'
+import NoDataAnimation from '@/components/NoDataAnimation'
 
 interface GroupBubbleProps {
   codeInsee: string
@@ -203,14 +204,7 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
   const taxonomicLevel = getTaxonomicLevel()
 
   if (!data || !data.children || data.children.length === 0) {
-    return (
-      <div className="h-full flex items-center justify-center text-gray-500">
-        <div className="text-center">
-          <div className="text-4xl mb-2">📊</div>
-          <p>Aucune donnée disponible</p>
-        </div>
-      </div>
-    )
+    return <NoDataAnimation message="Aucune donnée disponible" />
   }
 
   return (

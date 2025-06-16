@@ -5,6 +5,7 @@ import { ResponsiveBar } from '@nivo/bar'
 import { useAppStore } from '../../store/useAppStore'
 import { useChartInteractions } from '../../hooks/useChartInteractions'
 import { generateGreenColorRamp, GREEN_PALETTE } from '../../utils/colors'
+import NoDataAnimation from '@/components/NoDataAnimation'
 
 interface RedListBarProps {
   codeInsee: string
@@ -144,14 +145,7 @@ export default function RedListBar({ codeInsee }: RedListBarProps) {
   }, [communeData, speciesData, codeInsee, filters])
 
   if (data.length === 0) {
-    return (
-      <div className="h-full flex items-center justify-center text-gray-500">
-        <div className="text-center">
-          <div className="text-4xl mb-2">🚨</div>
-          <p>Aucune donnée de liste rouge disponible</p>
-        </div>
-      </div>
-    )
+    return <NoDataAnimation message="Aucune donnée de liste rouge disponible" />
   }
 
   return (

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { ResponsiveLine } from '@nivo/line'
 import { useAppStore } from '../../store/useAppStore'
 import { useChartInteractions } from '../../hooks/useChartInteractions'
+import NoDataAnimation from '@/components/NoDataAnimation'
 
 interface PhenoLineProps {
   codeInsee: string
@@ -108,14 +109,7 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
   }, [communeData, speciesData, codeInsee, filters])
 
   if (data.length === 0 || data[0].data.every(d => d.y === 0)) {
-    return (
-      <div className="h-full flex items-center justify-center text-gray-500">
-        <div className="text-center">
-          <div className="text-4xl mb-2">📅</div>
-          <p>Aucune donnée de phénologie disponible</p>
-        </div>
-      </div>
-    )
+    return <NoDataAnimation message="Aucune donnée de phénologie disponible" />
   }
 
   // Calculer les valeurs de graduations pour l'axe Y

@@ -19,6 +19,7 @@ import RedListBar from '../../../components/dashboards/RedListBar'
 import StatusTreemap from '../../../components/dashboards/StatusTreemap'
 import FilterBar from '../../../components/FilterBar'
 import SpeciesTable from '../../../components/SpeciesTable'
+import NoDataAnimation from '../../../components/NoDataAnimation'
 
 import type { SyntheseInsee, PhenoMoisInsee, Taxonomie, ListeRouge, Statut } from '../../../types'
 
@@ -436,9 +437,8 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="glass rounded-2xl p-8 text-center">
-          <div className="text-gray-500 text-6xl mb-4">🏘️</div>
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">Commune non trouvée</h2>
-          <p className="text-gray-600 mb-4">Aucune donnée disponible pour le code INSEE {codeInsee}</p>
+          <NoDataAnimation message={`Aucune donnée disponible pour le code INSEE ${codeInsee}`} size="large" />
+          <h2 className="text-xl font-semibold text-gray-800 mb-4 mt-4">Commune non trouvée</h2>
           <button 
             onClick={() => router.push('/')}
             className="bg-blue-500/20 hover:bg-blue-500/30 text-blue-700 font-medium py-2 px-4 rounded-lg transition-colors border border-blue-300/50"
