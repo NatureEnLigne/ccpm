@@ -155,7 +155,7 @@ export default function Sidebar() {
     <div className="w-96 h-screen max-h-screen flex flex-col gap-6 overflow-hidden py-6">
       {/* Section Communes CCPM - Hauteur fixe */}
       <div className="container-hover-safe flex-1 min-h-0">
-        <div className="modern-card fade-in-scale h-full flex flex-col">
+        <div className="modern-card shadow-xl fade-in-scale h-full flex flex-col">
           {/* Titre avec icône plus lisible */}
           <h3 className="text-xl font-bold mb-6 flex items-center gap-3 flex-shrink-0">
             <span className="text-2xl">🏛️</span>
@@ -268,7 +268,7 @@ export default function Sidebar() {
 
       {/* Section Couches - Hauteur fixe */}
       <div className="container-hover-safe flex-shrink-0">
-        <div className="modern-card fade-in-scale">
+        <div className="modern-card shadow-xl fade-in-scale">
           <h4 className="text-xl font-bold mb-6 flex items-center gap-3">
             <span className="text-2xl">🗺️</span>
             <span className="text-gradient">Couches</span>
