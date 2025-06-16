@@ -62,7 +62,7 @@ export default function HomePage() {
                   <div className="text-xl font-bold text-gradient mb-1">
                           {formatNumberFull(globalStats.totalObs)}
                         </div>
-                  <div className="text-gray-600 font-medium text-sm">
+                  <div className="data-label">
                           Observations
                         </div>
                       </div>
@@ -74,7 +74,7 @@ export default function HomePage() {
                   <div className="text-xl font-bold text-gradient mb-1">
                           {formatNumberFull(globalStats.totalEsp)}
                         </div>
-                  <div className="text-gray-600 font-medium text-sm">
+                  <div className="data-label">
                           Espèces
                         </div>
                       </div>

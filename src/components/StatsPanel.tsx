@@ -64,22 +64,22 @@ export default function StatsPanel() {
                     <div className="text-3xl font-bold text-blue-600">
                       {formatNumber(statsCommuneData.totalObs)}
                     </div>
-                    <div className="text-sm text-gray-600 mt-1">Observations</div>
+                    <div className="data-label mt-1">Observations</div>
                   </div>
                   <div className="text-center">
                     <div className="text-3xl font-bold text-green-600">
                       {formatNumber(statsCommuneData.totalEsp)}
                     </div>
-                    <div className="text-sm text-gray-600 mt-1">Espèces</div>
+                    <div className="data-label mt-1">Espèces</div>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-white/20">
                   <div>
-                    <span className="text-gray-600 text-sm">Code INSEE:</span>
+                    <span className="data-label">Code INSEE:</span>
                     <p className="font-semibold">{statsCommuneData.insee}</p>
                   </div>
                   <div>
-                    <span className="text-gray-600 text-sm">Entrées de données:</span>
+                    <span className="data-label">Entrées de données:</span>
                     <p className="font-semibold">{statsCommuneData.observations.length}</p>
                   </div>
                 </div>

@@ -468,7 +468,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
               <div className="text-3xl font-bold text-gradient mb-1">
                 ← 
               </div>
-              <div className="text-gray-600 font-medium text-sm">
+              <div className="nav-button-label">
                 Retour à l'accueil
               </div>
               </button>
@@ -492,7 +492,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
               <div className="text-xl font-bold text-gradient mb-1">
                   {formatNumberFull(filteredStats.totalObs)}
                 </div>
-              <div className="text-gray-600 font-medium text-sm">
+              <div className="data-label">
                       Observations
                     </div>
                   </div>
@@ -504,9 +504,9 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
               <div className="text-xl font-bold text-gradient mb-1">
                   {formatNumberFull(filteredStats.totalEsp)}
                 </div>
-              <div className="text-gray-600 font-medium text-sm">
+                            <div className="data-label">
                       Espèces
-              </div>
+                    </div>
             </div>
           </div>
           
@@ -524,9 +524,9 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
                   </svg>
                 </div>
               </div>
-              <div className="text-gray-600 font-medium text-sm">
-                Télécharger CSV
-              </div>
+                            <div className="nav-button-label">
+                      Télécharger CSV
+                    </div>
             </button>
           </div>
           
@@ -544,9 +544,9 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
                   </svg>
                 </div>
               </div>
-              <div className="text-gray-600 font-medium text-sm">
-                Comparaison
-              </div>
+                            <div className="nav-button-label">
+                      Comparaison
+                    </div>
             </button>
           </div>
         </div>

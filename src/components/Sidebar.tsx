@@ -187,14 +187,14 @@ export default function Sidebar() {
                     <span className="text-sm">👁️</span>
                   {formatNumber(communeData.get(selectedCommune)?.totalObs || 0)}
                 </div>
-                <div className="opacity-90">Observations</div>
+                <div className="data-label-selected">Observations</div>
               </div>
               <div className="bg-white/20 rounded-lg p-3 text-center">
                   <div className="font-bold text-xl flex items-center justify-center gap-1">
                     <span className="text-sm">🦋</span>
                   {formatNumber(communeData.get(selectedCommune)?.totalEsp || 0)}
                 </div>
-                <div className="opacity-90">Espèces</div>
+                <div className="data-label-selected">Espèces</div>
                 </div>
               </div>
               <div className="flex-shrink-0">
