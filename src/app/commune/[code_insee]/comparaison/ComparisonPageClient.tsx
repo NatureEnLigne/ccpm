@@ -431,7 +431,7 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
               </>
             ) : (
               /* Panneau de sélection de commune - reprend exactement le contenu de 🏛️ Communes CCPM */
-              <div className="modern-card shadow-xl fade-in-up h-full max-h-screen flex flex-col">
+              <div className="modern-card shadow-xl fade-in-up flex flex-col" style={{ height: 'calc(100vh - 200px)' }}>
                 {/* Titre avec icône */}
                 <h3 className="text-xl font-bold mb-6 flex items-center gap-3 flex-shrink-0">
                   <span className="text-2xl">🏛️</span>
@@ -453,7 +453,7 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
                 </div>
 
                 {/* Contenu scrollable avec hauteur contrainte */}
-                <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100" style={{ maxHeight: 'calc(100vh - 500px)' }}>
+                <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                   {/* Champ de recherche moderne */}
                   <div className="mb-6 flex-shrink-0">
                     <div className="relative">
