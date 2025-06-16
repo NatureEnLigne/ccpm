@@ -336,7 +336,7 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
                     <span className="text-gradient">Liste des espèces</span>
                   </h3>
                   <div className="p-4">
-                    <SpeciesTable codeInsee={codeInseeBase} />
+                    <SpeciesTable codeInsee={codeInseeBase} noCard={true} />
                   </div>
                 </div>
               </>
@@ -425,7 +425,7 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
                     <span className="text-gradient">Liste des espèces</span>
                   </h3>
                   <div className="p-4">
-                    <SpeciesTable codeInsee={selectedCommune} />
+                    <SpeciesTable codeInsee={selectedCommune} noCard={true} />
                   </div>
                 </div>
               </>

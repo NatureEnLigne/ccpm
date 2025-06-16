@@ -7,6 +7,7 @@ import type { Taxonomie } from '../types'
 
 interface SpeciesTableProps {
   codeInsee: string
+  noCard?: boolean
 }
 
 interface SpeciesTableRow {
@@ -19,7 +20,7 @@ interface SpeciesTableRow {
   nombreObservations: number
 }
 
-export default function SpeciesTable({ codeInsee }: SpeciesTableProps) {
+export default function SpeciesTable({ codeInsee, noCard = false }: SpeciesTableProps) {
   const { speciesData, communeData, filters } = useAppStore()
   const [sortField, setSortField] = useState<keyof SpeciesTableRow>('nombreObservations')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
@@ -243,29 +244,39 @@ export default function SpeciesTable({ codeInsee }: SpeciesTableProps) {
   }
 
   if (!currentCommune || tableData.length === 0) {
-    return (
-      <div className="modern-card z-bottom shadow-xl fade-in-up">
-        <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-          <span className="text-xl">📋</span>
-          <span className="text-gradient">Liste des espèces</span>
-        </h3>
+    const content = (
+      <>
+        {!noCard && (
+          <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <span className="text-xl">📋</span>
+            <span className="text-gradient">Liste des espèces</span>
+          </h3>
+        )}
         <div className="text-center py-8 text-gray-500">
           <div className="text-4xl mb-2">🔍</div>
           <p>Aucune donnée d'espèce disponible pour cette commune</p>
           {filters.selectedRegne && <p className="text-sm mt-1">Filtre: {translateRegne(filters.selectedRegne)}</p>}
         </div>
-      </div>
+      </>
+    )
+
+    return noCard ? (
+      <div className="fade-in-up">{content}</div>
+    ) : (
+      <div className="modern-card z-bottom shadow-xl fade-in-up">{content}</div>
     )
   }
 
-  return (
-    <div className="modern-card z-bottom shadow-xl fade-in-up">
+  const content = (
+    <>
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-xl font-semibold flex items-center gap-2">
-          <span className="text-xl">📋</span>
-          <span className="text-gradient">Liste des espèces</span>
-        </h3>
-        <div className="species-count-title">
+        {!noCard && (
+          <h3 className="text-xl font-semibold flex items-center gap-2">
+            <span className="text-xl">📋</span>
+            <span className="text-gradient">Liste des espèces</span>
+          </h3>
+        )}
+        <div className={`species-count-title ${noCard ? 'w-full text-center' : ''}`}>
           {formatNumber(tableData.length)} espèces • {formatNumber(tableData.reduce((sum, row) => sum + row.nombreObservations, 0))} observations
           {filters.selectedRegne && <span className="ml-2 text-green-600">• Filtre: {translateRegne(filters.selectedRegne)}</span>}
         </div>
@@ -435,6 +446,12 @@ export default function SpeciesTable({ codeInsee }: SpeciesTableProps) {
           </div>
         </div>
       )}
-    </div>
+    </>
+  )
+
+  return noCard ? (
+    <div className="fade-in-up">{content}</div>
+  ) : (
+    <div className="modern-card z-bottom shadow-xl fade-in-up">{content}</div>
   )
 } 
