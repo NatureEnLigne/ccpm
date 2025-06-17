@@ -417,6 +417,20 @@
     margin: -16px;
     overflow: visible;
   }
+
+  /* Force la couleur verte foncée pour le champ nom de la commune */
+  .input-commune {
+    color: #2d5016 !important;
+  }
+  
+  .input-commune::placeholder {
+    color: #cd853f !important;
+    opacity: 0.7;
+  }
+  
+  .input-commune:focus {
+    color: #2d5016 !important;
+  }
 }
 
 @layer utilities {

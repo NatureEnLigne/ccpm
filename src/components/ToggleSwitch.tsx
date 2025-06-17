@@ -10,7 +10,7 @@ interface ToggleSwitchProps {
 
 export default function ToggleSwitch({ checked, onChange, label }: ToggleSwitchProps) {
   return (
-    <div className="flex items-center justify-between group">
+    <div className="flex items-center gap-3 group">
       {/* Toggle switch moderne */}
       <div 
         onClick={() => onChange(!checked)}
@@ -32,10 +32,10 @@ export default function ToggleSwitch({ checked, onChange, label }: ToggleSwitchP
         )}
       </div>
       
-      {/* Label moderne */}
+      {/* Label moderne avec gradient */}
       <label 
         onClick={() => onChange(!checked)}
-        className="font-medium text-gray-700 cursor-pointer transition-colors duration-200 group-hover:text-gray-900 select-none"
+        className="font-medium cursor-pointer transition-colors duration-200 select-none data-label-unified"
       >
         {label}
       </label>

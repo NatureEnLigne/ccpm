@@ -183,18 +183,18 @@ export default function Sidebar() {
             <div className="flex items-center gap-3">
               <div className="flex-1 grid grid-cols-2 gap-3 text-sm">
               <div className="bg-white/20 rounded-lg p-2 text-center">
-                  <div className="font-bold text-sm flex items-center justify-center gap-1">
+                  <div className="font-bold text-xs flex items-center justify-center gap-1">
                     <span className="text-xs">👁️</span>
                   {formatNumber(communeData.get(selectedCommune)?.totalObs || 0)}
                 </div>
-                <div className="data-label-selected text-xs">Observations</div>
+                <div className="data-label-selected text-xs font-bold">Observations</div>
               </div>
               <div className="bg-white/20 rounded-lg p-2 text-center">
-                  <div className="font-bold text-sm flex items-center justify-center gap-1">
+                  <div className="font-bold text-xs flex items-center justify-center gap-1">
                     <span className="text-xs">🦋</span>
                   {formatNumber(communeData.get(selectedCommune)?.totalEsp || 0)}
                 </div>
-                <div className="data-label-selected text-xs">Espèces</div>
+                <div className="data-label-selected text-xs font-bold">Espèces</div>
                 </div>
               </div>
               <div className="flex-shrink-0">
@@ -210,13 +210,12 @@ export default function Sidebar() {
               <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg">🔍</span>
             <input
               type="text"
-                placeholder="Nom de la commune"
+              placeholder="Nom de la commune"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-                className="rounded-xl border border-amber-200/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 font-medium w-full pl-10 pr-4 placeholder-amber-600"
+              className="rounded-xl border border-amber-200/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 font-medium w-full pl-10 pr-4 input-commune"
               style={{
-                background: 'linear-gradient(135deg, rgba(205, 133, 63, 0.1), rgba(45, 80, 22, 0.1))',
-                color: '#cd853f'
+                background: 'linear-gradient(135deg, rgba(205, 133, 63, 0.1), rgba(45, 80, 22, 0.1))'
               }}
             />
             </div>
@@ -286,12 +285,12 @@ export default function Sidebar() {
           {/* Toggles */}
           <div className="space-y-4">
             <ToggleSwitch
-              label="🏘️ Communes"
+              label="Communes"
               checked={showCommunes}
               onChange={setShowCommunes}
             />
             <ToggleSwitch
-              label="🏢 Bâtiments 3D"
+              label="Bâtiments 3D"
               checked={show3D}
               onChange={setShow3D}
             />
@@ -309,7 +308,7 @@ export default function Sidebar() {
               className="rounded-xl border border-amber-200/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 font-medium w-full"
               style={{
                 background: 'linear-gradient(135deg, rgba(205, 133, 63, 0.1), rgba(45, 80, 22, 0.1))',
-                color: '#cd853f'
+                color: '#2d5016'
               }}
             >
               {Object.entries(MAPBOX_STYLES).map(([key, label]) => (
