@@ -514,7 +514,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
           <div className="modern-card shadow-xl">
             <button 
               onClick={() => generateSpeciesCSV(codeInsee, speciesData, currentCommune, filters)}
-              className="p-3 text-center min-w-[140px] hover:bg-white/10 transition-colors rounded-lg"
+              className="p-3 text-center min-w-[160px] hover:bg-white/10 transition-colors rounded-lg"
               title="Télécharger la liste des espèces en CSV"
             >
               <div className="text-xl font-bold mb-1 flex justify-center">
@@ -534,7 +534,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
           <div className="modern-card shadow-xl">
             <button 
               onClick={() => router.push(`/commune/${codeInsee}/comparaison`)}
-              className="p-3 text-center min-w-[140px] hover:bg-white/10 transition-colors rounded-lg"
+              className="p-3 text-center min-w-[160px] hover:bg-white/10 transition-colors rounded-lg"
               title="Comparer avec une autre commune"
             >
               <div className="text-xl font-bold mb-1 flex justify-center">
