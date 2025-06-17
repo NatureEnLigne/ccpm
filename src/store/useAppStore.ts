@@ -35,6 +35,9 @@ interface AppState {
   setCommuneData: (data: Map<string, CommuneData>) => void
   setSpeciesData: (data: Map<string, SpeciesData>) => void
   
+  // Action pour réinitialiser la vue carte
+  resetMapView: () => void
+  
   // Actions de filtres étendues
   setFilter: (filterType: keyof FilterState, value: string | number | null, source?: string) => void
   removeFilter: (filterType: keyof FilterState) => void
@@ -189,6 +192,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   setShowStatsPanel: (showStatsPanel) => set({ showStatsPanel }),
   
   setStatsPanelCommune: (statsPanelCommune) => set({ statsPanelCommune }),
+  
+  resetMapView: () => set({ selectedCommune: null }),
 }))
 
 // Sélecteurs utiles

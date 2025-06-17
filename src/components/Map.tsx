@@ -222,12 +222,23 @@ export default function Map() {
     })
   }
 
-  // Effet pour zoomer sur commune sélectionnée depuis la sidebar
+  // Effet pour zoomer sur commune sélectionnée depuis la sidebar ou revenir à l'emprise globale
   useEffect(() => {
     if (selectedCommune && communes && map.current && isMapLoaded) {
       const feature = communes.features.find(f => f.properties.insee === selectedCommune)
       if (feature) {
         zoomToCommune(feature)
+      }
+    } else if (!selectedCommune && communes && map.current && isMapLoaded) {
+      // Retour à l'emprise globale quand on désélectionne une commune
+      const bounds = getBounds(communes)
+      if (bounds) {
+        console.log('🎯 Retour à l\'emprise globale CCPM...')
+        map.current.fitBounds(bounds, { 
+          padding: 50,
+          maxZoom: 11,
+          duration: 1000 // Animation plus rapide pour le retour
+        })
       }
     }
   }, [selectedCommune, communes, isMapLoaded])

@@ -35,7 +35,7 @@ export default function ToggleSwitch({ checked, onChange, label }: ToggleSwitchP
       {/* Label moderne avec gradient */}
       <label 
         onClick={() => onChange(!checked)}
-        className="font-medium cursor-pointer transition-colors duration-200 select-none data-label-unified"
+        className="font-medium cursor-pointer transition-colors duration-200 select-none data-label-unified text-base"
       >
         {label}
       </label>
