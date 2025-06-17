@@ -88,14 +88,14 @@ export interface MapState {
 export interface FilterState {
   selectedGroupe: string | null
   selectedGroup2: string | null
-  selectedMois: number | null
+  selectedMois: number | number[] | null // Support des filtres multiples
   selectedStatut: string | null
   selectedRegne: string | null
   selectedOrdre: string | null
   selectedFamille: string | null
   selectedAnnee: number | null
-  selectedRedListCategory: string | null
-  selectedStatutReglementaire: string | null
+  selectedRedListCategory: string | string[] | null // Support des filtres multiples
+  selectedStatutReglementaire: string | string[] | null // Support des filtres multiples
   anneeDebut: number | null
   anneeFin: number | null
   activeFilters: string[] // Liste des filtres actifs pour l'affichage

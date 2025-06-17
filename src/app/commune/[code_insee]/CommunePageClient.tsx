@@ -20,6 +20,7 @@ import StatusTreemap from '../../../components/dashboards/StatusTreemap'
 import FilterBar from '../../../components/FilterBar'
 import SpeciesTable from '../../../components/SpeciesTable'
 import NoDataAnimation from '../../../components/NoDataAnimation'
+import MultiFilterButton from '../../../components/MultiFilterButton'
 
 import type { SyntheseInsee, PhenoMoisInsee, Taxonomie, ListeRouge, Statut } from '../../../types'
 
@@ -228,6 +229,16 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
   } = useAppStore()
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  
+  // Options disponibles pour les filtres multiples
+  const [availableMonths, setAvailableMonths] = useState<Array<{ value: number, label: string }>>([])
+  const [availableRedListCategories, setAvailableRedListCategories] = useState<Array<{ value: string, label: string }>>([])
+  const [availableStatutReglementaires, setAvailableStatutReglementaires] = useState<Array<{ value: string, label: string }>>([])
+  
+  const MONTH_NAMES = [
+    'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+  ]
 
   // Réinitialiser les filtres à chaque changement de commune
   useEffect(() => {
@@ -300,6 +311,61 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
   // Récupérer les données de la commune actuelle
   const currentCommune = communeData?.get(codeInsee)
   const communeGeoJSON = communes?.features.find(f => f.properties.insee === codeInsee)
+
+  // Calculer les options disponibles pour les filtres multiples
+  useEffect(() => {
+    if (!currentCommune || !speciesData) return
+
+    const months = new Set<number>()
+    const redListCategories = new Set<string>()
+    const statutReglementaires = new Set<string>()
+
+    // Extraire les mois depuis les données phénologiques
+    currentCommune.phenologie.forEach(pheno => {
+      months.add(pheno['Mois Obs'])
+    })
+
+    // Extraire les statuts depuis les espèces
+    currentCommune.observations.forEach(obs => {
+      const species = speciesData.get(obs['Cd Ref'])
+      if (species) {
+        // Statuts de listes rouges
+        if (species.listeRouge) {
+          redListCategories.add(species.listeRouge['Label Statut'])
+        } else {
+          redListCategories.add('Non évalué')
+        }
+
+        // Statuts réglementaires
+        if (species.statuts.length > 0) {
+          species.statuts.forEach(statut => {
+            statutReglementaires.add(statut['LABEL STATUT (statuts)'])
+          })
+        } else {
+          statutReglementaires.add('Non réglementé')
+        }
+      }
+    })
+
+    // Convertir en format pour les composants
+    setAvailableMonths(
+      Array.from(months)
+        .sort((a, b) => a - b)
+        .map(month => ({ value: month, label: MONTH_NAMES[month - 1] }))
+    )
+
+    setAvailableRedListCategories(
+      Array.from(redListCategories)
+        .sort()
+        .map(category => ({ value: category, label: category }))
+    )
+
+    setAvailableStatutReglementaires(
+      Array.from(statutReglementaires)
+        .sort()
+        .map(statut => ({ value: statut, label: statut }))
+    )
+  }, [currentCommune, speciesData, MONTH_NAMES])
 
   // Calculer les statistiques filtrées
   const filteredStats = useMemo(() => {
@@ -575,6 +641,12 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
               <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
               <span className="text-xl">📅</span>
               <span className="text-gradient">Phénologie mensuelle</span>
+              <MultiFilterButton
+                filterType="selectedMois"
+                currentValue={filters.selectedMois}
+                availableOptions={availableMonths}
+                title="Phénologie mensuelle"
+              />
             </h3>
               <div className="h-80 flex-1">
               <PhenoLine codeInsee={codeInsee} />
@@ -588,6 +660,12 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
               <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
               <span className="text-xl">🚨</span>
               <span className="text-gradient">Statuts listes rouges</span>
+              <MultiFilterButton
+                filterType="selectedRedListCategory"
+                currentValue={filters.selectedRedListCategory}
+                availableOptions={availableRedListCategories}
+                title="Statuts listes rouges"
+              />
             </h3>
               <div className="h-80 flex-1">
               <RedListBar codeInsee={codeInsee} />
@@ -601,6 +679,12 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
               <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
               <span className="text-xl">⚖️</span>
               <span className="text-gradient">Statuts réglementaires</span>
+              <MultiFilterButton
+                filterType="selectedStatutReglementaire"
+                currentValue={filters.selectedStatutReglementaire}
+                availableOptions={availableStatutReglementaires}
+                title="Statuts réglementaires"
+              />
             </h3>
               <div className="h-80 flex-1">
               <StatusTreemap codeInsee={codeInsee} />

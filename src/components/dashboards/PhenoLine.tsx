@@ -5,6 +5,7 @@ import { ResponsiveLine } from '@nivo/line'
 import { useAppStore } from '../../store/useAppStore'
 import { useChartInteractions } from '../../hooks/useChartInteractions'
 import NoDataAnimation from '@/components/NoDataAnimation'
+import { isValueInFilter } from '../../utils/filterHelpers'
 
 interface PhenoLineProps {
   codeInsee: string
@@ -54,13 +55,8 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
           }
           
           if (filters.selectedRedListCategory) {
-            if (filters.selectedRedListCategory === 'Non évalué') {
-              // Pour "Non évalué", inclure seulement les espèces sans statut de liste rouge
-              if (species.listeRouge) return
-            } else {
-              // Pour les autres statuts, filtrer par le statut spécifique
-              if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
-            }
+            const redListStatus = species.listeRouge?.['Label Statut'] || 'Non évalué'
+            if (!isValueInFilter(filters.selectedRedListCategory, redListStatus)) return
           }
           
           if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) {
@@ -72,16 +68,15 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
           }
           
           if (filters.selectedStatutReglementaire) {
-            // Vérifier si l'espèce a ce statut réglementaire
-            const hasStatus = species.statuts.some(statut => 
-              statut['LABEL STATUT (statuts)'] === filters.selectedStatutReglementaire
+            const statutsReglementaires = species.statuts.length > 0 
+              ? species.statuts.map(s => s['LABEL STATUT (statuts)'])
+              : ['Non réglementé']
+            
+            const hasMatchingStatus = statutsReglementaires.some(statut => 
+              isValueInFilter(filters.selectedStatutReglementaire, statut)
             )
-            if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') {
-              return
-            }
-            if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) {
-              return
-            }
+            
+            if (!hasMatchingStatus) return
           }
         }
         
@@ -175,15 +170,27 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
       colors={['#4a7c59']}  // Vert mousse uni
       animate={true}
       motionConfig="gentle"
-      markers={filters.selectedMois ? [{
-        axis: 'x',
-        value: MONTH_NAMES[filters.selectedMois - 1],
-        lineStyle: {
-          stroke: '#8B4513',
-          strokeWidth: 3,
-          strokeDasharray: '10 8'
-        }
-      }] : []}
+      markers={filters.selectedMois ? (
+        Array.isArray(filters.selectedMois) 
+          ? filters.selectedMois.map(month => ({
+              axis: 'x' as const,
+              value: MONTH_NAMES[month - 1],
+              lineStyle: {
+                stroke: '#8B4513',
+                strokeWidth: 3,
+                strokeDasharray: '10 8'
+              }
+            }))
+          : [{
+              axis: 'x' as const,
+              value: MONTH_NAMES[filters.selectedMois - 1],
+              lineStyle: {
+                stroke: '#8B4513',
+                strokeWidth: 3,
+                strokeDasharray: '10 8'
+              }
+            }]
+      ) : []}
       onClick={(point) => {
         const monthIndex = MONTH_NAMES.indexOf(point.data.x as string) + 1
         handleChartClick({
