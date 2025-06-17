@@ -126,7 +126,7 @@ export default function Map() {
     })
     console.log('✅ Source communes ajoutée')
 
-    // Couche de contour - vert fluo pour toutes les communes
+    // Couche de contour - vert foncé de la rampe pour toutes les communes
     map.current.addLayer({
       id: 'communes-line',
       type: 'line',
@@ -135,7 +135,7 @@ export default function Map() {
         'visibility': showCommunes ? 'visible' : 'none'
       },
       paint: {
-        'line-color': '#96ff33', // Vert fluo demandé par l'utilisateur
+        'line-color': '#2d5016', // Vert le plus foncé de la rampe
         'line-width': [
           'interpolate',
           ['linear'],
@@ -146,7 +146,7 @@ export default function Map() {
         'line-opacity': 0.8
       }
     })
-    console.log('✅ Couche line ajoutée avec contour vert fluo #96ff33')
+    console.log('✅ Couche line ajoutée avec contour vert foncé #2d5016')
 
     // Couche de contour pour la sélection - au-dessus
     map.current.addLayer({
@@ -158,7 +158,7 @@ export default function Map() {
         'visibility': showCommunes ? 'visible' : 'none'
       },
       paint: {
-        'line-color': '#ffa833', // Orange doré pour la commune sélectionnée
+        'line-color': '#cd853f', // Doré marron le plus clair de la rampe pour la commune sélectionnée
         'line-width': [
           'interpolate',
           ['linear'],
@@ -169,7 +169,7 @@ export default function Map() {
         'line-opacity': 1.0
       }
     })
-    console.log('✅ Couche line sélection ajoutée avec couleur orange dorée #ffa833')
+    console.log('✅ Couche line sélection ajoutée avec couleur doré marron #cd853f')
 
     // Gestion des clics
     map.current.on('click', 'communes-line', (e) => {
