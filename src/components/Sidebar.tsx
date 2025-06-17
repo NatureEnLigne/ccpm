@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAppStore } from '../store/useAppStore'
 import { loadCommunesGeoJSON } from '../utils/geojsonLoader'
@@ -91,6 +91,7 @@ export default function Sidebar() {
   const [searchTerm, setSearchTerm] = useState('')
   const [communeNames, setCommuneNames] = useState<Map<string, string>>(new Map())
   const [isLoading, setIsLoading] = useState(true)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
 
   // Filtrer les communes par nom
   const filteredCommuneNames = Array.from(communeNames.entries())
@@ -98,6 +99,16 @@ export default function Sidebar() {
       name.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .sort((a, b) => a[1].localeCompare(b[1]))
+
+  // Défilement automatique vers le haut quand une commune est sélectionnée
+  useEffect(() => {
+    if (selectedCommune && scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      })
+    }
+  }, [selectedCommune])
 
   useEffect(() => {
     const loadAllData = async () => {
@@ -163,7 +174,7 @@ export default function Sidebar() {
         </h3>
 
           {/* Contenu scrollable avec hauteur maximale */}
-          <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+          <div ref={scrollContainerRef} className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 pr-2">
         {/* Fiche commune sélectionnée */}
         {selectedCommune && communeData?.has(selectedCommune) && (
           <div className="mb-6 p-4 bg-gradient-primary rounded-2xl text-white shadow-lg">
