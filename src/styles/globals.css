@@ -550,6 +550,11 @@
     margin-left: 0 !important;
     margin-right: 0 !important;
   }
+
+  /* Épaisseur de bordure personnalisée */
+  .border-b-3 {
+    border-bottom-width: 3px;
+  }
 }
 
 /* Animations keyframes */

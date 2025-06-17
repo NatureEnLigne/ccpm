@@ -234,9 +234,9 @@ export default function Sidebar() {
 
           {/* Indicateur de chargement */}
           {isLoading && (
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-3"></div>
-              <p className="text-gray-600 text-sm">Chargement des communes...</p>
+            <div className="modern-card shadow-lg p-6 text-center mb-6">
+              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-amber-600 mx-auto mb-4"></div>
+              <p className="data-label-unified font-medium">Chargement des communes...</p>
             </div>
           )}
 

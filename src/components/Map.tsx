@@ -381,11 +381,11 @@ export default function Map() {
       
       {/* Loading overlay */}
       {!isMapLoaded && (
-        <div className="absolute inset-0 glass rounded-2xl flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600 font-medium">Chargement de la carte...</p>
-            <p className="text-gray-500 text-sm mt-2">Vue France → Zoom automatique CCPM</p>
+        <div className="absolute inset-0 modern-card rounded-2xl flex items-center justify-center">
+          <div className="text-center p-8">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-3 border-amber-600 mx-auto mb-6"></div>
+            <p className="data-label-unified font-bold text-lg mb-2">Chargement de la carte...</p>
+            <p className="data-label-unified text-sm opacity-80">Vue France → Zoom automatique CCPM</p>
           </div>
         </div>
       )}

@@ -225,9 +225,9 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="glass rounded-2xl p-8 text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">Chargement des données...</h2>
+        <div className="modern-card shadow-xl rounded-2xl p-12 text-center">
+          <div className="animate-spin rounded-full h-20 w-20 border-b-3 border-amber-600 mx-auto mb-6"></div>
+          <h2 className="text-2xl font-bold text-gradient mb-4">Chargement des données...</h2>
         </div>
       </div>
     )
@@ -236,15 +236,15 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="glass rounded-2xl p-8 text-center">
-          <div className="text-red-500 text-6xl mb-4">⚠️</div>
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">Erreur</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
+        <div className="modern-card shadow-xl rounded-2xl p-12 text-center">
+          <div className="text-red-500 text-6xl mb-6">⚠️</div>
+          <h2 className="text-2xl font-bold text-gradient mb-4">Erreur</h2>
+          <p className="data-label-unified text-lg mb-6">{error}</p>
           <button 
             onClick={() => router.push('/')}
-            className="bg-blue-500/20 hover:bg-blue-500/30 text-blue-700 font-medium py-2 px-4 rounded-lg transition-colors border border-blue-300/50"
+            className="modern-card hover:shadow-lg transition-all duration-200 px-6 py-3 rounded-xl"
           >
-            Retour à l'accueil
+            <span className="data-label-unified font-medium">Retour à l'accueil</span>
           </button>
         </div>
       </div>
@@ -254,14 +254,14 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
   if (!communeBase) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="glass rounded-2xl p-8 text-center">
+        <div className="modern-card shadow-xl rounded-2xl p-12 text-center">
           <NoDataAnimation message={`Aucune donnée disponible pour le code INSEE ${codeInseeBase}`} size="large" />
-          <h2 className="text-xl font-semibold text-gray-800 mb-4 mt-4">Commune non trouvée</h2>
+          <h2 className="text-2xl font-bold text-gradient mb-6 mt-6">Commune non trouvée</h2>
           <button 
             onClick={() => router.push('/')}
-            className="bg-blue-500/20 hover:bg-blue-500/30 text-blue-700 font-medium py-2 px-4 rounded-lg transition-colors border border-blue-300/50"
+            className="modern-card hover:shadow-lg transition-all duration-200 px-6 py-3 rounded-xl"
           >
-            Retour à l'accueil
+            <span className="data-label-unified font-medium">Retour à l'accueil</span>
           </button>
         </div>
       </div>
@@ -519,9 +519,9 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
 
                   {/* Indicateur de chargement */}
                   {isLoading && (
-                    <div className="text-center py-8">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-3"></div>
-                      <p className="text-gray-600 text-sm">Chargement des communes...</p>
+                    <div className="modern-card shadow-lg p-6 text-center mb-6">
+                      <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-amber-600 mx-auto mb-4"></div>
+                      <p className="data-label-unified font-medium">Chargement des communes...</p>
                     </div>
                   )}
 
