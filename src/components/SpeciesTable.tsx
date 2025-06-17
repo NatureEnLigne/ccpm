@@ -255,7 +255,6 @@ export default function SpeciesTable({ codeInsee, noCard = false }: SpeciesTable
         )}
         <div className="py-8">
           <NoDataAnimation message="Aucune donnée d'espèce disponible pour cette commune" />
-          {filters.selectedRegne && <p className="text-sm mt-4 text-center text-gray-500">Filtre: {translateRegne(filters.selectedRegne)}</p>}
         </div>
       </>
     )

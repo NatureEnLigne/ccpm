@@ -388,8 +388,7 @@ export default function Map() {
         }}>
           <div className="text-center p-8">
             <div className="animate-spin rounded-full h-16 w-16 border-b-3 border-amber-600 mx-auto mb-6"></div>
-            <p className="data-label-unified font-bold text-lg mb-2">Chargement de la carte...</p>
-            <p className="data-label-unified text-sm opacity-80">Vue France → Zoom automatique CCPM</p>
+            <p className="data-label-unified font-bold text-lg">Chargement de la carte...</p>
           </div>
         </div>
       )}
