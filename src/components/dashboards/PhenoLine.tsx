@@ -31,7 +31,7 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
       const commune = communeData.get(codeInsee)
       if (!commune) return
 
-      // Compter les observations par mois
+      // Compter les observations par mois en appliquant les filtres d'années
       const monthlyData = new Map<number, number>()
       const selectedRegne = filters.selectedRegne
       
@@ -77,6 +77,21 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
             )
             
             if (!hasMatchingStatus) return
+          }
+          
+          // NOUVEAU : Filtrer par années en croisant avec les observations de l'espèce
+          if (filters.anneeDebut || filters.anneeFin) {
+            // Vérifier si cette espèce a des observations dans la période demandée
+            const hasObsInPeriod = species.observations.some(obs => {
+              const annee = obs['An Obs']
+              const afterStart = !filters.anneeDebut || annee >= filters.anneeDebut
+              const beforeEnd = !filters.anneeFin || annee <= filters.anneeFin
+              return afterStart && beforeEnd && obs['Insee (Synthese!Insee)'] === codeInsee
+            })
+            
+            if (!hasObsInPeriod) {
+              return // Exclure cette donnée phénologique si l'espèce n'a pas d'observations dans la période
+            }
           }
         }
         
