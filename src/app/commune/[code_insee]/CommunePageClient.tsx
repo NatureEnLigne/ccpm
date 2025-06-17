@@ -242,6 +242,26 @@ function generateSpeciesCSV(codeInsee: string, speciesData: any, currentCommune:
       .replace(/ç/g, 'c')
       .replace(/[^a-z0-9]/g, '')
   
+  // Ajouter le filtre par règne (🌿 Règne)
+  if (filters.selectedRegne) {
+    filterParts.push(`regne:${sanitizeString(filters.selectedRegne)}`)
+  }
+  
+  // Ajouter les filtres d'années (📅 Années)
+  if (filters.anneeDebut || filters.anneeFin) {
+    if (filters.anneeDebut && filters.anneeFin) {
+      if (filters.anneeDebut === filters.anneeFin) {
+        filterParts.push(`annee:${filters.anneeDebut}`)
+      } else {
+        filterParts.push(`annees:${filters.anneeDebut}-${filters.anneeFin}`)
+      }
+    } else if (filters.anneeDebut) {
+      filterParts.push(`apartirde:${filters.anneeDebut}`)
+    } else if (filters.anneeFin) {
+      filterParts.push(`jusqua:${filters.anneeFin}`)
+    }
+  }
+  
   // Ajouter le filtre par groupe taxonomique (🦋 Groupes taxonomiques)
   if (filters.selectedGroupe) {
     if (Array.isArray(filters.selectedGroupe)) {

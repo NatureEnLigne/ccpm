@@ -35,38 +35,31 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
       const monthlyData = new Map<number, number>()
       const selectedRegne = filters.selectedRegne
       
-      commune.phenologie.forEach(pheno => {
-        const cdRef = pheno['CD REF (pheno!mois!insee)']
-        const species = speciesData?.get(cdRef)
+      // Si les filtres d'années sont actifs, calculer la proportion des observations filtrées
+      if (filters.anneeDebut || filters.anneeFin) {
+        console.log('📅 Filtrage par années actif - calcul proportionnel:', filters.anneeDebut, '-', filters.anneeFin)
         
-        // Filtrer par règne si spécifié
-        if (selectedRegne && species && species.regne !== selectedRegne) {
-          return
-        }
+        // D'abord, calculer le ratio d'observations dans la période pour chaque espèce
+        const speciesRatios = new Map<string, number>()
         
-        // Appliquer les filtres du store global
-        if (species) {
-          if (filters.selectedGroupe && species.groupe !== filters.selectedGroupe) {
-            return
-          }
+        // Calculer pour chaque espèce le ratio des observations dans la période filtrée
+        const allSpecies = new Set<string>()
+        commune.observations.forEach(obs => allSpecies.add(obs['Cd Ref']))
+        
+        allSpecies.forEach(cdRef => {
+          const species = speciesData?.get(cdRef)
+          if (!species) return
           
-          if (filters.selectedGroup2 && species.group2 !== filters.selectedGroup2) {
-            return
-          }
-          
+          // Appliquer les filtres sur l'espèce d'abord
+          if (selectedRegne && species.regne !== selectedRegne) return
+          if (filters.selectedGroupe && species.groupe !== filters.selectedGroupe) return
+          if (filters.selectedGroup2 && species.group2 !== filters.selectedGroup2) return
           if (filters.selectedRedListCategory) {
             const redListStatus = species.listeRouge?.['Label Statut'] || 'Non évalué'
             if (!isValueInFilter(filters.selectedRedListCategory, redListStatus)) return
           }
-          
-          if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) {
-            return
-          }
-          
-          if (filters.selectedFamille && species.famille !== filters.selectedFamille) {
-            return
-          }
-          
+          if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) return
+          if (filters.selectedFamille && species.famille !== filters.selectedFamille) return
           if (filters.selectedStatutReglementaire) {
             const statutsReglementaires = species.statuts.length > 0 
               ? species.statuts.map(s => s['LABEL STATUT (statuts)'])
@@ -79,36 +72,99 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
             if (!hasMatchingStatus) return
           }
           
-          // NOUVEAU : Filtrer par années en croisant avec les observations de l'espèce
-          if (filters.anneeDebut || filters.anneeFin) {
-            // Vérifier si cette espèce a des observations dans la période demandée
-            const hasObsInPeriod = species.observations.some(obs => {
-              const annee = obs['An Obs']
-              const afterStart = !filters.anneeDebut || annee >= filters.anneeDebut
-              const beforeEnd = !filters.anneeFin || annee <= filters.anneeFin
-              return afterStart && beforeEnd && obs['Insee (Synthese!Insee)'] === codeInsee
-            })
+          // Calculer les observations totales et filtrées pour cette espèce dans cette commune
+          const speciesObsInCommune = commune.observations.filter(obs => obs['Cd Ref'] === cdRef)
+          const totalObs = speciesObsInCommune.reduce((sum, obs) => sum + obs['Nb Obs'], 0)
+          
+          const filteredObs = speciesObsInCommune.filter(obs => {
+            const annee = obs['An Obs']
+            const afterStart = !filters.anneeDebut || annee >= filters.anneeDebut
+            const beforeEnd = !filters.anneeFin || annee <= filters.anneeFin
+            return afterStart && beforeEnd
+          }).reduce((sum, obs) => sum + obs['Nb Obs'], 0)
+          
+          if (totalObs > 0) {
+            const ratio = filteredObs / totalObs
+            speciesRatios.set(cdRef, ratio)
+            console.log(`📅 Espèce ${cdRef}: ${filteredObs}/${totalObs} = ${ratio.toFixed(3)}`)
+          }
+        })
+        
+        // Appliquer les ratios aux données phénologiques
+        commune.phenologie.forEach(pheno => {
+          const cdRef = pheno['CD REF (pheno!mois!insee)']
+          const ratio = speciesRatios.get(cdRef)
+          
+          if (ratio !== undefined && ratio > 0) {
+            const mois = pheno['Mois Obs']
+            const current = monthlyData.get(mois) || 0
+            const adjustedValue = pheno['Nb Donnees'] * ratio
+            monthlyData.set(mois, current + adjustedValue)
+          }
+        })
+        
+        console.log('📅 Données phénologie proportionnelles calculées:', Array.from(monthlyData.entries()))
+      } else {
+        // Si pas de filtre d'années, utiliser les données phénologiques normales avec filtres
+        console.log('📅 Pas de filtre années - utilisation données phénologiques standard')
+        
+        commune.phenologie.forEach(pheno => {
+          const cdRef = pheno['CD REF (pheno!mois!insee)']
+          const species = speciesData?.get(cdRef)
+          
+          // Filtrer par règne si spécifié
+          if (selectedRegne && species && species.regne !== selectedRegne) {
+            return
+          }
+          
+          // Appliquer les filtres du store global
+          if (species) {
+            if (filters.selectedGroupe && species.groupe !== filters.selectedGroupe) {
+              return
+            }
             
-            if (!hasObsInPeriod) {
-              return // Exclure cette donnée phénologique si l'espèce n'a pas d'observations dans la période
+            if (filters.selectedGroup2 && species.group2 !== filters.selectedGroup2) {
+              return
+            }
+            
+            if (filters.selectedRedListCategory) {
+              const redListStatus = species.listeRouge?.['Label Statut'] || 'Non évalué'
+              if (!isValueInFilter(filters.selectedRedListCategory, redListStatus)) return
+            }
+            
+            if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) {
+              return
+            }
+            
+            if (filters.selectedFamille && species.famille !== filters.selectedFamille) {
+              return
+            }
+            
+            if (filters.selectedStatutReglementaire) {
+              const statutsReglementaires = species.statuts.length > 0 
+                ? species.statuts.map(s => s['LABEL STATUT (statuts)'])
+                : ['Non réglementé']
+              
+              const hasMatchingStatus = statutsReglementaires.some(statut => 
+                isValueInFilter(filters.selectedStatutReglementaire, statut)
+              )
+              
+              if (!hasMatchingStatus) return
             }
           }
-        }
-        
-        // Ne pas filtrer par mois ici - on veut toujours afficher toutes les données phénologiques
-        // Les marqueurs visuels indiqueront les mois sélectionnés
-        
-        const mois = pheno['Mois Obs']
-        const current = monthlyData.get(mois) || 0
-        monthlyData.set(mois, current + pheno['Nb Donnees'])
-      })
+          
+          const mois = pheno['Mois Obs']
+          const current = monthlyData.get(mois) || 0
+          monthlyData.set(mois, current + pheno['Nb Donnees'])
+        })
+      }
 
       // Convertir en format pour Nivo
       const lineData: LineData[] = [{
         id: 'Observations',
         data: MONTH_NAMES.map((monthName, index) => {
           const monthNumber = index + 1
-          const count = monthlyData.get(monthNumber) || 0
+          const count = Math.round(monthlyData.get(monthNumber) || 0) // Arrondir les valeurs proportionnelles
           return {
             x: monthName,
             y: count
@@ -117,7 +173,10 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
       }]
 
       setData(lineData)
-      console.log('📅 Données phénologie pour', codeInsee, 'règne:', selectedRegne, 'filtres appliqués:', filters, ':', lineData)
+      
+      // Calculer le total pour vérification
+      const totalPheno = lineData[0].data.reduce((sum, d) => sum + d.y, 0)
+      console.log('📅 Données phénologie pour', codeInsee, '- Total:', totalPheno, 'Détail par mois:', lineData[0].data.filter(d => d.y > 0))
     }
   }, [communeData, speciesData, codeInsee, filters])
 
