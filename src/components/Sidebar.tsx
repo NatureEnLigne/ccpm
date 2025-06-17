@@ -166,10 +166,10 @@ export default function Sidebar() {
           <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
         {/* Fiche commune sélectionnée */}
         {selectedCommune && communeData?.has(selectedCommune) && (
-          <div className="mb-6 p-4 bg-gradient-primary rounded-2xl text-white shadow-lg">
+          <div className="mb-6 p-4 bg-gradient-primary rounded-2xl text-white shadow-lg border-2" style={{ borderColor: '#96ff33' }}>
             <div className="flex items-center justify-between mb-3">
-                <h4 className="font-bold text-base truncate pr-2 flex items-center gap-2">
-                  <span className="text-lg">🏘️</span>
+                <h4 className="font-bold text-sm truncate pr-2 flex items-center gap-2">
+                  <span className="text-xl">🏘️</span>
                 {communeNames.get(selectedCommune) || selectedCommune}
               </h4>
               <button
@@ -182,19 +182,19 @@ export default function Sidebar() {
             </div>
             <div className="flex items-center gap-3">
               <div className="flex-1 grid grid-cols-2 gap-3 text-sm">
-              <div className="bg-white/20 rounded-lg p-3 text-center">
-                  <div className="font-bold text-xl flex items-center justify-center gap-1">
-                    <span className="text-sm">👁️</span>
+              <div className="bg-white/20 rounded-lg p-2 text-center">
+                  <div className="font-bold text-lg flex items-center justify-center gap-1">
+                    <span className="text-xs">👁️</span>
                   {formatNumber(communeData.get(selectedCommune)?.totalObs || 0)}
                 </div>
-                <div className="data-label-selected">Observations</div>
+                <div className="data-label-selected text-xs">Observations</div>
               </div>
-              <div className="bg-white/20 rounded-lg p-3 text-center">
-                  <div className="font-bold text-xl flex items-center justify-center gap-1">
-                    <span className="text-sm">🦋</span>
+              <div className="bg-white/20 rounded-lg p-2 text-center">
+                  <div className="font-bold text-lg flex items-center justify-center gap-1">
+                    <span className="text-xs">🦋</span>
                   {formatNumber(communeData.get(selectedCommune)?.totalEsp || 0)}
                 </div>
-                <div className="data-label-selected">Espèces</div>
+                <div className="data-label-selected text-xs">Espèces</div>
                 </div>
               </div>
               <div className="flex-shrink-0">
@@ -213,7 +213,11 @@ export default function Sidebar() {
                 placeholder="Nom de la commune"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-                className="input-modern w-full pl-10 pr-4"
+                className="rounded-xl border border-amber-200/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 font-medium w-full pl-10 pr-4 placeholder-amber-600"
+              style={{
+                background: 'linear-gradient(135deg, rgba(205, 133, 63, 0.1), rgba(45, 80, 22, 0.1))',
+                color: '#cd853f'
+              }}
             />
             </div>
           </div>
@@ -237,11 +241,12 @@ export default function Sidebar() {
                 <button
                   key={codeInsee}
                   onClick={() => setSelectedCommune(codeInsee)}
-                  className={`w-full text-left p-3 rounded-xl transition-all duration-200 overflow-hidden ${
+                  className={`w-full text-left p-3 rounded-xl transition-all duration-200 overflow-hidden border-2 ${
                     isSelected 
                       ? 'bg-gradient-primary text-white shadow-lg' 
-                      : 'bg-white/50 hover:bg-white/70 text-gray-700'
+                      : 'bg-white/50 hover:bg-white/70 text-gray-700 border-transparent'
                   }`}
+                  style={isSelected ? { borderColor: '#ffa833' } : {}}
                 >
                     <div className="font-medium mb-1 truncate pr-2 flex items-center gap-2">
                       <span className="text-sm">🏘️</span>
@@ -302,10 +307,14 @@ export default function Sidebar() {
             <select
               value={mapStyle}
               onChange={(e) => setMapStyle(e.target.value)}
-              className="input-modern w-full"
+              className="rounded-xl border border-amber-200/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 font-medium w-full"
+              style={{
+                background: 'linear-gradient(135deg, rgba(205, 133, 63, 0.1), rgba(45, 80, 22, 0.1))',
+                color: '#cd853f'
+              }}
             >
               {Object.entries(MAPBOX_STYLES).map(([key, label]) => (
-                <option key={key} value={key}>
+                <option key={key} value={key} style={{ color: '#333' }}>
                   {label}
                 </option>
               ))}

@@ -506,7 +506,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
                 </div>
                             <div className="data-label-unified">
                       Espèces
-                    </div>
+              </div>
             </div>
           </div>
           
@@ -526,7 +526,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
               </div>
                             <div className="data-label-unified">
                       Télécharger
-                    </div>
+              </div>
             </button>
           </div>
           
@@ -545,8 +545,8 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
                 </div>
               </div>
                             <div className="data-label-unified">
-                      Comparaison
-                    </div>
+                Comparaison
+              </div>
             </button>
           </div>
         </div>

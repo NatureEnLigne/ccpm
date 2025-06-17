@@ -400,11 +400,11 @@
   }
 
   .badge-success {
-    background: linear-gradient(135deg, var(--color-success), var(--color-secondary));
+    background: linear-gradient(135deg, var(--color-accent), var(--color-success));
   }
 
   .badge-warning {
-    background: linear-gradient(135deg, var(--color-warning), var(--color-accent));
+    background: linear-gradient(135deg, var(--color-accent), var(--color-warning));
   }
 
   /* Classes spéciales pour les conteneurs qui peuvent déborder */
@@ -522,11 +522,11 @@
   }
 
   .bg-gradient-primary {
-    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    background: linear-gradient(135deg, var(--color-accent), var(--color-primary));
   }
 
   .bg-gradient-secondary {
-    background: linear-gradient(135deg, var(--color-secondary), var(--color-accent));
+    background: linear-gradient(135deg, var(--color-accent), var(--color-secondary));
   }
 
   /* Force l'utilisation de toute la largeur disponible */

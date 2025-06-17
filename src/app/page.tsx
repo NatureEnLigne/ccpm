@@ -50,7 +50,7 @@ export default function HomePage() {
                   <h1 className="text-2xl font-bold mb-1">
                     <span className="text-gradient whitespace-nowrap">Observations naturalistes : Ponthieu-Marquenterre</span>
                     </h1>
-                  <p className="species-count-title">
+                  <p className="data-label-unified text-base">
                       Données OpenOBS (Muséum national d'Histoire naturelle)
                     </p>
                 </div>
