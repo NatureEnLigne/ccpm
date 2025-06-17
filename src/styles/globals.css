@@ -466,7 +466,7 @@
   /* Style pour les labels dans la commune sélectionnée (reste en blanc) */
   .data-label-selected {
     font-family: var(--font-sora), 'Sora', sans-serif, system-ui, -apple-system;
-    font-size: 1rem;
+    font-size: 0.75rem;
     font-weight: 600;
     line-height: 1.2;
     color: white;
