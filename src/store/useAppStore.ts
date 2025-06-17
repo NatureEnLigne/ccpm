@@ -61,7 +61,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   isLoading: true,
   show3D: false,
   showCommunes: true,
-  mapStyle: 'basic-v9',
+  mapStyle: 'streets-v12',
   communeData: null,
   speciesData: null,
   filters: {

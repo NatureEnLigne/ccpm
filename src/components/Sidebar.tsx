@@ -17,9 +17,6 @@ import ToggleSwitch from './ToggleSwitch'
 import type { SyntheseInsee, PhenoMoisInsee, Taxonomie, ListeRouge, Statut } from '../types'
 
 const MAPBOX_STYLES = {
-  'basic-v9': 'Basic',
-  'basic-overcast-v9': 'Basic Overcast',
-  'frank-v1': 'Frank',
   'satellite-streets-v12': 'Satellite + Routes',
   'satellite-v9': 'Satellite',
   'outdoors-v12': 'Terrain',

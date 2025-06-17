@@ -10,9 +10,6 @@ import type { CommuneFeature } from '../types'
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || ''
 
 const MAPBOX_STYLES = {
-  'basic-v9': 'Basic',
-  'basic-overcast-v9': 'Basic Overcast',
-  'frank-v1': 'Frank',
   'satellite-v9': 'Satellite',
   'outdoors-v12': 'Terrain',
   'streets-v12': 'Rues',
