@@ -240,8 +240,69 @@ export default function SpeciesTable({ codeInsee, noCard = false }: SpeciesTable
   }
 
   const SortIcon = ({ field }: { field: keyof SpeciesTableRow }) => {
-    if (sortField !== field) return <span className="text-gray-400">↕️</span>
-    return sortDirection === 'asc' ? <span className="text-blue-600">⬆️</span> : <span className="text-blue-600">⬇️</span>
+    const isActive = sortField === field
+    
+    if (!isActive) {
+      return (
+        <div 
+          className="inline-flex items-center justify-center w-6 h-6 rounded transition-all duration-300"
+          style={{
+            background: 'linear-gradient(135deg, rgba(205, 133, 63, 0.1), rgba(45, 80, 22, 0.1))',
+            backdropFilter: 'blur(5px)',
+            border: '1px solid rgba(205, 133, 63, 0.2)'
+          }}
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <defs>
+              <linearGradient id="sort-inactive" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#cd853f" stopOpacity="0.6" />
+                <stop offset="100%" stopColor="#2d5016" stopOpacity="0.6" />
+              </linearGradient>
+            </defs>
+            <path 
+              d="M6 2L4 4h4L6 2z" 
+              fill="url(#sort-inactive)"
+            />
+            <path 
+              d="M6 10L4 8h4l-2 2z" 
+              fill="url(#sort-inactive)"
+            />
+          </svg>
+        </div>
+      )
+    }
+    
+    return (
+      <div 
+        className="inline-flex items-center justify-center w-6 h-6 rounded transition-all duration-300 shadow-md"
+        style={{
+          background: 'linear-gradient(45deg, #cd853f, #2d5016)',
+          backdropFilter: 'blur(10px)',
+          border: '1px solid rgba(255, 255, 255, 0.3)',
+          opacity: 0.9
+        }}
+      >
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <defs>
+            <linearGradient id="sort-active" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#ffffff" />
+              <stop offset="100%" stopColor="#f0f0f0" />
+            </linearGradient>
+          </defs>
+          {sortDirection === 'asc' ? (
+            <path 
+              d="M6 2L4 4h4L6 2z" 
+              fill="url(#sort-active)"
+            />
+          ) : (
+            <path 
+              d="M6 10L4 8h4l-2 2z" 
+              fill="url(#sort-active)"
+            />
+          )}
+        </svg>
+      </div>
+    )
   }
 
   if (!currentCommune || tableData.length === 0) {
