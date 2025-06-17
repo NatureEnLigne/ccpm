@@ -429,7 +429,7 @@ export default function SpeciesTable({ codeInsee, noCard = false }: SpeciesTable
                         : 'bg-white/20 hover:bg-white/30 text-gray-700'
                     }`}
                     style={currentPage === pageNum ? {
-                      background: 'linear-gradient(45deg, #2d5016, #cd853f)',
+                      background: 'linear-gradient(45deg, #cd853f, #2d5016)',
                       opacity: 0.9
                     } : {}}
                   >

@@ -285,7 +285,7 @@ export default function FilterBar({ noBottomMargin = false, compactPadding = fal
             onClick={clearFilters}
             className="text-xs px-3 py-1 rounded-full text-white font-medium transition-all hover:shadow-lg flex-shrink-0"
             style={{
-              background: 'linear-gradient(45deg, #2d5016, #cd853f)',
+              background: 'linear-gradient(45deg, #cd853f, #2d5016)',
               opacity: 0.9
             }}
           >
