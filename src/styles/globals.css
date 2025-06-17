@@ -449,7 +449,10 @@
     font-size: 1.1em;
     font-weight: 600;
     line-height: 1.2;
-    color: #856D2C;
+    background: linear-gradient(135deg, #cd853f, #2d5016);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     opacity: 1;
   }
   
