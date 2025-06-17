@@ -23,7 +23,7 @@ export default function NoDataAnimation({ message, size = 'medium' }: NoDataAnim
             autoplay={true}
           />
         </div>
-        <p className="text-gray-600">{message}</p>
+        <p style={{ color: '#d7d7d7' }}>{message}</p>
       </div>
     </div>
   )
