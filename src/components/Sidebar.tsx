@@ -60,13 +60,19 @@ const FicheIcon = ({ isSelected, codeInsee }: { isSelected: boolean, codeInsee: 
           </linearGradient>
         </defs>
         {/* Contour du document */}
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="url(#gradient-stroke-fiche)" />
+        <path 
+          d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" 
+          stroke={isSelected ? "#ffffff" : "url(#gradient-stroke-fiche)"} 
+        />
         {/* Coin plié */}
-        <path d="M14,2 L14,8 L20,8" stroke="url(#gradient-stroke-fiche)" />
+        <path 
+          d="M14,2 L14,8 L20,8" 
+          stroke={isSelected ? "#ffffff" : "url(#gradient-stroke-fiche)"} 
+        />
         {/* Lignes de contenu */}
         <path 
           d="M16,13 L8,13 M16,17 L8,17 M10,9 L8,9"
-          stroke="url(#gradient-stroke-fiche)"
+          stroke={isSelected ? "#ffffff" : "url(#gradient-stroke-fiche)"}
           strokeWidth="1.5"
           opacity="0.9"
         />
