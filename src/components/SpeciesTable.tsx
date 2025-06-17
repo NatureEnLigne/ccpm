@@ -252,7 +252,7 @@ export default function SpeciesTable({ codeInsee, noCard = false }: SpeciesTable
             border: '1px solid rgba(205, 133, 63, 0.2)'
           }}
         >
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
             <defs>
               <linearGradient id="sort-inactive" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#cd853f" stopOpacity="0.6" />
@@ -260,11 +260,11 @@ export default function SpeciesTable({ codeInsee, noCard = false }: SpeciesTable
               </linearGradient>
             </defs>
             <path 
-              d="M6 2L4 4h4L6 2z" 
+              d="M9 3L6 6h6L9 3z" 
               fill="url(#sort-inactive)"
             />
             <path 
-              d="M6 10L4 8h4l-2 2z" 
+              d="M9 15L6 12h6l-3 3z" 
               fill="url(#sort-inactive)"
             />
           </svg>
@@ -282,7 +282,7 @@ export default function SpeciesTable({ codeInsee, noCard = false }: SpeciesTable
           opacity: 0.9
         }}
       >
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
           <defs>
             <linearGradient id="sort-active" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#ffffff" />
@@ -291,12 +291,12 @@ export default function SpeciesTable({ codeInsee, noCard = false }: SpeciesTable
           </defs>
           {sortDirection === 'asc' ? (
             <path 
-              d="M6 2L4 4h4L6 2z" 
+              d="M9 3L6 6h6L9 3z" 
               fill="url(#sort-active)"
             />
           ) : (
             <path 
-              d="M6 10L4 8h4l-2 2z" 
+              d="M9 15L6 12h6l-3 3z" 
               fill="url(#sort-active)"
             />
           )}
@@ -329,16 +329,20 @@ export default function SpeciesTable({ codeInsee, noCard = false }: SpeciesTable
 
   const mainContent = (
     <>
-      <div className="flex justify-between items-center mb-6">
+      <div className="mb-6">
         {!noCard && (
-        <h3 className="text-xl font-semibold flex items-center gap-2">
-          <span className="text-xl">📋</span>
-          <span className="text-gradient">Liste des espèces</span>
-        </h3>
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xl font-semibold flex items-center gap-2">
+            <span className="text-xl">📋</span>
+            <span className="text-gradient">Liste des espèces</span>
+          </h3>
+        </div>
         )}
-        <div className={`species-count-title ${noCard ? 'w-full text-center' : ''}`}>
-          {formatNumber(tableData.length)} espèces • {formatNumber(tableData.reduce((sum, row) => sum + row.nombreObservations, 0))} observations
-          {filters.selectedRegne && <span className="ml-2 text-green-600">• Filtre: {translateRegne(filters.selectedRegne)}</span>}
+        <div className="flex justify-end">
+          <div className={`species-count-title ${noCard ? 'text-center' : 'text-right'}`} style={{ marginRight: '80px' }}>
+            {formatNumber(tableData.length)} espèces • {formatNumber(tableData.reduce((sum, row) => sum + row.nombreObservations, 0))} observations
+            {filters.selectedRegne && <span className="ml-2 text-green-600">• Filtre: {translateRegne(filters.selectedRegne)}</span>}
+          </div>
         </div>
       </div>
 
