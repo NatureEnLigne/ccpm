@@ -225,7 +225,11 @@ export const useAppStore = create<AppState>((set, get) => ({
   
   setStatsPanelCommune: (statsPanelCommune) => set({ statsPanelCommune }),
   
-  resetMapView: () => set({ selectedCommune: null }),
+  resetMapView: () => set({ 
+    selectedCommune: null,
+    showStatsPanel: false,
+    statsPanelCommune: null
+  }),
 }))
 
 // Sélecteurs utiles

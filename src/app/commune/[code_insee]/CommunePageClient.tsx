@@ -309,10 +309,17 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
     communes, 
     setCommunes,
     filters,
-    resetFiltersOnCommuneChange
+    resetFiltersOnCommuneChange,
+    resetMapView
   } = useAppStore()
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  // Fonction pour retourner à l'accueil avec réinitialisation
+  const handleReturnHome = () => {
+    resetMapView() // Désélectionne la commune et revient à l'emprise CCPM
+    router.push('/') // Navigate vers l'accueil
+  }
   
 
 
@@ -528,7 +535,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
           <h2 className="text-2xl font-bold text-gradient mb-4">Erreur</h2>
           <p className="data-label-unified text-lg mb-6">{error}</p>
           <button 
-            onClick={() => router.push('/')}
+            onClick={handleReturnHome}
             className="modern-card hover:shadow-lg transition-all duration-200 px-6 py-3 rounded-xl"
           >
             <span className="data-label-unified font-medium">Retour à l'accueil</span>
@@ -545,7 +552,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
           <NoDataAnimation message={`Aucune donnée disponible pour le code INSEE ${codeInsee}`} size="large" />
           <h2 className="text-2xl font-bold text-gradient mb-6 mt-6">Commune non trouvée</h2>
           <button 
-            onClick={() => router.push('/')}
+            onClick={handleReturnHome}
             className="modern-card hover:shadow-lg transition-all duration-200 px-6 py-3 rounded-xl"
           >
             <span className="data-label-unified font-medium">Retour à l'accueil</span>
@@ -566,7 +573,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
           {/* Bouton retour à l'accueil */}
           <div className="modern-card shadow-xl">
               <button 
-                onClick={() => router.push('/')}
+                onClick={handleReturnHome}
               className="p-3 text-center min-w-[120px] hover:bg-white/10 transition-colors rounded-lg"
                 title="Retour à l'accueil"
               >

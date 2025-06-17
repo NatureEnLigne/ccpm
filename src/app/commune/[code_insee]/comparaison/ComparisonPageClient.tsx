@@ -84,7 +84,8 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
     setCommuneData,
     speciesData, 
     setSpeciesData,
-    filters
+    filters,
+    resetMapView
   } = useAppStore()
 
   const [selectedCommune, setSelectedCommune] = useState<string>('')
@@ -93,6 +94,12 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
   const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [communeNames, setCommuneNames] = useState<Map<string, string>>(new Map())
+
+  // Fonction pour retourner à l'accueil avec réinitialisation
+  const handleReturnHome = () => {
+    resetMapView() // Désélectionne la commune et revient à l'emprise CCPM
+    router.push('/') // Navigate vers l'accueil
+  }
 
   useEffect(() => {
     loadAllData()
@@ -252,7 +259,7 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
           <h2 className="text-2xl font-bold text-gradient mb-4">Erreur</h2>
           <p className="data-label-unified text-lg mb-6">{error}</p>
           <button 
-            onClick={() => router.push('/')}
+            onClick={handleReturnHome}
             className="modern-card hover:shadow-lg transition-all duration-200 px-6 py-3 rounded-xl"
           >
             <span className="data-label-unified font-medium">Retour à l'accueil</span>
@@ -269,7 +276,7 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
           <NoDataAnimation message={`Aucune donnée disponible pour le code INSEE ${codeInseeBase}`} size="large" />
           <h2 className="text-2xl font-bold text-gradient mb-6 mt-6">Commune non trouvée</h2>
           <button 
-            onClick={() => router.push('/')}
+            onClick={handleReturnHome}
             className="modern-card hover:shadow-lg transition-all duration-200 px-6 py-3 rounded-xl"
           >
             <span className="data-label-unified font-medium">Retour à l'accueil</span>
