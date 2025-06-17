@@ -381,7 +381,11 @@ export default function Map() {
       
       {/* Loading overlay */}
       {!isMapLoaded && (
-        <div className="absolute inset-0 modern-card rounded-2xl flex items-center justify-center">
+        <div className="absolute inset-0 rounded-2xl flex items-center justify-center" style={{
+          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9))',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.2)'
+        }}>
           <div className="text-center p-8">
             <div className="animate-spin rounded-full h-16 w-16 border-b-3 border-amber-600 mx-auto mb-6"></div>
             <p className="data-label-unified font-bold text-lg mb-2">Chargement de la carte...</p>
