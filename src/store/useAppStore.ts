@@ -156,9 +156,39 @@ export const useAppStore = create<AppState>((set, get) => ({
   applyFilterEvent: (event) => {
     const { filterKey, value, source } = event
     set((state) => {
-      // Si la valeur est la même que celle déjà active, désactiver le filtre (toggle)
       const currentValue = state.filters[filterKey]
-      const newValue = currentValue === value ? null : value
+      let newValue: any = null
+
+      // Gestion des filtres multiples pour certains types
+      if (filterKey === 'selectedMois' || filterKey === 'selectedRedListCategory' || filterKey === 'selectedStatutReglementaire') {
+        if (!currentValue) {
+          // Aucune valeur sélectionnée, créer un nouveau filtre
+          newValue = value
+        } else if (Array.isArray(currentValue)) {
+          // Déjà un tableau, ajouter ou retirer la valeur
+          const valueExists = currentValue.some(v => v === value)
+          if (valueExists) {
+            // Retirer la valeur
+            const filtered = currentValue.filter(v => v !== value)
+            newValue = filtered.length === 0 ? null : (filtered.length === 1 ? filtered[0] : filtered)
+          } else {
+            // Ajouter la valeur
+            newValue = [...currentValue, value]
+          }
+        } else {
+          // Valeur unique existante
+          if (currentValue === value) {
+            // Même valeur, désactiver
+            newValue = null
+          } else {
+            // Valeur différente, créer un tableau
+            newValue = [currentValue, value]
+          }
+        }
+      } else {
+        // Logique normale pour les autres filtres (toggle simple)
+        newValue = currentValue === value ? null : value
+      }
       
       const newFilters = { ...state.filters, [filterKey]: newValue }
       
@@ -167,11 +197,12 @@ export const useAppStore = create<AppState>((set, get) => ({
         .filter(([key, val]) => val !== null && key !== 'activeFilters')
         .map(([key]) => key)
       
-      console.log(`🔄 Filtre appliqué par ${source}:`, { 
+      console.log(`🔄 Filtre multiple appliqué par ${source}:`, { 
         filterKey, 
         oldValue: currentValue, 
         newValue, 
         valueType: typeof value,
+        isArray: Array.isArray(newValue),
         event,
         newFilters 
       })

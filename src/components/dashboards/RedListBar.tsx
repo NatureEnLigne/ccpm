@@ -6,6 +6,7 @@ import { useAppStore } from '../../store/useAppStore'
 import { useChartInteractions } from '../../hooks/useChartInteractions'
 import { generateGreenColorRamp, GREEN_PALETTE } from '../../utils/colors'
 import NoDataAnimation from '@/components/NoDataAnimation'
+import { isValueInFilter } from '../../utils/filterHelpers'
 
 interface RedListBarProps {
   codeInsee: string
@@ -34,7 +35,8 @@ export default function RedListBar({ codeInsee }: RedListBarProps) {
         const uniqueSpecies = new Set<string>()
         
         commune.phenologie.forEach(pheno => {
-          if (pheno['Mois Obs'] !== filters.selectedMois) return
+          // Filtrer par mois sélectionnés (logique OU)
+          if (!isValueInFilter(filters.selectedMois, pheno['Mois Obs'])) return
           
           const cdRef = pheno['CD REF (pheno!mois!insee)']
           const species = speciesData?.get(cdRef)
@@ -53,11 +55,15 @@ export default function RedListBar({ codeInsee }: RedListBarProps) {
             // Le filtre sera appliqué visuellement par la mise en évidence
             
             if (filters.selectedStatutReglementaire) {
-              const hasStatus = species.statuts.some(statut => 
-                statut['LABEL STATUT (statuts)'] === filters.selectedStatutReglementaire
+              const statutsReglementaires = species.statuts.length > 0 
+                ? species.statuts.map(s => s['LABEL STATUT (statuts)'])
+                : ['Non réglementé']
+              
+              const hasMatchingStatus = statutsReglementaires.some(statut => 
+                isValueInFilter(filters.selectedStatutReglementaire, statut)
               )
-              if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') return
-              if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) return
+              
+              if (!hasMatchingStatus) return
             }
             
             // Ajouter cette espèce aux espèces uniques du mois
@@ -110,11 +116,15 @@ export default function RedListBar({ codeInsee }: RedListBarProps) {
             // Le filtre sera appliqué visuellement par la mise en évidence
           
           if (filters.selectedStatutReglementaire) {
-            const hasStatus = species.statuts.some(statut => 
-              statut['LABEL STATUT (statuts)'] === filters.selectedStatutReglementaire
+            const statutsReglementaires = species.statuts.length > 0 
+              ? species.statuts.map(s => s['LABEL STATUT (statuts)'])
+              : ['Non réglementé']
+            
+            const hasMatchingStatus = statutsReglementaires.some(statut => 
+              isValueInFilter(filters.selectedStatutReglementaire, statut)
             )
-              if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') return
-              if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) return
+            
+            if (!hasMatchingStatus) return
           }
           
           if (species.listeRouge) {
@@ -160,7 +170,7 @@ export default function RedListBar({ codeInsee }: RedListBarProps) {
       colors={(bar) => {
         // Si un filtre de liste rouge est actif, mettre en évidence la barre correspondante
         if (filters.selectedRedListCategory) {
-          if (bar.indexValue === filters.selectedRedListCategory) {
+          if (isValueInFilter(filters.selectedRedListCategory, bar.indexValue as string)) {
             return GREEN_PALETTE.primary // Couleur principale pour la barre filtrée
           } else {
             return GREEN_PALETTE.light + '40' // Couleur atténuée pour les autres barres

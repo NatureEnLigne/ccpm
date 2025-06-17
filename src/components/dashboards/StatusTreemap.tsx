@@ -5,6 +5,7 @@ import { ResponsiveTreeMap } from '@nivo/treemap'
 import { useAppStore } from '../../store/useAppStore'
 import { useChartInteractions } from '../../hooks/useChartInteractions'
 import NoDataAnimation from '@/components/NoDataAnimation'
+import { isValueInFilter } from '../../utils/filterHelpers'
 
 interface StatusTreemapProps {
   codeInsee: string
@@ -35,7 +36,8 @@ export default function StatusTreemap({ codeInsee }: StatusTreemapProps) {
         const uniqueSpecies = new Set<string>()
         
         commune.phenologie.forEach(pheno => {
-          if (pheno['Mois Obs'] !== filters.selectedMois) return
+          // Filtrer par mois sélectionnés (logique OU)
+          if (!isValueInFilter(filters.selectedMois, pheno['Mois Obs'])) return
           
           const cdRef = pheno['CD REF (pheno!mois!insee)']
           const species = speciesData?.get(cdRef)
@@ -48,24 +50,14 @@ export default function StatusTreemap({ codeInsee }: StatusTreemapProps) {
             if (filters.selectedGroupe && species.groupe !== filters.selectedGroupe) return
             if (filters.selectedGroup2 && species.group2 !== filters.selectedGroup2) return
             if (filters.selectedRedListCategory) {
-              if (filters.selectedRedListCategory === 'Non évalué') {
-                // Pour "Non évalué", inclure seulement les espèces sans statut de liste rouge
-                if (species.listeRouge) return
-              } else {
-                // Pour les autres statuts, filtrer par le statut spécifique
-              if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
-              }
+              const redListStatus = species.listeRouge?.['Label Statut'] || 'Non évalué'
+              if (!isValueInFilter(filters.selectedRedListCategory, redListStatus)) return
             }
             if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) return
             if (filters.selectedFamille && species.famille !== filters.selectedFamille) return
             
-            if (filters.selectedStatutReglementaire) {
-              const hasStatus = species.statuts.some(statut => 
-                statut['LABEL STATUT (statuts)'] === filters.selectedStatutReglementaire
-              )
-              if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') return
-              if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) return
-            }
+            // Ne pas appliquer le filtre selectedStatutReglementaire ici car on veut voir tous les statuts
+            // Le filtre sera appliqué visuellement par la mise en évidence
             
             // Ajouter cette espèce aux espèces uniques du mois
             uniqueSpecies.add(cdRef)
@@ -119,24 +111,14 @@ export default function StatusTreemap({ codeInsee }: StatusTreemapProps) {
             if (filters.selectedGroupe && species.groupe !== filters.selectedGroupe) return
             if (filters.selectedGroup2 && species.group2 !== filters.selectedGroup2) return
           if (filters.selectedRedListCategory) {
-            if (filters.selectedRedListCategory === 'Non évalué') {
-              // Pour "Non évalué", inclure seulement les espèces sans statut de liste rouge
-              if (species.listeRouge) return
-            } else {
-              // Pour les autres statuts, filtrer par le statut spécifique
-              if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
-            }
-            }
+            const redListStatus = species.listeRouge?.['Label Statut'] || 'Non évalué'
+            if (!isValueInFilter(filters.selectedRedListCategory, redListStatus)) return
+          }
             if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) return
             if (filters.selectedFamille && species.famille !== filters.selectedFamille) return
           
-          if (filters.selectedStatutReglementaire) {
-            const hasStatus = species.statuts.some(statut => 
-              statut['LABEL STATUT (statuts)'] === filters.selectedStatutReglementaire
-            )
-              if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') return
-              if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) return
-          }
+          // Ne pas appliquer le filtre selectedStatutReglementaire ici car on veut voir tous les statuts
+          // Le filtre sera appliqué visuellement par la mise en évidence
           
           if (species.statuts.length > 0) {
               // Créer un Set pour éviter de compter plusieurs fois le même statut pour une espèce
