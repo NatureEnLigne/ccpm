@@ -2,6 +2,7 @@
 
 import { useCallback } from 'react'
 import { useAppStore } from '../store/useAppStore'
+import { isValueInFilter } from '../utils/filterHelpers'
 import type { ChartInteraction, FilterEvent } from '../types'
 
 export function useChartInteractions() {
@@ -122,11 +123,11 @@ export function useChartInteractions() {
       case 'bubble-famille':
         return filters.selectedFamille === value
       case 'line-month':
-        return filters.selectedMois === value
+        return isValueInFilter(filters.selectedMois, value as number)
       case 'bar-status':
-        return filters.selectedRedListCategory === value
+        return isValueInFilter(filters.selectedRedListCategory, value as string)
       case 'treemap-status':
-        return filters.selectedStatutReglementaire === value
+        return isValueInFilter(filters.selectedStatutReglementaire, value as string)
       case 'treemap-ordre':
         return filters.selectedOrdre === value
       case 'treemap-famille':

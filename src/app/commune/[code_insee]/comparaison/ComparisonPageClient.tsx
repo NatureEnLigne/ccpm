@@ -20,6 +20,7 @@ import {
 import { joinCommuneData, joinSpeciesData, enrichCommuneDataWithNames } from '../../../../utils/dataJoiner'
 import { loadCommunesGeoJSON } from '../../../../utils/geojsonLoader'
 import { formatNumber } from '../../../../utils/formatters'
+import { isValueInFilter } from '../../../../utils/filterHelpers'
 
 interface ComparisonPageClientProps {
   codeInseeBase: string
@@ -191,20 +192,30 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
         if (filters.selectedGroupe && species.groupe !== filters.selectedGroupe) return
         if (filters.selectedGroup2 && species.group2 !== filters.selectedGroup2) return
         if (filters.selectedRedListCategory) {
-          if (filters.selectedRedListCategory === 'Non évalué') {
-            if (species.listeRouge) return
-          } else {
-            if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
-          }
+          const speciesStatus = species.listeRouge?.['Label Statut'] || 'Non évalué'
+          if (!isValueInFilter(filters.selectedRedListCategory, speciesStatus)) return
         }
         if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) return
         if (filters.selectedFamille && species.famille !== filters.selectedFamille) return
         if (filters.selectedStatutReglementaire) {
-          const hasStatus = species.statuts.some(statut => 
-            statut['LABEL STATUT (statuts)'] === filters.selectedStatutReglementaire
-          )
-          if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') return
-          if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) return
+          const speciesStatuts = species.statuts.map((s: any) => s['LABEL STATUT (statuts)'])
+          const hasReglementaryStatus = speciesStatuts.length > 0
+          
+          if (Array.isArray(filters.selectedStatutReglementaire)) {
+            const matchesAnyStatus = filters.selectedStatutReglementaire.some((status: string) => {
+              if (status === 'Non réglementé') {
+                return !hasReglementaryStatus
+              }
+              return speciesStatuts.includes(status)
+            })
+            if (!matchesAnyStatus) return
+          } else {
+            if (filters.selectedStatutReglementaire === 'Non réglementé') {
+              if (hasReglementaryStatus) return
+            } else {
+              if (!speciesStatuts.includes(filters.selectedStatutReglementaire)) return
+            }
+          }
         }
         
         // Utiliser le bon nom de champ pour les observations (cohérent avec la page commune)

@@ -80,13 +80,8 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
           }
         }
         
-        // Filtrer par mois sélectionnés (logique OU)
-        if (filters.selectedMois) {
-          const moisObs = pheno['Mois Obs']
-          if (!isValueInFilter(filters.selectedMois, moisObs)) {
-            return
-          }
-        }
+        // Ne pas filtrer par mois ici - on veut toujours afficher toutes les données phénologiques
+        // Les marqueurs visuels indiqueront les mois sélectionnés
         
         const mois = pheno['Mois Obs']
         const current = monthlyData.get(mois) || 0

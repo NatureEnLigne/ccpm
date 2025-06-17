@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { isValueInFilter } from '../utils/filterHelpers'
 import type { CommuneCollection, FilterState, HoverState, FilterEvent } from '../types'
 import type { CommuneData, SpeciesData } from '../utils/dataJoiner'
 
@@ -248,15 +249,10 @@ export const useFilteredSpeciesData = () => {
   }
   
   if (filters.selectedRedListCategory) {
-    if (filters.selectedRedListCategory === 'Non évalué') {
-      // Pour "Non évalué", inclure toutes les espèces qui n'ont PAS de statut de liste rouge
-      filtered = filtered.filter(species => !species.listeRouge)
-    } else {
-      // Pour les autres statuts, filtrer par le statut spécifique
-      filtered = filtered.filter(species => 
-        species.listeRouge?.['Label Statut'] === filters.selectedRedListCategory
-      )
-    }
+    filtered = filtered.filter(species => {
+      const speciesStatus = species.listeRouge?.['Label Statut'] || 'Non évalué'
+      return isValueInFilter(filters.selectedRedListCategory, speciesStatus)
+    })
   }
   
   if (filters.selectedStatut) {

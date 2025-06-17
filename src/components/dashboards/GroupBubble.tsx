@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { ResponsiveCirclePacking } from '@nivo/circle-packing'
 import { useAppStore } from '../../store/useAppStore'
 import { useChartInteractions } from '../../hooks/useChartInteractions'
+import { isValueInFilter } from '../../utils/filterHelpers'
 import { generateGreenColorRamp, GREEN_PALETTE } from '../../utils/colors'
 import NoDataAnimation from '@/components/NoDataAnimation'
 
@@ -62,7 +63,7 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
       if (filters.selectedMois) {
         // Si un filtre par mois est actif, utiliser les données phénologiques
         commune.phenologie.forEach(pheno => {
-          if (pheno['Mois Obs'] !== filters.selectedMois) return
+          if (!isValueInFilter(filters.selectedMois, pheno['Mois Obs'])) return
           
           const cdRef = pheno['CD REF (pheno!mois!insee)']
           const species = speciesData?.get(cdRef)
@@ -73,13 +74,8 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
             
             // Appliquer les filtres du store global
             if (filters.selectedRedListCategory) {
-              if (filters.selectedRedListCategory === 'Non évalué') {
-                // Pour "Non évalué", inclure seulement les espèces sans statut de liste rouge
-                if (species.listeRouge) return
-              } else {
-                // Pour les autres statuts, filtrer par le statut spécifique
-              if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
-              }
+              const speciesStatus = species.listeRouge?.['Label Statut'] || 'Non évalué'
+              if (!isValueInFilter(filters.selectedRedListCategory, speciesStatus)) return
             }
             
             if (filters.selectedGroupe && species.groupe !== filters.selectedGroupe) return
@@ -88,11 +84,24 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
             if (filters.selectedFamille && species.famille !== filters.selectedFamille) return
             
             if (filters.selectedStatutReglementaire) {
-              const hasStatus = species.statuts.some(statut => 
-                statut['LABEL STATUT (statuts)'] === filters.selectedStatutReglementaire
-              )
-              if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') return
-              if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) return
+              const speciesStatuts = species.statuts.map((s: any) => s['LABEL STATUT (statuts)'])
+              const hasReglementaryStatus = speciesStatuts.length > 0
+              
+              if (Array.isArray(filters.selectedStatutReglementaire)) {
+                const matchesAnyStatus = filters.selectedStatutReglementaire.some((status: string) => {
+                  if (status === 'Non réglementé') {
+                    return !hasReglementaryStatus
+                  }
+                  return speciesStatuts.includes(status)
+                })
+                if (!matchesAnyStatus) return
+              } else {
+                if (filters.selectedStatutReglementaire === 'Non réglementé') {
+                  if (hasReglementaryStatus) return
+                } else {
+                  if (!speciesStatuts.includes(filters.selectedStatutReglementaire)) return
+                }
+              }
             }
             
             // Récupérer la valeur du champ taxonomique approprié
@@ -130,13 +139,8 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
           
           // Appliquer les filtres du store global
           if (filters.selectedRedListCategory) {
-            if (filters.selectedRedListCategory === 'Non évalué') {
-              // Pour "Non évalué", inclure seulement les espèces sans statut de liste rouge
-              if (species.listeRouge) return
-            } else {
-              // Pour les autres statuts, filtrer par le statut spécifique
-              if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
-            }
+            const speciesStatus = species.listeRouge?.['Label Statut'] || 'Non évalué'
+            if (!isValueInFilter(filters.selectedRedListCategory, speciesStatus)) return
           }
           
             if (filters.selectedGroupe && species.groupe !== filters.selectedGroupe) return
@@ -145,11 +149,24 @@ export default function GroupBubble({ codeInsee }: GroupBubbleProps) {
             if (filters.selectedFamille && species.famille !== filters.selectedFamille) return
           
           if (filters.selectedStatutReglementaire) {
-            const hasStatus = species.statuts.some(statut => 
-              statut['LABEL STATUT (statuts)'] === filters.selectedStatutReglementaire
-            )
-              if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') return
-              if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) return
+            const speciesStatuts = species.statuts.map((s: any) => s['LABEL STATUT (statuts)'])
+            const hasReglementaryStatus = speciesStatuts.length > 0
+            
+            if (Array.isArray(filters.selectedStatutReglementaire)) {
+              const matchesAnyStatus = filters.selectedStatutReglementaire.some((status: string) => {
+                if (status === 'Non réglementé') {
+                  return !hasReglementaryStatus
+                }
+                return speciesStatuts.includes(status)
+              })
+              if (!matchesAnyStatus) return
+            } else {
+              if (filters.selectedStatutReglementaire === 'Non réglementé') {
+                if (hasReglementaryStatus) return
+              } else {
+                if (!speciesStatuts.includes(filters.selectedStatutReglementaire)) return
+              }
+            }
           }
           
           // Appliquer les filtres d'années

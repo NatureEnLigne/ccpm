@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useAppStore } from '../store/useAppStore'
 import { X } from 'lucide-react'
 import { translateRegne } from '../utils/formatters'
+import { getFilterDisplayValue } from '../utils/filterHelpers'
 
 const FILTER_LABELS: Record<string, string> = {
   selectedGroupe: 'Groupe',
@@ -130,9 +131,16 @@ export default function FilterBar({ noBottomMargin = false, compactPadding = fal
   const formatFilterValue = (key: string, value: any) => {
     console.log(`🎨 formatFilterValue appelé avec:`, { key, value, valueType: typeof value, rawValue: JSON.stringify(value) })
     
-    if (key === 'selectedMois' && typeof value === 'number') {
-      const result = MONTH_NAMES[value - 1] || value
+    // Utiliser la fonction utilitaire pour les filtres multiples
+    if (key === 'selectedMois') {
+      const result = getFilterDisplayValue(value, MONTH_NAMES)
       console.log(`🎨 formatFilterValue mois résultat:`, { key, value, result })
+      return result
+    }
+    
+    if (key === 'selectedRedListCategory' || key === 'selectedStatutReglementaire') {
+      const result = getFilterDisplayValue(value)
+      console.log(`🎨 formatFilterValue statut résultat:`, { key, value, result })
       return result
     }
     

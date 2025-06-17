@@ -13,6 +13,7 @@ import {
 import { joinCommuneData, joinSpeciesData, enrichCommuneDataWithNames } from '../../../utils/dataJoiner'
 import { loadCommunesGeoJSON } from '../../../utils/geojsonLoader'
 import { formatNumber } from '../../../utils/formatters'
+import { isValueInFilter } from '../../../utils/filterHelpers'
 import GroupBubble from '../../../components/dashboards/GroupBubble'
 import PhenoLine from '../../../components/dashboards/PhenoLine'
 import RedListBar from '../../../components/dashboards/RedListBar'
@@ -46,7 +47,7 @@ function generateSpeciesCSV(codeInsee: string, speciesData: any, currentCommune:
     const monthSpeciesData = new Map<string, number>()
     
     currentCommune.phenologie.forEach((pheno: any) => {
-      if (pheno['Mois Obs'] !== filters.selectedMois) return
+      if (!isValueInFilter(filters.selectedMois, pheno['Mois Obs'])) return
       
       const cdRef = pheno['CD REF (pheno!mois!insee)']
       const species = speciesData.get(cdRef)
@@ -57,21 +58,31 @@ function generateSpeciesCSV(codeInsee: string, speciesData: any, currentCommune:
       if (filters?.selectedGroupe && species.groupe !== filters.selectedGroupe) return
       if (filters?.selectedGroup2 && species.group2 !== filters.selectedGroup2) return
       if (filters?.selectedRedListCategory) {
-        if (filters.selectedRedListCategory === 'Non évalué') {
-          if (species.listeRouge) return
-        } else {
-          if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
-        }
+        const speciesStatus = species.listeRouge?.['Label Statut'] || 'Non évalué'
+        if (!isValueInFilter(filters.selectedRedListCategory, speciesStatus)) return
       }
       if (filters?.selectedOrdre && species.ordre !== filters.selectedOrdre) return
       if (filters?.selectedFamille && species.famille !== filters.selectedFamille) return
       
       if (filters?.selectedStatutReglementaire) {
-        const hasStatus = species.statuts.some((statut: any) => 
-          statut['LABEL STATUT (statuts)'] === filters.selectedStatutReglementaire
-        )
-        if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') return
-        if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) return
+        const speciesStatuts = species.statuts.map((s: any) => s['LABEL STATUT (statuts)'])
+        const hasReglementaryStatus = speciesStatuts.length > 0
+        
+                 if (Array.isArray(filters.selectedStatutReglementaire)) {
+           const matchesAnyStatus = filters.selectedStatutReglementaire.some((status: string) => {
+             if (status === 'Non réglementé') {
+               return !hasReglementaryStatus
+             }
+             return speciesStatuts.includes(status)
+           })
+           if (!matchesAnyStatus) return
+         } else {
+          if (filters.selectedStatutReglementaire === 'Non réglementé') {
+            if (hasReglementaryStatus) return
+          } else {
+            if (!speciesStatuts.includes(filters.selectedStatutReglementaire)) return
+          }
+        }
       }
 
       // Ajouter les observations de ce mois pour cette espèce
@@ -112,21 +123,31 @@ function generateSpeciesCSV(codeInsee: string, speciesData: any, currentCommune:
       if (filters?.selectedGroupe && species.groupe !== filters.selectedGroupe) return
       if (filters?.selectedGroup2 && species.group2 !== filters.selectedGroup2) return
       if (filters?.selectedRedListCategory) {
-        if (filters.selectedRedListCategory === 'Non évalué') {
-          if (species.listeRouge) return
-        } else {
-          if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
-        }
+        const speciesStatus = species.listeRouge?.['Label Statut'] || 'Non évalué'
+        if (!isValueInFilter(filters.selectedRedListCategory, speciesStatus)) return
       }
       if (filters?.selectedOrdre && species.ordre !== filters.selectedOrdre) return
       if (filters?.selectedFamille && species.famille !== filters.selectedFamille) return
       
       if (filters?.selectedStatutReglementaire) {
-        const hasStatus = species.statuts.some((statut: any) => 
-          statut['LABEL STATUT (statuts)'] === filters.selectedStatutReglementaire
-        )
-        if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') return
-        if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) return
+        const speciesStatuts = species.statuts.map((s: any) => s['LABEL STATUT (statuts)'])
+        const hasReglementaryStatus = speciesStatuts.length > 0
+        
+        if (Array.isArray(filters.selectedStatutReglementaire)) {
+          const matchesAnyStatus = filters.selectedStatutReglementaire.some((status: string) => {
+            if (status === 'Non réglementé') {
+              return !hasReglementaryStatus
+            }
+            return speciesStatuts.includes(status)
+          })
+          if (!matchesAnyStatus) return
+        } else {
+          if (filters.selectedStatutReglementaire === 'Non réglementé') {
+            if (hasReglementaryStatus) return
+          } else {
+            if (!speciesStatuts.includes(filters.selectedStatutReglementaire)) return
+          }
+        }
       }
 
       // Calculer le nombre total d'observations pour cette espèce dans cette commune
@@ -204,10 +225,73 @@ function generateSpeciesCSV(codeInsee: string, speciesData: any, currentCommune:
   const url = URL.createObjectURL(blob)
   link.setAttribute('href', url)
   
-  // Nom du fichier avec filtres appliqués
-  const filterSuffix = filters.selectedRegne ? `_${filters.selectedRegne}` : ''
-  const monthSuffix = filters.selectedMois ? `_${filters.selectedMois}` : ''
-  link.setAttribute('download', `especes_commune_${codeInsee}${filterSuffix}${monthSuffix}.csv`)
+  // Créer le nom du fichier avec le nom de la commune et les filtres
+  const communeName = currentCommune.nom || `Commune-${codeInsee}`
+  const sanitizedCommuneName = communeName.replace(/[^a-zA-Z0-9\-]/g, '-')
+  
+  const filterParts: string[] = []
+  
+  // Fonction pour nettoyer les chaînes de caractères
+  const sanitizeString = (str: string) => 
+    str.toLowerCase()
+      .replace(/[éèêë]/g, 'e')
+      .replace(/[àâä]/g, 'a')
+      .replace(/[îï]/g, 'i')
+      .replace(/[ôö]/g, 'o')
+      .replace(/[ùûü]/g, 'u')
+      .replace(/ç/g, 'c')
+      .replace(/[^a-z0-9]/g, '')
+  
+  // Ajouter le filtre par groupe taxonomique (🦋 Groupes taxonomiques)
+  if (filters.selectedGroupe) {
+    if (Array.isArray(filters.selectedGroupe)) {
+      const groupNames = filters.selectedGroupe.map(sanitizeString).join('-')
+      filterParts.push(`groupe:${groupNames}`)
+    } else {
+      filterParts.push(`groupe:${sanitizeString(filters.selectedGroupe)}`)
+    }
+  }
+  
+  // Ajouter le filtre par mois (📅 Phénologie mensuelle)
+  if (filters.selectedMois) {
+    const moisNoms = [
+      'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+      'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'
+    ]
+    
+    if (Array.isArray(filters.selectedMois)) {
+      const moisNames = filters.selectedMois.map((mois: number) => moisNoms[mois - 1]).join('-')
+      filterParts.push(`mois:${moisNames}`)
+    } else {
+      filterParts.push(`mois:${moisNoms[filters.selectedMois - 1]}`)
+    }
+  }
+  
+  // Ajouter le filtre par statut liste rouge (🚨 Statuts listes rouges)
+  if (filters.selectedRedListCategory) {
+    if (Array.isArray(filters.selectedRedListCategory)) {
+      const statusNames = filters.selectedRedListCategory.map(sanitizeString).join('-')
+      filterParts.push(`liste-rouge:${statusNames}`)
+    } else {
+      filterParts.push(`liste-rouge:${sanitizeString(filters.selectedRedListCategory)}`)
+    }
+  }
+  
+  // Ajouter le filtre par statut réglementaire (⚖️ Statuts réglementaires)
+  if (filters.selectedStatutReglementaire) {
+    if (Array.isArray(filters.selectedStatutReglementaire)) {
+      const statusNames = filters.selectedStatutReglementaire.map(sanitizeString).join('-')
+      filterParts.push(`statut-reglementaire:${statusNames}`)
+    } else {
+      filterParts.push(`statut-reglementaire:${sanitizeString(filters.selectedStatutReglementaire)}`)
+    }
+  }
+  
+  // Construire le nom final du fichier
+  const filterSuffix = filterParts.length > 0 ? `_${filterParts.join('_')}` : ''
+  const fileName = `${sanitizedCommuneName}${filterSuffix}.csv`
+  
+  link.setAttribute('download', fileName)
   
   link.style.visibility = 'hidden'
   document.body.appendChild(link)
@@ -320,7 +404,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
     if (filters?.selectedMois) {
       // Compter directement depuis les données phénologiques
       currentCommune.phenologie.forEach(pheno => {
-        if (pheno['Mois Obs'] !== filters.selectedMois) return
+        if (!isValueInFilter(filters.selectedMois, pheno['Mois Obs'])) return
         
         const cdRef = pheno['CD REF (pheno!mois!insee)']
         const species = speciesData.get(cdRef)
@@ -332,23 +416,31 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
         if (filters?.selectedGroupe && species.groupe !== filters.selectedGroupe) return
         if (filters?.selectedGroup2 && species.group2 !== filters.selectedGroup2) return
         if (filters?.selectedRedListCategory) {
-          if (filters.selectedRedListCategory === 'Non évalué') {
-            // Pour "Non évalué", inclure seulement les espèces sans statut de liste rouge
-            if (species.listeRouge) return
-          } else {
-            // Pour les autres statuts, filtrer par le statut spécifique
-            if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
-          }
+          const speciesStatus = species.listeRouge?.['Label Statut'] || 'Non évalué'
+          if (!isValueInFilter(filters.selectedRedListCategory, speciesStatus)) return
         }
         if (filters?.selectedOrdre && species.ordre !== filters.selectedOrdre) return
         if (filters?.selectedFamille && species.famille !== filters.selectedFamille) return
         
         if (filters?.selectedStatutReglementaire) {
-          const hasStatus = species.statuts.some(statut => 
-            statut['LABEL STATUT (statuts)'] === filters.selectedStatutReglementaire
-          )
-          if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') return
-          if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) return
+          const speciesStatuts = species.statuts.map((s: any) => s['LABEL STATUT (statuts)'])
+          const hasReglementaryStatus = speciesStatuts.length > 0
+          
+          if (Array.isArray(filters.selectedStatutReglementaire)) {
+            const matchesAnyStatus = filters.selectedStatutReglementaire.some((status: string) => {
+              if (status === 'Non réglementé') {
+                return !hasReglementaryStatus
+              }
+              return speciesStatuts.includes(status)
+            })
+            if (!matchesAnyStatus) return
+          } else {
+            if (filters.selectedStatutReglementaire === 'Non réglementé') {
+              if (hasReglementaryStatus) return
+            } else {
+              if (!speciesStatuts.includes(filters.selectedStatutReglementaire)) return
+            }
+          }
         }
 
         // Cette espèce passe tous les filtres pour ce mois
@@ -370,23 +462,31 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
       if (filters?.selectedGroupe && species.groupe !== filters.selectedGroupe) return
       if (filters?.selectedGroup2 && species.group2 !== filters.selectedGroup2) return
       if (filters?.selectedRedListCategory) {
-        if (filters.selectedRedListCategory === 'Non évalué') {
-          // Pour "Non évalué", inclure seulement les espèces sans statut de liste rouge
-          if (species.listeRouge) return
-        } else {
-          // Pour les autres statuts, filtrer par le statut spécifique
-          if (species.listeRouge?.['Label Statut'] !== filters.selectedRedListCategory) return
-        }
+        const speciesStatus = species.listeRouge?.['Label Statut'] || 'Non évalué'
+        if (!isValueInFilter(filters.selectedRedListCategory, speciesStatus)) return
       }
       if (filters?.selectedOrdre && species.ordre !== filters.selectedOrdre) return
       if (filters?.selectedFamille && species.famille !== filters.selectedFamille) return
       
       if (filters?.selectedStatutReglementaire) {
-        const hasStatus = species.statuts.some(statut => 
-          statut['LABEL STATUT (statuts)'] === filters.selectedStatutReglementaire
-        )
-        if (!hasStatus && filters.selectedStatutReglementaire !== 'Non réglementé') return
-        if (filters.selectedStatutReglementaire === 'Non réglementé' && species.statuts.length > 0) return
+        const speciesStatuts = species.statuts.map((s: any) => s['LABEL STATUT (statuts)'])
+        const hasReglementaryStatus = speciesStatuts.length > 0
+        
+        if (Array.isArray(filters.selectedStatutReglementaire)) {
+          const matchesAnyStatus = filters.selectedStatutReglementaire.some((status: string) => {
+            if (status === 'Non réglementé') {
+              return !hasReglementaryStatus
+            }
+            return speciesStatuts.includes(status)
+          })
+          if (!matchesAnyStatus) return
+        } else {
+          if (filters.selectedStatutReglementaire === 'Non réglementé') {
+            if (hasReglementaryStatus) return
+          } else {
+            if (!speciesStatuts.includes(filters.selectedStatutReglementaire)) return
+          }
+        }
       }
 
       // Appliquer les filtres d'années
