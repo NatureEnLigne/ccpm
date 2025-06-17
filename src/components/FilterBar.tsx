@@ -201,7 +201,7 @@ export default function FilterBar({ noBottomMargin = false, compactPadding = fal
           <select
             value="Tous"
             onChange={(e) => handleStatutReglementaireChange(e.target.value)}
-            className="rounded-xl border border-amber-200/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 font-medium w-52"
+            className="rounded-xl border border-amber-200/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 font-medium w-64"
             style={{
               background: 'linear-gradient(135deg, rgba(205, 133, 63, 0.1), rgba(45, 80, 22, 0.1))',
               color: '#cd853f'
@@ -220,7 +220,7 @@ export default function FilterBar({ noBottomMargin = false, compactPadding = fal
             placeholder="A partir de l'année"
             value={filters.anneeDebut || ''}
             onChange={(e) => handleAnneeDebutChange(e.target.value)}
-            className="rounded-xl border border-amber-200/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 font-medium w-44 placeholder-amber-600"
+            className="rounded-xl border border-amber-200/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 font-medium w-48"
             style={{
               background: 'linear-gradient(135deg, rgba(205, 133, 63, 0.1), rgba(45, 80, 22, 0.1))',
               color: '#cd853f'
@@ -234,7 +234,7 @@ export default function FilterBar({ noBottomMargin = false, compactPadding = fal
             placeholder="Jusque l'année"
             value={filters.anneeFin || ''}
             onChange={(e) => handleAnneeFinChange(e.target.value)}
-            className="rounded-xl border border-amber-200/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 font-medium w-36 placeholder-amber-600"
+            className="rounded-xl border border-amber-200/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 font-medium w-44"
             style={{
               background: 'linear-gradient(135deg, rgba(205, 133, 63, 0.1), rgba(45, 80, 22, 0.1))',
               color: '#cd853f'
