@@ -113,7 +113,7 @@ export default function StatusTreemap({ codeInsee }: StatusTreemapProps) {
           if (filters.selectedRedListCategory) {
             const redListStatus = species.listeRouge?.['Label Statut'] || 'Non évalué'
             if (!isValueInFilter(filters.selectedRedListCategory, redListStatus)) return
-          }
+            }
             if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) return
             if (filters.selectedFamille && species.famille !== filters.selectedFamille) return
           

@@ -107,40 +107,40 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
       } else {
         // Si pas de filtre d'années, utiliser les données phénologiques normales avec filtres
         console.log('📅 Pas de filtre années - utilisation données phénologiques standard')
+      
+      commune.phenologie.forEach(pheno => {
+        const cdRef = pheno['CD REF (pheno!mois!insee)']
+        const species = speciesData?.get(cdRef)
         
-        commune.phenologie.forEach(pheno => {
-          const cdRef = pheno['CD REF (pheno!mois!insee)']
-          const species = speciesData?.get(cdRef)
-          
-          // Filtrer par règne si spécifié
-          if (selectedRegne && species && species.regne !== selectedRegne) {
+        // Filtrer par règne si spécifié
+        if (selectedRegne && species && species.regne !== selectedRegne) {
+          return
+        }
+        
+        // Appliquer les filtres du store global
+        if (species) {
+          if (filters.selectedGroupe && species.groupe !== filters.selectedGroupe) {
             return
           }
           
-          // Appliquer les filtres du store global
-          if (species) {
-            if (filters.selectedGroupe && species.groupe !== filters.selectedGroupe) {
-              return
-            }
-            
-            if (filters.selectedGroup2 && species.group2 !== filters.selectedGroup2) {
-              return
-            }
-            
-            if (filters.selectedRedListCategory) {
+          if (filters.selectedGroup2 && species.group2 !== filters.selectedGroup2) {
+            return
+          }
+          
+          if (filters.selectedRedListCategory) {
               const redListStatus = species.listeRouge?.['Label Statut'] || 'Non évalué'
               if (!isValueInFilter(filters.selectedRedListCategory, redListStatus)) return
-            }
-            
-            if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) {
-              return
-            }
-            
-            if (filters.selectedFamille && species.famille !== filters.selectedFamille) {
-              return
-            }
-            
-            if (filters.selectedStatutReglementaire) {
+          }
+          
+          if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) {
+            return
+          }
+          
+          if (filters.selectedFamille && species.famille !== filters.selectedFamille) {
+            return
+          }
+          
+          if (filters.selectedStatutReglementaire) {
               const statutsReglementaires = species.statuts.length > 0 
                 ? species.statuts.map(s => s['LABEL STATUT (statuts)'])
                 : ['Non réglementé']
@@ -150,13 +150,13 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
               )
               
               if (!hasMatchingStatus) return
-            }
           }
-          
-          const mois = pheno['Mois Obs']
-          const current = monthlyData.get(mois) || 0
-          monthlyData.set(mois, current + pheno['Nb Donnees'])
-        })
+        }
+        
+        const mois = pheno['Mois Obs']
+        const current = monthlyData.get(mois) || 0
+        monthlyData.set(mois, current + pheno['Nb Donnees'])
+      })
       }
 
       // Convertir en format pour Nivo
@@ -260,12 +260,12 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
             }))
           : [{
               axis: 'x' as const,
-              value: MONTH_NAMES[filters.selectedMois - 1],
-              lineStyle: {
-                stroke: '#8B4513',
-                strokeWidth: 3,
-                strokeDasharray: '10 8'
-              }
+        value: MONTH_NAMES[filters.selectedMois - 1],
+        lineStyle: {
+          stroke: '#8B4513',
+          strokeWidth: 3,
+          strokeDasharray: '10 8'
+        }
             }]
       ) : []}
       onClick={(point) => {
