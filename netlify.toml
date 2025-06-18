@@ -20,11 +20,13 @@
   status = 200
   force = false
 
-# Headers de sécurité
+# Headers de sécurité - Autorisation d'embedding pour WordPress
 [[headers]]
   for = "/*"
   [headers.values]
-    X-Frame-Options = "DENY"
+    # X-Frame-Options supprimé pour permettre l'embedding
+    # Content-Security-Policy avec frame-ancestors pour plus de contrôle
+    Content-Security-Policy = "frame-ancestors *"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
