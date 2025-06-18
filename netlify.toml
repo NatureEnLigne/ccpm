@@ -1,0 +1,32 @@
+[build]
+  publish = "out"
+  command = "npm run build"
+
+[build.environment]
+  NEXT_PUBLIC_MAPBOX_TOKEN = "pk.eyJ1IjoibWJyb3V0aW4iLCJhIjoiY21iZzU4OHAxMjhqcTJscXUwNGp3ZXVwdCJ9.XHkFEC_OBMp7B0UqDkE8Tg"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  conditions = {Role = ["admin"]}
+
+# Gestion des erreurs 404 pour les routes dynamiques
+[[redirects]]
+  from = "/commune/*"
+  to = "/commune/[code_insee]/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/commune/*/comparaison"
+  to = "/commune/[code_insee]/comparaison/index.html"
+  status = 200
+
+# Headers de sécurité
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()" 
