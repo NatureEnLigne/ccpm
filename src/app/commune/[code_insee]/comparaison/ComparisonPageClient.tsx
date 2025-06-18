@@ -189,22 +189,31 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
 
     let totalObservations = 0
     const uniqueSpecies = new Set<string>()
+    const selectedRegne = filters.selectedRegne
 
-    commune.observations.forEach(obs => {
-      const cdRef = obs['Cd Ref']
-      const species = speciesData.get(cdRef)
-      
-      if (species) {
-        // Appliquer les filtres
-        if (filters.selectedGroupe && species.groupe !== filters.selectedGroupe) return
-        if (filters.selectedGroup2 && species.group2 !== filters.selectedGroup2) return
-        if (filters.selectedRedListCategory) {
+    // Si un filtre par mois est actif, utiliser les données phénologiques
+    if (filters?.selectedMois) {
+      // Compter directement depuis les données phénologiques
+      commune.phenologie.forEach(pheno => {
+        if (!isValueInFilter(filters.selectedMois, pheno['Mois Obs'])) return
+        
+        const cdRef = pheno['CD REF (pheno!mois!insee)']
+        const species = speciesData.get(cdRef)
+        
+        if (!species) return
+
+        // Appliquer tous les autres filtres sur l'espèce
+        if (selectedRegne && species.regne !== selectedRegne) return
+        if (filters?.selectedGroupe && species.groupe !== filters.selectedGroupe) return
+        if (filters?.selectedGroup2 && species.group2 !== filters.selectedGroup2) return
+        if (filters?.selectedRedListCategory) {
           const speciesStatus = species.listeRouge?.['Label Statut'] || 'Non évalué'
           if (!isValueInFilter(filters.selectedRedListCategory, speciesStatus)) return
         }
-        if (filters.selectedOrdre && species.ordre !== filters.selectedOrdre) return
-        if (filters.selectedFamille && species.famille !== filters.selectedFamille) return
-        if (filters.selectedStatutReglementaire) {
+        if (filters?.selectedOrdre && species.ordre !== filters.selectedOrdre) return
+        if (filters?.selectedFamille && species.famille !== filters.selectedFamille) return
+        
+        if (filters?.selectedStatutReglementaire) {
           const speciesStatuts = species.statuts.map((s: any) => s['LABEL STATUT (statuts)'])
           const hasReglementaryStatus = speciesStatuts.length > 0
           
@@ -224,12 +233,62 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
             }
           }
         }
+
+        // Cette espèce passe tous les filtres pour ce mois
+        totalObservations += pheno['Nb Donnees']
+        uniqueSpecies.add(cdRef)
+      })
+    } else {
+      // Logique normale sans filtre par mois
+      commune.observations.forEach(obs => {
+        const cdRef = obs['Cd Ref']
+        const species = speciesData.get(cdRef)
         
-        // Utiliser le bon nom de champ pour les observations (cohérent avec la page commune)
+        if (!species) return
+
+        // Filtrer par règne si spécifié
+        if (selectedRegne && species.regne !== selectedRegne) return
+
+        // Appliquer les filtres globaux sur les espèces
+        if (filters?.selectedGroupe && species.groupe !== filters.selectedGroupe) return
+        if (filters?.selectedGroup2 && species.group2 !== filters.selectedGroup2) return
+        if (filters?.selectedRedListCategory) {
+          const speciesStatus = species.listeRouge?.['Label Statut'] || 'Non évalué'
+          if (!isValueInFilter(filters.selectedRedListCategory, speciesStatus)) return
+        }
+        if (filters?.selectedOrdre && species.ordre !== filters.selectedOrdre) return
+        if (filters?.selectedFamille && species.famille !== filters.selectedFamille) return
+        
+        if (filters?.selectedStatutReglementaire) {
+          const speciesStatuts = species.statuts.map((s: any) => s['LABEL STATUT (statuts)'])
+          const hasReglementaryStatus = speciesStatuts.length > 0
+          
+          if (Array.isArray(filters.selectedStatutReglementaire)) {
+            const matchesAnyStatus = filters.selectedStatutReglementaire.some((status: string) => {
+              if (status === 'Non réglementé') {
+                return !hasReglementaryStatus
+              }
+              return speciesStatuts.includes(status)
+            })
+            if (!matchesAnyStatus) return
+          } else {
+            if (filters.selectedStatutReglementaire === 'Non réglementé') {
+              if (hasReglementaryStatus) return
+            } else {
+              if (!speciesStatuts.includes(filters.selectedStatutReglementaire)) return
+            }
+          }
+        }
+
+        // Appliquer les filtres d'années
+        if (filters?.anneeDebut && obs['An Obs'] < filters.anneeDebut) return
+        if (filters?.anneeFin && obs['An Obs'] > filters.anneeFin) return
+        
+        // Cette observation passe tous les filtres
         totalObservations += obs['Nb Obs']
         uniqueSpecies.add(cdRef)
-      }
-    })
+      })
+    }
 
     return {
       totalObs: totalObservations,

@@ -1,5 +1,30 @@
 import { Suspense } from 'react'
 import ComparisonPageClient from './ComparisonPageClient'
+import { loadCommunesGeoJSON } from '../../../../utils/geojsonLoader'
+
+// Génération statique des paramètres pour toutes les communes
+export async function generateStaticParams() {
+  try {
+    console.log('🔄 Génération des paramètres statiques pour les pages de comparaison...')
+    
+    // Charger les données des communes
+    const communesGeoJSON = await loadCommunesGeoJSON()
+    console.log(`GeoJSON chargé (serveur): ${communesGeoJSON.features.length} communes`)
+    
+    // Générer les paramètres pour chaque commune
+    const params = communesGeoJSON.features.map((commune) => ({
+      code_insee: commune.properties.insee
+    }))
+    
+    console.log(`✅ generateStaticParams comparaison - ${params.length} codes INSEE générés`)
+    console.log('📋 Codes INSEE:', params.map(p => p.code_insee))
+    
+    return params
+  } catch (error) {
+    console.error('❌ Erreur lors de la génération des paramètres statiques pour comparaison:', error)
+    return []
+  }
+}
 
 interface ComparisonPageProps {
   params: {
