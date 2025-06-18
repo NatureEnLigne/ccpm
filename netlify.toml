@@ -3,7 +3,8 @@
   command = "npm run build"
 
 [build.environment]
-  NEXT_PUBLIC_MAPBOX_TOKEN = "pk.eyJ1IjoibWJyb3V0aW4iLCJhIjoiY21iZzU4OHAxMjhqcTJscXUwNGp3ZXVwdCJ9.XHkFEC_OBMp7B0UqDkE8Tg"
+  # Nouveau token Mapbox avec restrictions de domaine configurées
+  NEXT_PUBLIC_MAPBOX_TOKEN = "pk.eyJ1IjoibWJyb3V0aW4iLCJhIjoiY21jMjVpbG5nMDVnMjJscXhrYjU4NDJpdCJ9.nwr3N3oiuU3MXdnN2X62Qw"
 
 # Gestion des pages dynamiques Next.js - routes spécifiques en premier
 [[redirects]]
