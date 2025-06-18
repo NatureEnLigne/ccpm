@@ -4,17 +4,11 @@ import { useEffect, useRef, useState } from 'react'
 import mapboxgl from 'mapbox-gl'
 import { useAppStore } from '../store/useAppStore'
 import { loadCommunesGeoJSON, getBounds } from '../utils/geojsonLoader'
+import { MAPBOX_CONFIG } from '../config/mapbox'
 import type { CommuneFeature } from '../types'
 
 // Configuration Mapbox
-mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || ''
-
-const MAPBOX_STYLES = {
-  'satellite-v9': 'Satellite',
-  'outdoors-v12': 'Terrain',
-  'streets-v12': 'Rues',
-  'light-v11': 'Clair'
-}
+mapboxgl.accessToken = MAPBOX_CONFIG.accessToken
 
 export default function Map() {
   const mapContainer = useRef<HTMLDivElement>(null)

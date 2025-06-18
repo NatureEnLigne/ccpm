@@ -13,16 +13,9 @@ import {
 } from '../utils/csvLoader'
 import { joinCommuneData, joinSpeciesData, enrichCommuneDataWithNames } from '../utils/dataJoiner'
 import { formatNumber } from '../utils/formatters'
+import { MAPBOX_CONFIG } from '../config/mapbox'
 import ToggleSwitch from './ToggleSwitch'
 import type { SyntheseInsee, PhenoMoisInsee, Taxonomie, ListeRouge, Statut } from '../types'
-
-const MAPBOX_STYLES = {
-  'satellite-streets-v12': 'Satellite + Routes',
-  'satellite-v9': 'Satellite',
-  'outdoors-v12': 'Terrain',
-  'streets-v12': 'Rues',
-  'light-v11': 'Clair'
-}
 
 // Composant icône de fiche optimisé
 const FicheIcon = ({ isSelected, codeInsee }: { isSelected: boolean, codeInsee: string }) => {
@@ -331,7 +324,7 @@ export default function Sidebar() {
                 color: '#2d5016'
               }}
             >
-              {Object.entries(MAPBOX_STYLES).map(([key, label]) => (
+              {Object.entries(MAPBOX_CONFIG.styles).map(([key, label]) => (
                 <option key={key} value={key} style={{ color: '#333' }}>
                   {label}
                 </option>
