@@ -5,22 +5,23 @@
 [build.environment]
   NEXT_PUBLIC_MAPBOX_TOKEN = "pk.eyJ1IjoibWJyb3V0aW4iLCJhIjoiY21iZzU4OHAxMjhqcTJscXUwNGp3ZXVwdCJ9.XHkFEC_OBMp7B0UqDkE8Tg"
 
+# Gestion des pages dynamiques Next.js - routes spécifiques en premier
+[[redirects]]
+  from = "/commune/:code_insee"
+  to = "/commune/:code_insee/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/commune/:code_insee/comparaison"
+  to = "/commune/:code_insee/comparaison/index.html"
+  status = 200
+
+# Fallback pour toutes les autres routes (SPA) - doit être en dernier
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-  conditions = {Role = ["admin"]}
-
-# Gestion des erreurs 404 pour les routes dynamiques
-[[redirects]]
-  from = "/commune/*"
-  to = "/commune/[code_insee]/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/commune/*/comparaison"
-  to = "/commune/[code_insee]/comparaison/index.html"
-  status = 200
+  force = false
 
 # Headers de sécurité
 [[headers]]
@@ -29,4 +30,10 @@
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "camera=(), microphone=(), geolocation=()" 
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# Headers spécifiques pour les assets statiques
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable" 
