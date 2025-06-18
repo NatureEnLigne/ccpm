@@ -16,12 +16,11 @@ import { formatNumber } from '../utils/formatters'
 import ToggleSwitch from './ToggleSwitch'
 import type { SyntheseInsee, PhenoMoisInsee, Taxonomie, ListeRouge, Statut } from '../types'
 
-const MAPBOX_STYLES = {
-  'satellite-streets-v12': 'Satellite + Routes',
-  'satellite-v9': 'Satellite',
-  'outdoors-v12': 'Terrain',
-  'streets-v12': 'Rues',
-  'light-v11': 'Clair'
+const TILE_LAYERS = {
+  'streets': 'Rues',
+  'satellite': 'Satellite',
+  'terrain': 'Terrain',
+  'light': 'Clair'
 }
 
 // Composant icône de fiche optimisé
@@ -325,14 +324,10 @@ export default function Sidebar() {
             <select
               value={mapStyle}
               onChange={(e) => setMapStyle(e.target.value)}
-              className="rounded-xl border border-amber-200/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 font-medium w-full"
-              style={{
-                background: 'linear-gradient(135deg, rgba(205, 133, 63, 0.1), rgba(45, 80, 22, 0.1))',
-                color: '#2d5016'
-              }}
+              className="block w-full px-3 py-2 border border-amber-200/50 rounded-lg bg-white/80 text-gray-900 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm"
             >
-              {Object.entries(MAPBOX_STYLES).map(([key, label]) => (
-                <option key={key} value={key} style={{ color: '#333' }}>
+              {Object.entries(TILE_LAYERS).map(([key, label]) => (
+                <option key={key} value={key}>
                   {label}
                 </option>
               ))}
