@@ -476,6 +476,15 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
       return { totalObs: 0, totalEsp: 0 }
     }
 
+    // Éviter le calcul prématuré si les filtres URL ne sont pas encore appliqués
+    const hasUrlParams = new URLSearchParams(window.location.search).size > 0
+    const hasAppliedFilters = Object.values(filters).some(value => value !== null && value !== undefined)
+    
+    if (hasUrlParams && !hasAppliedFilters) {
+      console.log('⏳ Calcul des statistiques différé - En attente des filtres URL')
+      return { totalObs: 0, totalEsp: 0 }
+    }
+
     console.log('📊 Calcul des statistiques avec filtres:', filters)
 
     let totalObservations = 0
