@@ -169,14 +169,14 @@ export default function Sidebar() {
       {/* Section Communes CCPM - Hauteur adaptative */}
       <div className="container-hover-safe flex-1 min-h-0">
         <div className="modern-card shadow-xl fade-in-scale h-full flex flex-col">
-          {/* Titre avec icône - padding réduit */}
-          <h3 className="text-lg font-bold mb-3 flex items-center gap-2 flex-shrink-0 px-4 pt-4">
+          {/* Titre avec icône - padding uniforme */}
+          <h3 className="text-lg font-bold mb-3 flex items-center gap-2 flex-shrink-0 px-3 pt-4">
             <span className="text-xl">🏛️</span>
             <span className="text-gradient">Communes CCPM</span>
         </h3>
 
           {/* Contenu scrollable avec hauteur maximale */}
-          <div ref={scrollContainerRef} className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 px-4 pb-4">
+          <div ref={scrollContainerRef} className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 px-3 pb-4">
         {/* Fiche commune sélectionnée */}
         {selectedCommune && communeData?.has(selectedCommune) && (
           <div className="mb-4 p-3 bg-gradient-primary rounded-2xl text-white shadow-lg">
