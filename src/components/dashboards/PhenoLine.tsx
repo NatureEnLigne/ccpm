@@ -249,24 +249,57 @@ export default function PhenoLine({ codeInsee }: PhenoLineProps) {
       motionConfig="gentle"
       markers={filters.selectedMois ? (
         Array.isArray(filters.selectedMois) 
-          ? filters.selectedMois.map(month => ({
-              axis: 'x' as const,
-              value: MONTH_NAMES[month - 1],
-              lineStyle: {
-                stroke: '#8B4513',
-                strokeWidth: 3,
-                strokeDasharray: '10 8'
+          ? filters.selectedMois.map((month: any) => {
+              // Si c'est un nom de mois, l'utiliser directement
+              if (typeof month === 'string' && MONTH_NAMES.includes(month)) {
+                return {
+                  axis: 'x' as const,
+                  value: month,
+                  lineStyle: {
+                    stroke: '#8B4513',
+                    strokeWidth: 3,
+                    strokeDasharray: '10 8'
+                  }
+                }
               }
-            }))
-          : [{
-              axis: 'x' as const,
-        value: MONTH_NAMES[filters.selectedMois - 1],
-        lineStyle: {
-          stroke: '#8B4513',
-          strokeWidth: 3,
-          strokeDasharray: '10 8'
-        }
-            }]
+              // Si c'est un numéro, le convertir en nom
+              const monthNumber = typeof month === 'number' ? month : parseInt(month) || 0
+              return {
+                axis: 'x' as const,
+                value: MONTH_NAMES[monthNumber - 1] || 'Janvier',
+                lineStyle: {
+                  stroke: '#8B4513',
+                  strokeWidth: 3,
+                  strokeDasharray: '10 8'
+                }
+              }
+            })
+          : (() => {
+              const month = filters.selectedMois as any
+              // Si c'est un nom de mois, l'utiliser directement
+              if (typeof month === 'string' && MONTH_NAMES.includes(month)) {
+                return [{
+                  axis: 'x' as const,
+                  value: month,
+                  lineStyle: {
+                    stroke: '#8B4513',
+                    strokeWidth: 3,
+                    strokeDasharray: '10 8'
+                  }
+                }]
+              }
+              // Si c'est un numéro, le convertir en nom
+              const monthNumber = typeof month === 'number' ? month : parseInt(month) || 0
+              return [{
+                axis: 'x' as const,
+                value: MONTH_NAMES[monthNumber - 1] || 'Janvier',
+                lineStyle: {
+                  stroke: '#8B4513',
+                  strokeWidth: 3,
+                  strokeDasharray: '10 8'
+                }
+              }]
+            })()
       ) : []}
       onClick={(point) => {
         const monthIndex = MONTH_NAMES.indexOf(point.data.x as string) + 1
