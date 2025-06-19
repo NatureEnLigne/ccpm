@@ -46,8 +46,31 @@ function generateSpeciesCSV(codeInsee: string, speciesData: any, currentCommune:
     // Grouper les données phénologiques par CD REF pour ce mois
     const monthSpeciesData = new Map<string, number>()
     
+    // Convertir les noms de mois en numéros pour la comparaison
+    const monthNames = [
+      'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+      'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+    ]
+    
+    const selectedMonthNumbers = Array.isArray(filters.selectedMois) 
+      ? filters.selectedMois.map((monthName: any) => {
+          if (typeof monthName === 'string') {
+            const index = monthNames.indexOf(monthName)
+            return index !== -1 ? index + 1 : parseInt(monthName) || 0
+          }
+          return monthName || 0
+        })
+      : (() => {
+          const monthValue = filters.selectedMois as any
+          if (typeof monthValue === 'string') {
+            const index = monthNames.indexOf(monthValue)
+            return [index !== -1 ? index + 1 : parseInt(monthValue) || 0]
+          }
+          return [monthValue || 0]
+        })()
+
     currentCommune.phenologie.forEach((pheno: any) => {
-      if (!isValueInFilter(filters.selectedMois, pheno['Mois Obs'])) return
+      if (!isValueInFilter(selectedMonthNumbers, pheno['Mois Obs'])) return
       
       const cdRef = pheno['CD REF (pheno!mois!insee)']
       const species = speciesData.get(cdRef)
