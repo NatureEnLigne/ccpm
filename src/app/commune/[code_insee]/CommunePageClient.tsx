@@ -769,40 +769,40 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
       <main className="w-full full-width-layout px-6 py-8">
         
         {/* Header avec bouton retour et statistiques - responsive */}
-        <div className="flex flex-col lg:flex-row lg:items-center gap-4 mb-6 fade-in-up">
+        <div className="flex flex-col gap-4 mb-6 fade-in-up">
           {/* Première rangée : Bouton retour et nom de la commune */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 flex-1">
+          <div className="flex flex-row items-stretch gap-4">
             {/* Bouton retour à l'accueil */}
             <div className="modern-card shadow-xl">
                 <button 
                   onClick={handleReturnHome}
-                className="p-3 text-center w-full sm:min-w-[120px] hover:bg-white/10 transition-colors rounded-lg"
+                className="p-3 text-center min-w-[80px] hover:bg-white/10 transition-colors rounded-lg"
                   title="Retour à l'accueil"
                 >
-                <div className="text-3xl font-bold text-gradient mb-1">
+                <div className="text-2xl font-bold text-gradient mb-1">
                   ← 
                 </div>
-                <div className="nav-button-label">
+                <div className="nav-button-label text-xs">
                   Retour à l'accueil
                 </div>
                 </button>
             </div>
             
-            {/* Nom de la commune et code INSEE */}
+            {/* Nom de la commune et code INSEE - centré */}
             <div className="modern-card shadow-xl flex-1">
-              <div className="p-3 text-left">
-                <h1 className="text-xl sm:text-2xl font-bold mb-1">
+              <div className="p-3 text-center">
+                <h1 className="text-lg sm:text-xl font-bold mb-1">
                       <span className="text-gradient">{currentCommune.nom || `Commune ${codeInsee}`}</span>
                   </h1>
-                <p className="species-count-title">
+                <p className="species-count-title text-sm">
                       INSEE : {codeInsee}
                     </p>
                 </div>
               </div>
           </div>
           
-          {/* Deuxième rangée : Statistiques et actions */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-end">
+          {/* Deuxième rangée : Statistiques */}
+          <div className="flex justify-center">
             {/* Cadre statistiques regroupées */}
             <div className="modern-card shadow-xl">
               <div className="flex divide-x divide-white/20">
@@ -827,19 +827,21 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
                 </div>
               </div>
             </div>
-            
-            {/* Cadre actions regroupées */}
+          </div>
+          
+          {/* Troisième rangée : Actions - 3 boutons sur la même ligne */}
+          <div className="flex justify-center">
             <div className="modern-card shadow-xl">
-              <div className="flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-white/20">
+              <div className="flex flex-row divide-x divide-white/20">
                 {/* Téléchargement CSV */}
                 <button 
                   onClick={() => generateSpeciesCSV(codeInsee, speciesData, currentCommune, filters)}
-                  className="p-3 text-center flex-1 hover:bg-white/10 transition-colors first:rounded-t-lg last:rounded-b-lg sm:first:rounded-l-lg sm:last:rounded-r-lg sm:first:rounded-t-lg sm:last:rounded-t-lg"
+                  className="p-3 text-center flex-1 min-w-[80px] hover:bg-white/10 transition-colors rounded-l-lg"
                   title="Télécharger la liste des espèces en CSV"
                 >
-                  <div className="text-lg font-bold mb-1 flex justify-center">
-                    <div className="w-5 h-5 bg-gradient-to-br from-amber-600 to-green-800 rounded flex items-center justify-center">
-                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <div className="text-sm font-bold mb-1 flex justify-center">
+                    <div className="w-4 h-4 bg-gradient-to-br from-amber-600 to-green-800 rounded flex items-center justify-center">
+                      <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
                       </svg>
                     </div>
@@ -852,12 +854,12 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
                 {/* Comparaison */}
                 <button 
                   onClick={() => router.push(`/commune/${codeInsee}/comparaison`)}
-                  className="p-3 text-center flex-1 hover:bg-white/10 transition-colors"
+                  className="p-3 text-center flex-1 min-w-[80px] hover:bg-white/10 transition-colors"
                   title="Comparer avec une autre commune"
                 >
-                  <div className="text-lg font-bold mb-1 flex justify-center">
-                    <div className="w-5 h-5 bg-gradient-to-br from-amber-600 to-green-800 rounded flex items-center justify-center">
-                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <div className="text-sm font-bold mb-1 flex justify-center">
+                    <div className="w-4 h-4 bg-gradient-to-br from-amber-600 to-green-800 rounded flex items-center justify-center">
+                      <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M3 4a1 1 0 011-1h4a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM11 4a1 1 0 011-1h4a1 1 0 011 1v12a1 1 0 01-1 1h-4a1 1 0 01-1-1V4z" clipRule="evenodd" />
                       </svg>
                     </div>
@@ -870,17 +872,17 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
                 {/* Partage de lien */}
                 <button 
                   onClick={handleShareLink}
-                  className="p-3 text-center flex-1 hover:bg-white/10 transition-colors"
+                  className="p-3 text-center flex-1 min-w-[80px] hover:bg-white/10 transition-colors rounded-r-lg"
                   title="Partager le lien avec les filtres actuels"
                 >
-                  <div className="text-lg font-bold mb-1 flex justify-center">
-                    <div className="w-5 h-5 bg-gradient-to-br from-amber-600 to-green-800 rounded flex items-center justify-center">
+                  <div className="text-sm font-bold mb-1 flex justify-center">
+                    <div className="w-4 h-4 bg-gradient-to-br from-amber-600 to-green-800 rounded flex items-center justify-center">
                       {linkCopied ? (
-                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
                       ) : (
-                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
                           <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
                         </svg>
                       )}
