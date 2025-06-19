@@ -124,44 +124,44 @@ export default function HomePage() {
 
   return (
     <main className="h-screen flex flex-col overflow-hidden">
-      {/* Layout Desktop - visible jusqu'à 1280x720 */}
-      <div className="hidden min-[1280px]:flex flex-1 min-h-0 p-4 gap-4 overflow-hover-safe">
+      {/* Layout Desktop - visible au-dessus de 1280px avec optimisation hauteur */}
+      <div className="hidden min-[1280px]:flex flex-1 min-h-0 p-2 gap-3 overflow-hidden">
         {/* Zone carte avec header et panneau de stats - maintenant à gauche */}
-        <div className="flex-1 flex flex-col min-h-0 fade-in-up gap-4" style={{ animationDelay: '0.1s' }}>
-          {/* Header moderne avec style cohérent */}
-          <div className="container-hover-safe">
-            <div className="flex items-center gap-4 fade-in-up">
-              {/* Titre principal */}
+        <div className="flex-1 flex flex-col min-h-0 fade-in-up gap-2" style={{ animationDelay: '0.1s' }}>
+          {/* Header moderne avec style cohérent - hauteur réduite */}
+          <div className="flex-shrink-0">
+            <div className="flex items-center gap-3 fade-in-up">
+              {/* Titre principal - padding réduit */}
               <div className="modern-card shadow-xl flex-1">
-                <div className="p-3 text-left">
-                  <h1 className="text-2xl font-bold mb-1">
+                <div className="p-2 text-left">
+                  <h1 className="text-lg font-bold mb-0.5 leading-tight">
                     <span className="text-gradient whitespace-nowrap">Observations naturalistes : Ponthieu-Marquenterre</span>
                   </h1>
-                  <p className="data-label-unified text-xl">
+                  <p className="data-label-unified text-sm leading-tight">
                     Données OpenOBS (Muséum national d'Histoire naturelle)
                   </p>
                 </div>
               </div>
                   
-              {/* Observations */}
+              {/* Observations - taille réduite */}
               <div className="modern-card shadow-xl">
-                <div className="p-3 text-center min-w-[120px]">
-                  <div className="text-xl font-bold text-gradient mb-1">
+                <div className="p-2 text-center min-w-[100px]">
+                  <div className="text-lg font-bold text-gradient mb-0.5">
                     {formatNumberFull(globalStats.totalObs)}
                   </div>
-                  <div className="data-label-unified text-lg">
+                  <div className="data-label-unified text-sm">
                     Observations
                   </div>
                 </div>
               </div>
               
-              {/* Espèces */}
+              {/* Espèces - taille réduite */}
               <div className="modern-card shadow-xl">
-                <div className="p-3 text-center min-w-[120px]">
-                  <div className="text-xl font-bold text-gradient mb-1">
+                <div className="p-2 text-center min-w-[100px]">
+                  <div className="text-lg font-bold text-gradient mb-0.5">
                     {formatNumberFull(globalStats.totalEsp)}
                   </div>
-                  <div className="data-label-unified text-lg">
+                  <div className="data-label-unified text-sm">
                     Espèces
                   </div>
                 </div>
@@ -169,8 +169,8 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Zone carte avec icône plus lisible */}
-          <div className="flex-1 relative min-h-0">
+          {/* Zone carte - s'adapte à l'espace restant */}
+          <div className="flex-1 relative min-h-0 overflow-hidden">
             <div className="h-full modern-card shadow-xl overflow-hidden">
               <Map />
               <StatsPanel />
@@ -178,8 +178,8 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Sidebar moderne - maintenant à droite */}
-        <div className="slide-in-right" style={{ animationDelay: '0.2s' }}>
+        {/* Sidebar moderne - maintenant à droite avec largeur fixe optimisée */}
+        <div className="slide-in-right w-80 flex-shrink-0" style={{ animationDelay: '0.2s' }}>
           <Sidebar />
         </div>
       </div>
