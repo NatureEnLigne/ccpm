@@ -289,14 +289,15 @@ export default function Sidebar() {
 
       {/* Section Couches - Hauteur réduite */}
       <div className="container-hover-safe flex-shrink-0">
-        <div className="modern-card shadow-xl fade-in-scale p-4">
-          <h4 className="text-lg font-bold mb-3 flex items-center gap-2">
+        <div className="modern-card shadow-xl fade-in-scale">
+          <h4 className="text-lg font-bold mb-3 flex items-center gap-2 px-2 pt-4">
             <span className="text-xl">🗺️</span>
             <span className="text-gradient">Couches</span>
           </h4>
-        
-          {/* Toggles compacts */}
-          <div className="space-y-2">
+          
+          <div className="px-2 pb-4">
+            {/* Toggles compacts */}
+            <div className="space-y-2">
             <ToggleSwitch
               label="Communes"
               checked={showCommunes}
@@ -332,20 +333,21 @@ export default function Sidebar() {
             </select>
           </div>
 
-          {/* Mention Nature en ligne compacte */}
-          <div className="mt-3 pt-2 border-t border-white/30">
-            <div className="text-center">
-              <p className="text-xs text-gray-600">
-                Une production{' '}
-                <a 
-                  href="https://natureenligne.fr" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="font-medium text-gradient hover:underline"
-                >
-                  Nature en ligne
-                </a>
-              </p>
+            {/* Mention Nature en ligne compacte */}
+            <div className="mt-3 pt-2 border-t border-white/30">
+              <div className="text-center">
+                <p className="text-xs text-gray-600">
+                  Une production{' '}
+                  <a 
+                    href="https://natureenligne.fr" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="font-medium text-gradient hover:underline"
+                  >
+                    Nature en ligne
+                  </a>
+                </p>
+              </div>
             </div>
           </div>
         </div>
