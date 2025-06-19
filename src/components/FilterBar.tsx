@@ -164,18 +164,18 @@ export default function FilterBar({ noBottomMargin = false, compactPadding = fal
 
   return (
     <div className={`modern-card z-filters shadow-xl fade-in-up ${noBottomMargin ? '' : 'mb-8'} ${compactPadding ? 'p-3' : ''}`}>
-      {/* Première ligne : Titre et contrôles alignés */}
-      <div className="flex items-center justify-between gap-4 min-h-[72px]">
-        <div className="flex items-center gap-2">
+      {/* Première ligne : Titre et contrôles - responsive */}
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 min-h-[72px]">
+        <div className="flex items-center gap-2 flex-shrink-0">
           <span className="text-xl">🔍</span>
           <span className="text-xl font-bold text-gradient">Filtres</span>
         </div>
         
-        <div className="flex items-center gap-3 flex-wrap">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:items-center gap-3 lg:flex-wrap">
           <select
             value="Tous"
             onChange={(e) => handleRegneChange(e.target.value)}
-            className="rounded-xl border border-amber-200/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 font-medium"
+            className="rounded-xl border border-amber-200/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 font-medium w-full lg:w-auto"
             style={{
               background: 'linear-gradient(135deg, rgba(205, 133, 63, 0.1), rgba(45, 80, 22, 0.1))',
               color: '#cd853f'
@@ -192,7 +192,7 @@ export default function FilterBar({ noBottomMargin = false, compactPadding = fal
           <select
             value="Tous"
             onChange={(e) => handleRedListCategoryChange(e.target.value)}
-            className="rounded-xl border border-amber-200/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 font-medium"
+            className="rounded-xl border border-amber-200/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 font-medium w-full lg:w-auto"
             style={{
               background: 'linear-gradient(135deg, rgba(205, 133, 63, 0.1), rgba(45, 80, 22, 0.1))',
               color: '#cd853f'
@@ -209,7 +209,7 @@ export default function FilterBar({ noBottomMargin = false, compactPadding = fal
           <select
             value="Tous"
             onChange={(e) => handleStatutReglementaireChange(e.target.value)}
-            className="rounded-xl border border-amber-200/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 font-medium w-64"
+            className="rounded-xl border border-amber-200/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 font-medium w-full lg:w-64 sm:col-span-2 lg:col-span-1"
             style={{
               background: 'linear-gradient(135deg, rgba(205, 133, 63, 0.1), rgba(45, 80, 22, 0.1))',
               color: '#cd853f'
@@ -228,7 +228,7 @@ export default function FilterBar({ noBottomMargin = false, compactPadding = fal
             placeholder="A partir de l'année"
             value={filters.anneeDebut || ''}
             onChange={(e) => handleAnneeDebutChange(e.target.value)}
-            className="rounded-xl border border-amber-200/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 font-medium w-48 placeholder-amber-600"
+            className="rounded-xl border border-amber-200/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 font-medium w-full lg:w-48 placeholder-amber-600"
             style={{
               background: 'linear-gradient(135deg, rgba(205, 133, 63, 0.1), rgba(45, 80, 22, 0.1))',
               color: '#cd853f'
@@ -242,7 +242,7 @@ export default function FilterBar({ noBottomMargin = false, compactPadding = fal
             placeholder="Jusque l'année"
             value={filters.anneeFin || ''}
             onChange={(e) => handleAnneeFinChange(e.target.value)}
-            className="rounded-xl border border-amber-200/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 font-medium w-44 placeholder-amber-600"
+            className="rounded-xl border border-amber-200/50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 font-medium w-full lg:w-44 placeholder-amber-600"
             style={{
               background: 'linear-gradient(135deg, rgba(205, 133, 63, 0.1), rgba(45, 80, 22, 0.1))',
               color: '#cd853f'
@@ -255,7 +255,7 @@ export default function FilterBar({ noBottomMargin = false, compactPadding = fal
 
       {/* Deuxième ligne : Filtres actifs (si il y en a) */}
       {activeFilterEntries.length > 0 && (
-        <div className="mt-4 flex items-center justify-between gap-4">
+        <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex flex-wrap gap-2 flex-1">
             {activeFilterEntries.map(([key, value], index) => {
               // Calculer la couleur basée sur l'index pour variation
@@ -291,7 +291,7 @@ export default function FilterBar({ noBottomMargin = false, compactPadding = fal
           
           <button
             onClick={clearFilters}
-            className="text-xs px-3 py-1 rounded-full text-white font-medium transition-all hover:shadow-lg flex-shrink-0"
+            className="text-xs px-3 py-1 rounded-full text-white font-medium transition-all hover:shadow-lg flex-shrink-0 w-full sm:w-auto"
             style={{
               background: 'linear-gradient(45deg, #cd853f, #2d5016)',
               opacity: 0.9

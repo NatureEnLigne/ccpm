@@ -330,10 +330,15 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
     setCommunes,
     filters,
     resetFiltersOnCommuneChange,
-    resetMapView
+    resetMapView,
+    setSelectedCommune,
+    setFilter,
+    clearFilters,
+    setLoading
   } = useAppStore()
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [linkCopied, setLinkCopied] = useState(false)
 
   // Fonction pour retourner à l'accueil avec réinitialisation
   const handleReturnHome = () => {
@@ -341,8 +346,6 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
     router.push('/') // Navigate vers l'accueil
   }
   
-
-
   // Réinitialiser les filtres à chaque changement de commune
   useEffect(() => {
     console.log('🔄 Changement de commune détecté:', codeInsee)
@@ -352,6 +355,56 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
   useEffect(() => {
     loadAllData()
   }, [])
+
+  // Appliquer les filtres depuis l'URL au chargement de la page
+  useEffect(() => {
+    const applyFiltersFromURL = () => {
+      const urlParams = new URLSearchParams(window.location.search)
+      
+      // Noms des mois pour la conversion
+      const monthNames = [
+        'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+        'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+      ]
+      
+      // Parcourir tous les paramètres URL et appliquer les filtres correspondants
+      urlParams.forEach((value, key) => {
+        if (value && key !== 'activeFilters') {
+          let filterValue: any = value
+          
+          // Gérer les filtres multiples (séparés par des virgules)
+          if (value.includes(',')) {
+            filterValue = value.split(',')
+            
+            // Conversion spéciale pour les mois (convertir numéros en noms)
+            if (key === 'selectedMois') {
+              filterValue = filterValue.map((monthNum: string) => {
+                const num = parseInt(monthNum.trim(), 10)
+                return (num >= 1 && num <= 12) ? monthNames[num - 1] : monthNum
+              })
+            }
+          }
+          // Gérer les nombres
+          else if (key === 'anneeDebut' || key === 'anneeFin') {
+            filterValue = parseInt(value, 10)
+            if (isNaN(filterValue)) return
+          }
+          // Conversion pour un seul mois
+          else if (key === 'selectedMois') {
+            const num = parseInt(value.trim(), 10)
+            filterValue = (num >= 1 && num <= 12) ? monthNames[num - 1] : value
+          }
+          
+          // Appliquer le filtre
+          setFilter(key as any, filterValue, 'URL')
+        }
+      })
+    }
+
+    // Appliquer les filtres après un court délai pour s'assurer que les données sont chargées
+    const timer = setTimeout(applyFiltersFromURL, 1000)
+    return () => clearTimeout(timer)
+  }, [setFilter])
 
   const loadAllData = async () => {
     setIsLoading(true)
@@ -414,8 +467,6 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
   // Récupérer les données de la commune actuelle
   const currentCommune = communeData?.get(codeInsee)
   const communeGeoJSON = communes?.features.find(f => f.properties.insee === codeInsee)
-
-
 
   // Calculer les statistiques filtrées
   const filteredStats = useMemo(() => {
@@ -532,6 +583,69 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
     }
   }, [currentCommune, speciesData, filters])
 
+  // Fonction pour générer le lien de partage avec les filtres actuels
+  const generateShareLink = () => {
+    const baseUrl = window.location.origin
+    const currentPath = `/commune/${codeInsee}`
+    const searchParams = new URLSearchParams()
+
+    // Noms des mois pour la conversion
+    const monthNames = [
+      'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+      'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+    ]
+
+    // Ajouter tous les filtres actifs aux paramètres de l'URL
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== null && key !== 'activeFilters') {
+        if (Array.isArray(value)) {
+          // Conversion spéciale pour les mois (convertir noms en numéros)
+          if (key === 'selectedMois') {
+            const monthNumbers = value.map((monthName: string) => {
+              const index = monthNames.indexOf(monthName)
+              return index !== -1 ? (index + 1).toString() : monthName
+            })
+            searchParams.set(key, monthNumbers.join(','))
+          } else {
+            // Pour les autres filtres multiples, joindre par des virgules
+            searchParams.set(key, value.join(','))
+          }
+        } else {
+          // Conversion pour un seul mois
+          if (key === 'selectedMois') {
+            const index = monthNames.indexOf(value as string)
+            const monthValue = index !== -1 ? (index + 1).toString() : value
+            searchParams.set(key, String(monthValue))
+          } else {
+            searchParams.set(key, String(value))
+          }
+        }
+      }
+    })
+
+    const queryString = searchParams.toString()
+    return queryString ? `${baseUrl}${currentPath}?${queryString}` : `${baseUrl}${currentPath}`
+  }
+
+  // Fonction pour copier le lien de partage
+  const handleShareLink = async () => {
+    try {
+      const shareLink = generateShareLink()
+      await navigator.clipboard.writeText(shareLink)
+      setLinkCopied(true)
+      
+      // Réinitialiser l'état après 3 secondes
+      setTimeout(() => {
+        setLinkCopied(false)
+      }, 3000)
+    } catch (err) {
+      console.error('Erreur lors de la copie du lien:', err)
+      // Fallback pour les navigateurs qui ne supportent pas clipboard API
+      const shareLink = generateShareLink()
+      prompt('Copiez ce lien:', shareLink)
+    }
+  }
+
   if (isLoading) {
     // Essayer de récupérer le nom de la commune depuis le GeoJSON déjà chargé
     const communeName = communes?.features.find(f => f.properties.insee === codeInsee)?.properties.nom || `Code INSEE ${codeInsee}`
@@ -588,105 +702,137 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
       {/* Contenu principal */}
       <main className="w-full full-width-layout px-6 py-8">
         
-        {/* Header avec bouton retour et statistiques sur une seule ligne */}
-        <div className="flex items-center gap-4 mb-6 fade-in-up">
-          {/* Bouton retour à l'accueil */}
-          <div className="modern-card shadow-xl">
-              <button 
-                onClick={handleReturnHome}
-              className="p-3 text-center min-w-[120px] hover:bg-white/10 transition-colors rounded-lg"
-                title="Retour à l'accueil"
-              >
-              <div className="text-3xl font-bold text-gradient mb-1">
-                ← 
+        {/* Header avec bouton retour et statistiques - responsive */}
+        <div className="flex flex-col lg:flex-row lg:items-center gap-4 mb-6 fade-in-up">
+          {/* Première rangée : Bouton retour et nom de la commune */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 flex-1">
+            {/* Bouton retour à l'accueil */}
+            <div className="modern-card shadow-xl">
+                <button 
+                  onClick={handleReturnHome}
+                className="p-3 text-center w-full sm:min-w-[120px] hover:bg-white/10 transition-colors rounded-lg"
+                  title="Retour à l'accueil"
+                >
+                <div className="text-3xl font-bold text-gradient mb-1">
+                  ← 
+                </div>
+                <div className="nav-button-label">
+                  Retour à l'accueil
+                </div>
+                </button>
+            </div>
+            
+            {/* Nom de la commune et code INSEE */}
+            <div className="modern-card shadow-xl flex-1">
+              <div className="p-3 text-left">
+                <h1 className="text-xl sm:text-2xl font-bold mb-1">
+                      <span className="text-gradient">{currentCommune.nom || `Commune ${codeInsee}`}</span>
+                  </h1>
+                <p className="species-count-title">
+                      INSEE : {codeInsee}
+                    </p>
+                </div>
               </div>
-              <div className="nav-button-label">
-                Retour à l'accueil
-              </div>
-              </button>
           </div>
           
-          {/* Nom de la commune et code INSEE */}
-          <div className="modern-card shadow-xl flex-1">
-            <div className="p-3 text-left">
-              <h1 className="text-2xl font-bold mb-1">
-                    <span className="text-gradient">{currentCommune.nom || `Commune ${codeInsee}`}</span>
-                </h1>
-              <p className="species-count-title">
-                    Code INSEE: {codeInsee}
-                  </p>
+          {/* Deuxième rangée : Statistiques et actions */}
+          <div className="flex flex-wrap gap-4 justify-center lg:justify-end">
+            {/* Observations */}
+            <div className="modern-card shadow-xl">
+              <div className="p-3 text-center min-w-[120px]">
+                <div className="text-xl font-bold text-gradient mb-1">
+                    {formatNumberFull(filteredStats.totalObs)}
+                  </div>
+                <div className="data-label-unified">
+                        Observations
+                      </div>
+                    </div>
+                </div>
+            
+            {/* Espèces */}
+            <div className="modern-card shadow-xl">
+              <div className="p-3 text-center min-w-[120px]">
+                <div className="text-xl font-bold text-gradient mb-1">
+                    {formatNumberFull(filteredStats.totalEsp)}
+                  </div>
+                              <div className="data-label-unified">
+                        Espèces
+                </div>
               </div>
             </div>
             
-          {/* Observations */}
-          <div className="modern-card shadow-xl">
-            <div className="p-3 text-center min-w-[120px]">
-              <div className="text-xl font-bold text-gradient mb-1">
-                  {formatNumberFull(filteredStats.totalObs)}
-                </div>
-              <div className="data-label-unified">
-                      Observations
-                    </div>
+            {/* Téléchargement CSV */}
+            <div className="modern-card shadow-xl">
+              <button 
+                onClick={() => generateSpeciesCSV(codeInsee, speciesData, currentCommune, filters)}
+                className="p-3 text-center w-full sm:min-w-[160px] hover:bg-white/10 transition-colors rounded-lg"
+                title="Télécharger la liste des espèces en CSV"
+              >
+                <div className="text-xl font-bold mb-1 flex justify-center">
+                  <div className="w-6 h-6 bg-gradient-to-br from-amber-600 to-green-800 rounded flex items-center justify-center">
+                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
                   </div>
-              </div>
-          
-          {/* Espèces */}
-          <div className="modern-card shadow-xl">
-            <div className="p-3 text-center min-w-[120px]">
-              <div className="text-xl font-bold text-gradient mb-1">
-                  {formatNumberFull(filteredStats.totalEsp)}
                 </div>
-                            <div className="data-label-unified">
-                      Espèces
-              </div>
+                              <div className="data-label-unified">
+                        Télécharger
+                </div>
+              </button>
             </div>
-          </div>
-          
-          {/* Téléchargement CSV */}
-          <div className="modern-card shadow-xl">
-            <button 
-              onClick={() => generateSpeciesCSV(codeInsee, speciesData, currentCommune, filters)}
-              className="p-3 text-center min-w-[160px] hover:bg-white/10 transition-colors rounded-lg"
-              title="Télécharger la liste des espèces en CSV"
-            >
-              <div className="text-xl font-bold mb-1 flex justify-center">
-                <div className="w-6 h-6 bg-gradient-to-br from-amber-600 to-green-800 rounded flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
+            
+            {/* Comparaison */}
+            <div className="modern-card shadow-xl">
+              <button 
+                onClick={() => router.push(`/commune/${codeInsee}/comparaison`)}
+                className="p-3 text-center w-full sm:min-w-[160px] hover:bg-white/10 transition-colors rounded-lg"
+                title="Comparer avec une autre commune"
+              >
+                <div className="text-xl font-bold mb-1 flex justify-center">
+                  <div className="w-6 h-6 bg-gradient-to-br from-amber-600 to-green-800 rounded flex items-center justify-center">
+                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M3 4a1 1 0 011-1h4a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM11 4a1 1 0 011-1h4a1 1 0 011 1v12a1 1 0 01-1 1h-4a1 1 0 01-1-1V4z" clipRule="evenodd" />
+                    </svg>
+                  </div>
                 </div>
-              </div>
-                            <div className="data-label-unified">
-                      Télécharger
-              </div>
-            </button>
-          </div>
-          
-          {/* Comparaison */}
-          <div className="modern-card shadow-xl">
-            <button 
-              onClick={() => router.push(`/commune/${codeInsee}/comparaison`)}
-              className="p-3 text-center min-w-[160px] hover:bg-white/10 transition-colors rounded-lg"
-              title="Comparer avec une autre commune"
-            >
-              <div className="text-xl font-bold mb-1 flex justify-center">
-                <div className="w-6 h-6 bg-gradient-to-br from-amber-600 to-green-800 rounded flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M3 4a1 1 0 011-1h4a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM11 4a1 1 0 011-1h4a1 1 0 011 1v12a1 1 0 01-1 1h-4a1 1 0 01-1-1V4z" clipRule="evenodd" />
-                  </svg>
+                <div className="data-label-unified">
+                  Comparaison
                 </div>
-              </div>
-                            <div className="data-label-unified">
-                Comparaison
-              </div>
-            </button>
+              </button>
+            </div>
+            
+            {/* Partage de lien */}
+            <div className="modern-card shadow-xl">
+              <button 
+                onClick={handleShareLink}
+                className="p-3 text-center w-full sm:min-w-[160px] hover:bg-white/10 transition-colors rounded-lg"
+                title="Partager le lien avec les filtres actuels"
+              >
+                <div className="text-xl font-bold mb-1 flex justify-center">
+                  <div className="w-6 h-6 bg-gradient-to-br from-amber-600 to-green-800 rounded flex items-center justify-center">
+                    {linkCopied ? (
+                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    ) : (
+                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
+                      </svg>
+                    )}
+                  </div>
+                </div>
+                <div className="data-label-unified">
+                  {linkCopied ? 'Copié !' : 'Partager'}
+                </div>
+              </button>
+            </div>
           </div>
         </div>
         
         {/* Barre de filtres */}
         <FilterBar compactPadding={true} noBottomMargin={true} />
 
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 overflow-hover-safe w-full mt-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-6 overflow-hover-safe w-full mt-6">
           
           {/* Groupes taxonomiques - Bubble chart */}
           <div className="container-hover-safe">
@@ -695,7 +841,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
               <span className="text-xl">🦋</span>
               <span className="text-gradient">Groupes taxonomiques</span>
             </h3>
-              <div className="h-80 flex-1">
+              <div className="h-64 sm:h-80 flex-1">
               <GroupBubble codeInsee={codeInsee} />
               </div>
             </div>
@@ -708,7 +854,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
               <span className="text-xl">📅</span>
               <span className="text-gradient">Phénologie mensuelle</span>
             </h3>
-              <div className="h-80 flex-1">
+              <div className="h-64 sm:h-80 flex-1">
               <PhenoLine codeInsee={codeInsee} />
               </div>
             </div>
@@ -721,7 +867,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
               <span className="text-xl">🚨</span>
               <span className="text-gradient">Statuts listes rouges</span>
             </h3>
-              <div className="h-80 flex-1">
+              <div className="h-64 sm:h-80 flex-1">
               <RedListBar codeInsee={codeInsee} />
               </div>
             </div>
@@ -734,7 +880,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
               <span className="text-xl">⚖️</span>
               <span className="text-gradient">Statuts réglementaires</span>
             </h3>
-              <div className="h-80 flex-1">
+              <div className="h-64 sm:h-80 flex-1">
               <StatusTreemap codeInsee={codeInsee} />
               </div>
             </div>

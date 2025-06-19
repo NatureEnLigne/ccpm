@@ -359,14 +359,14 @@ export default function SpeciesTable({ codeInsee, noCard = false }: SpeciesTable
         </div>
       </div>
 
-      {/* Tableau */}
+      {/* Tableau responsive */}
       <div className="overflow-x-auto">
         <div className="min-w-full">
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-200/50">
                 <th 
-                  className="text-left py-3 px-2 font-medium text-gray-700 cursor-pointer hover:bg-white/20 rounded"
+                  className="text-left py-3 px-2 font-medium text-gray-700 cursor-pointer hover:bg-white/20 rounded hidden sm:table-cell"
                   onClick={() => handleSort('group2Inpn')}
                 >
                   <div className="flex items-center gap-2">
@@ -379,12 +379,13 @@ export default function SpeciesTable({ codeInsee, noCard = false }: SpeciesTable
                   onClick={() => handleSort('nomComplet')}
                 >
                   <div className="flex items-center gap-2">
-                    Nom scientifique
+                    <span className="hidden md:inline">Nom scientifique</span>
+                    <span className="md:hidden">Espèce</span>
                     <SortIcon field="nomComplet" />
                   </div>
                 </th>
                 <th 
-                  className="text-left py-3 px-2 font-medium text-gray-700 cursor-pointer hover:bg-white/20 rounded"
+                  className="text-left py-3 px-2 font-medium text-gray-700 cursor-pointer hover:bg-white/20 rounded hidden lg:table-cell"
                   onClick={() => handleSort('nomVern')}
                 >
                   <div className="flex items-center gap-2">
@@ -397,7 +398,8 @@ export default function SpeciesTable({ codeInsee, noCard = false }: SpeciesTable
                   onClick={() => handleSort('nombreObservations')}
                 >
                   <div className="flex items-center gap-2">
-                    Observations
+                    <span className="hidden sm:inline">Observations</span>
+                    <span className="sm:hidden">Obs.</span>
                     <SortIcon field="nombreObservations" />
                   </div>
                 </th>
@@ -414,15 +416,27 @@ export default function SpeciesTable({ codeInsee, noCard = false }: SpeciesTable
                     index % 2 === 0 ? 'bg-white/5' : ''
                   }`}
                 >
-                  <td className="py-3 px-2 text-sm text-gray-700">
+                  <td className="py-3 px-2 text-sm text-gray-700 hidden sm:table-cell">
                     {row.group2Inpn || '-'}
                   </td>
                   <td className="py-3 px-2 text-sm">
-                    <span className="font-medium text-gray-800 italic">
-                      {row.nomComplet || '-'}
-                    </span>
+                    <div>
+                      <div className="font-medium text-gray-800 italic">
+                        {row.nomComplet || '-'}
+                      </div>
+                      {/* Afficher le groupe sur mobile */}
+                      <div className="text-xs text-gray-500 mt-1 sm:hidden">
+                        {row.group2Inpn || '-'}
+                      </div>
+                      {/* Afficher le nom vernaculaire sur tablette */}
+                      {row.nomVern && (
+                        <div className="text-xs text-gray-600 mt-1 lg:hidden">
+                          {row.nomVern}
+                        </div>
+                      )}
+                    </div>
                   </td>
-                  <td className="py-3 px-2 text-sm text-gray-600">
+                  <td className="py-3 px-2 text-sm text-gray-600 hidden lg:table-cell">
                     {row.nomVern || '-'}
                   </td>
                   <td className="py-3 px-2 text-sm">
@@ -467,21 +481,22 @@ export default function SpeciesTable({ codeInsee, noCard = false }: SpeciesTable
         </div>
       </div>
 
-      {/* Pagination */}
+      {/* Pagination responsive */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200/30">
-          <div className="text-sm text-gray-600">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-4 pt-4 border-t border-gray-200/30">
+          <div className="text-sm text-gray-600 text-center sm:text-left">
             Page {currentPage} sur {totalPages} • 
             Affichage {startIndex + 1}-{Math.min(startIndex + itemsPerPage, sortedData.length)} sur {sortedData.length}
           </div>
           
-          <div className="flex gap-2">
+          <div className="flex gap-2 justify-center sm:justify-end">
             <button
               onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
               disabled={currentPage === 1}
               className="px-3 py-1 bg-white/20 hover:bg-white/30 disabled:bg-gray-200/20 disabled:text-gray-400 text-gray-700 rounded-lg transition-colors text-sm"
             >
-              ← Précédent
+              <span className="hidden sm:inline">← Précédent</span>
+              <span className="sm:hidden">←</span>
             </button>
             
             <div className="flex gap-1">
@@ -522,7 +537,8 @@ export default function SpeciesTable({ codeInsee, noCard = false }: SpeciesTable
               disabled={currentPage === totalPages}
               className="px-3 py-1 bg-white/20 hover:bg-white/30 disabled:bg-gray-200/20 disabled:text-gray-400 text-gray-700 rounded-lg transition-colors text-sm"
             >
-              Suivant →
+              <span className="hidden sm:inline">Suivant →</span>
+              <span className="sm:hidden">→</span>
             </button>
           </div>
         </div>
