@@ -15,6 +15,7 @@ export default function StatsToggle({ compactPadding = false, noBottomMargin = f
     { key: 'phenologie' as const, label: 'Phénologie mensuelle' },
     { key: 'listesRouges' as const, label: 'Statuts listes rouges' },
     { key: 'statutsReglementaires' as const, label: 'Statuts réglementaires' },
+    { key: 'evolutionEspeces' as const, label: 'Évolution des espèces' },
     { key: 'listeEspeces' as const, label: 'Liste des espèces' }
   ]
 
