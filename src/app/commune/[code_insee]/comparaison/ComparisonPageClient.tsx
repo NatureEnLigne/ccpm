@@ -372,28 +372,55 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
     <div className="min-h-screen w-full full-width-layout">
       <main className="w-full full-width-layout px-6 py-8">
         
-        {/* En-tête avec bouton retour et barre de filtres */}
-        <div className="flex items-start gap-4 mb-6 fade-in-up">
-          {/* Bouton retour - hauteur fixe pour correspondre à la première ligne des filtres */}
-          <div className="modern-card shadow-xl">
-            <button 
-              onClick={() => router.push(`/commune/${codeInseeBase}`)}
-              className="text-center min-w-[120px] hover:bg-white/10 transition-colors rounded-lg flex flex-col items-center justify-center"
-              style={{ height: '72px' }}
-              title="Retour à la commune"
-            >
-              <div className="text-3xl font-bold text-gradient mb-1">
-                ←
-              </div>
-              <div className="nav-button-label">
-                Retour
-              </div>
-            </button>
+        {/* En-tête responsive avec bouton retour et barre de filtres */}
+        <div className="mb-6 fade-in-up">
+          {/* Version Desktop : bouton retour et filtres sur la même ligne */}
+          <div className="hidden lg:flex items-start gap-4">
+            {/* Bouton retour - hauteur fixe pour correspondre à la première ligne des filtres */}
+            <div className="modern-card shadow-xl">
+              <button 
+                onClick={() => router.push(`/commune/${codeInseeBase}`)}
+                className="text-center min-w-[120px] hover:bg-white/10 transition-colors rounded-lg flex flex-col items-center justify-center"
+                style={{ height: '72px' }}
+                title="Retour à la commune"
+              >
+                <div className="text-3xl font-bold text-gradient mb-1">
+                  ←
+                </div>
+                <div className="nav-button-label">
+                  Retour
+                </div>
+              </button>
+            </div>
+            
+            {/* Barre de filtres */}
+            <div className="flex-1">
+              <FilterBar noBottomMargin={true} />
+            </div>
           </div>
-          
-          {/* Barre de filtres */}
-          <div className="flex-1">
-            <FilterBar noBottomMargin={true} />
+
+          {/* Version Mobile : bouton retour et filtres sur deux lignes séparées */}
+          <div className="lg:hidden space-y-4">
+            {/* Première ligne : Bouton retour seul */}
+            <div className="modern-card shadow-xl">
+              <button 
+                onClick={() => router.push(`/commune/${codeInseeBase}`)}
+                className="w-full text-center p-4 hover:bg-white/10 transition-colors rounded-lg flex items-center justify-center gap-3"
+                title="Retour à la commune"
+              >
+                <div className="text-2xl font-bold text-gradient">
+                  ←
+                </div>
+                <div className="nav-button-label text-lg">
+                  Retour à la commune
+                </div>
+              </button>
+            </div>
+            
+            {/* Deuxième ligne : Barre de filtres seule */}
+            <div>
+              <FilterBar noBottomMargin={true} />
+            </div>
           </div>
         </div>
 
