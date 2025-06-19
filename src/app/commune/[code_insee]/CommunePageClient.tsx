@@ -769,9 +769,9 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
       <main className="w-full full-width-layout px-6 py-8">
         
         {/* Header avec bouton retour et statistiques - responsive */}
-        <div className="flex flex-col gap-4 mb-6 fade-in-up">
-          {/* Première rangée : Bouton retour et nom de la commune - toujours sur la même ligne */}
-          <div className="flex flex-row items-stretch gap-4">
+        <div className="flex flex-col xl:flex-row xl:items-center gap-4 mb-6 fade-in-up">
+          {/* Première rangée : Bouton retour et nom de la commune */}
+          <div className="flex flex-row items-stretch gap-4 xl:flex-1">
             {/* Bouton retour à l'accueil */}
             <div className="modern-card shadow-xl">
                 <button 
@@ -790,7 +790,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
             
             {/* Nom de la commune et code INSEE - centré sur mobile, aligné à gauche sur desktop */}
             <div className="modern-card shadow-xl flex-1">
-              <div className="p-3 text-center lg:text-left">
+              <div className="p-3 text-center xl:text-left">
                 <h1 className="text-lg sm:text-xl lg:text-2xl font-bold mb-1">
                       <span className="text-gradient">{currentCommune.nom || `Commune ${codeInsee}`}</span>
                   </h1>
@@ -802,9 +802,9 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
           </div>
           
           {/* Deuxième rangée : Statistiques et actions */}
-          <div className="flex flex-col lg:flex-row gap-4 justify-center">
+          <div className="flex flex-col lg:flex-row xl:flex-row gap-4 justify-center xl:justify-end">
             {/* Cadre statistiques regroupées */}
-            <div className="modern-card shadow-xl">
+            <div className="modern-card shadow-xl lg:flex-1 xl:flex-none">
               <div className="flex divide-x divide-white/20">
                 {/* Observations */}
                 <div className="p-3 text-center flex-1 min-w-[120px]">
@@ -829,7 +829,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
             </div>
             
             {/* Cadre actions - responsive selon écran */}
-            <div className="modern-card shadow-xl">
+            <div className="modern-card shadow-xl lg:flex-1 xl:flex-none">
               <div className="flex flex-row divide-x divide-white/20">
                 {/* Téléchargement CSV */}
                 <button 
