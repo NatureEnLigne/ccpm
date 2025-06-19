@@ -3,6 +3,7 @@ import PhenoLine from '../dashboards/PhenoLine'
 import RedListBar from '../dashboards/RedListBar'
 import StatusTreemap from '../dashboards/StatusTreemap'
 import GroupsEvolutionStream from '../dashboards/GroupsEvolutionStream'
+import ObservationsAnnuellesBar from '../dashboards/ObservationsAnnuellesBar'
 import { useAppStore } from '../../store/useAppStore'
 
 interface CommuneDashboardsProps {
@@ -120,6 +121,21 @@ export default function CommuneDashboards({ codeInsee }: CommuneDashboardsProps)
                 </h3>
                 <div className="h-64 sm:h-80 flex-1">
                   <GroupsEvolutionStream codeInsee={codeInsee} />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Observations annuelles - Bar chart */}
+          {visibleStats.observationsAnnuelles && (
+            <div className="container-hover-safe">
+              <div className="modern-card z-middle shadow-xl fade-in-up">
+                <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                  <span className="text-xl">📊</span>
+                  <span className="text-gradient">Observations par année</span>
+                </h3>
+                <div className="h-64 sm:h-80 flex-1">
+                  <ObservationsAnnuellesBar codeInsee={codeInsee} />
                 </div>
               </div>
             </div>

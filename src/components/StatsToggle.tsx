@@ -16,6 +16,7 @@ export default function StatsToggle({ compactPadding = false, noBottomMargin = f
     { key: 'listesRouges' as const, label: 'Statuts listes rouges' },
     { key: 'statutsReglementaires' as const, label: 'Statuts réglementaires' },
     { key: 'evolutionGroupes' as const, label: 'Évolution des groupes' },
+    { key: 'observationsAnnuelles' as const, label: 'Observations par année' },
     { key: 'listeEspeces' as const, label: 'Liste des espèces' }
   ]
 

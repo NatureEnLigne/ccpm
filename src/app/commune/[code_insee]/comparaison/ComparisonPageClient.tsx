@@ -10,6 +10,7 @@ import PhenoLine from '../../../../components/dashboards/PhenoLine'
 import RedListBar from '../../../../components/dashboards/RedListBar'
 import StatusTreemap from '../../../../components/dashboards/StatusTreemap'
 import GroupsEvolutionStream from '../../../../components/dashboards/GroupsEvolutionStream'
+import ObservationsAnnuellesBar from '../../../../components/dashboards/ObservationsAnnuellesBar'
 import SpeciesTable from '../../../../components/SpeciesTable'
 import NoDataAnimation from '../../../../components/NoDataAnimation'
 import { 
@@ -535,6 +536,19 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
                   </div>
                 )}
 
+                {/* Observations par année */}
+                {visibleStats.observationsAnnuelles && (
+                  <div className="modern-card shadow-xl fade-in-up">
+                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                      <span className="text-lg">📊</span>
+                      <span className="text-gradient">Observations par année</span>
+                    </h3>
+                    <div className="h-80 p-4">
+                      <ObservationsAnnuellesBar codeInsee={codeInseeBase} />
+                    </div>
+                  </div>
+                )}
+
                 {/* Liste des espèces */}
                 {visibleStats.listeEspeces && (
                   <div className="modern-card shadow-xl fade-in-up">
@@ -646,6 +660,19 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
                     </h3>
                     <div className="h-80 p-4">
                       <GroupsEvolutionStream codeInsee={selectedCommune} />
+                    </div>
+                  </div>
+                )}
+
+                {/* Observations par année */}
+                {visibleStats.observationsAnnuelles && (
+                  <div className="modern-card shadow-xl fade-in-up">
+                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                      <span className="text-lg">📊</span>
+                      <span className="text-gradient">Observations par année</span>
+                    </h3>
+                    <div className="h-80 p-4">
+                      <ObservationsAnnuellesBar codeInsee={selectedCommune} />
                     </div>
                   </div>
                 )}

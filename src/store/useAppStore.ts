@@ -33,6 +33,7 @@ interface AppState {
     listesRouges: boolean
     statutsReglementaires: boolean
     evolutionGroupes: boolean
+    observationsAnnuelles: boolean
     listeEspeces: boolean
   }
   
@@ -108,6 +109,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     listesRouges: true,
     statutsReglementaires: true,
     evolutionGroupes: false,
+    observationsAnnuelles: false,
     listeEspeces: true,
   },
   
