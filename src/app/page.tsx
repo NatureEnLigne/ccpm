@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import Map from '../components/Map'
 import Sidebar from '../components/Sidebar'
 import StatsPanel from '../components/StatsPanel'
@@ -49,17 +49,41 @@ export default function HomePage() {
     }
   }, [communeData])
 
-  // Filtrer les communes pour le menu mobile
-  const filteredCommunes = useMemo(() => {
-    if (!communeData) return []
+  // Logique de sélection automatique de commune
+  const matchingCommune = useMemo(() => {
+    if (!communeData || !searchTerm.trim()) return null
     
-    return Array.from(communeData.entries())
+    // Recherche exacte d'abord
+    const exactMatch = Array.from(communeData.entries()).find(([, commune]) => 
+      commune.nom && commune.nom.toLowerCase() === searchTerm.toLowerCase().trim()
+    )
+    
+    if (exactMatch) {
+      return exactMatch
+    }
+    
+    // Recherche partielle si pas de correspondance exacte
+    const partialMatches = Array.from(communeData.entries())
       .filter(([, commune]) => 
-        commune.nom && commune.nom.toLowerCase().includes(searchTerm.toLowerCase())
+        commune.nom && commune.nom.toLowerCase().includes(searchTerm.toLowerCase().trim())
       )
       .sort((a, b) => (a[1].nom || '').localeCompare(b[1].nom || ''))
-      .slice(0, 10) // Limiter à 10 résultats pour la performance mobile
+    
+    return partialMatches.length === 1 ? partialMatches[0] : null
   }, [communeData, searchTerm])
+
+  // Sélection automatique de la commune si correspondance unique
+  useEffect(() => {
+    if (matchingCommune && matchingCommune[0] !== selectedCommune) {
+      setSelectedCommune(matchingCommune[0])
+    } else if (!matchingCommune && searchTerm.trim() && selectedCommune) {
+      // Désélectionner si plus de correspondance
+      const currentCommune = communeData?.get(selectedCommune)
+      if (!currentCommune?.nom?.toLowerCase().includes(searchTerm.toLowerCase().trim())) {
+        setSelectedCommune(null)
+      }
+    }
+  }, [matchingCommune, selectedCommune, searchTerm, communeData, setSelectedCommune])
 
   return (
     <main className="h-screen flex flex-col overflow-hidden">
@@ -204,7 +228,7 @@ export default function HomePage() {
                       </button>
                     </div>
                     
-                    {/* Contenu du menu - Communes avec scroll */}
+                    {/* Contenu du menu - Zone de sélection commune */}
                     <div className="flex-1 min-h-0 p-4 flex flex-col">
                       {/* Champ de recherche */}
                       <div className="flex-shrink-0 mb-4">
@@ -223,46 +247,30 @@ export default function HomePage() {
                         </div>
                       </div>
 
-                      {/* Liste des communes avec scroll contrôlé */}
-                      <div className="flex-1 overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 pr-2">
-                        {filteredCommunes.length > 0 ? (
-                          filteredCommunes.map(([codeInsee, commune]) => {
-                            const isSelected = selectedCommune === codeInsee
-                            
-                            return (
-                              <button
-                                key={codeInsee}
-                                onClick={() => {
-                                  setSelectedCommune(codeInsee)
-                                  setIsMobileMenuOpen(false)
-                                }}
-                                className={`w-full text-left p-3 rounded-xl transition-all duration-200 ${
-                                  isSelected 
-                                    ? 'bg-gradient-primary text-white shadow-lg' 
-                                    : 'bg-white/50 hover:bg-white/70 text-gray-700'
-                                }`}
-                              >
-                                <div className="font-medium mb-1 truncate flex items-center gap-2">
-                                  <span className="text-sm">🏘️</span>
-                                  {commune.nom}
-                                </div>
-                                <div className="text-xs opacity-80 flex items-center gap-3">
-                                  <span className="flex items-center gap-1">
-                                    <span className="text-xs">👁️</span>
-                                    {commune.totalObs} obs.
-                                  </span>
-                                  <span className="flex items-center gap-1">
-                                    <span className="text-xs">🦋</span>
-                                    {commune.totalEsp} esp.
-                                  </span>
-                                </div>
-                              </button>
-                            )
-                          })
+                      {/* Zone d'affichage de la commune sélectionnée */}
+                      <div className="flex-1 flex items-center justify-center">
+                        {selectedCommune && communeData?.get(selectedCommune) ? (
+                          <div className="text-center p-6 bg-white/30 rounded-xl border border-white/20">
+                            <div className="text-4xl mb-3">🏘️</div>
+                            <h3 className="font-bold text-lg text-gradient mb-2">
+                              {communeData.get(selectedCommune)?.nom || selectedCommune}
+                            </h3>
+                            <div className="flex items-center justify-center gap-4 text-sm opacity-80">
+                              <span className="flex items-center gap-1">
+                                <span>👁️</span>
+                                {communeData.get(selectedCommune)?.totalObs || 0} obs.
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <span>🦋</span>
+                                {communeData.get(selectedCommune)?.totalEsp || 0} esp.
+                              </span>
+                            </div>
+                          </div>
                         ) : (
-                          <div className="text-center text-gray-500 mt-8">
+                          <div className="text-center text-gray-500">
+                            <div className="text-4xl mb-3">🗺️</div>
                             <p className="text-sm">
-                              {communeData ? 'Aucune commune trouvée' : 'Chargement des communes...'}
+                              {searchTerm ? 'Saisissez le nom complet d\'une commune' : 'Sélectionnez une commune pour voir ses détails'}
                             </p>
                           </div>
                         )}
@@ -276,8 +284,8 @@ export default function HomePage() {
                         <span className="font-bold text-gradient">Couches</span>
                       </div>
                       
-                      {/* Toggles */}
-                      <div className="space-y-3">
+                      {/* Toggles sur la même ligne pour gagner de la place */}
+                      <div className="flex gap-4">
                         <ToggleSwitch
                           label="Communes"
                           checked={showCommunes}
