@@ -396,15 +396,17 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
           }
           
           // Appliquer le filtre
+          console.log(`🔧 Filtre appliqué depuis URL: ${key} =`, filterValue)
           setFilter(key as any, filterValue, 'URL')
         }
       })
     }
 
-    // Appliquer les filtres après un court délai pour s'assurer que les données sont chargées
-    const timer = setTimeout(applyFiltersFromURL, 1000)
-    return () => clearTimeout(timer)
-  }, [setFilter])
+    // Appliquer les filtres seulement si les données sont chargées
+    if (!isLoading && communeData && speciesData) {
+      applyFiltersFromURL()
+    }
+  }, [setFilter, isLoading, communeData, speciesData])
 
   const loadAllData = async () => {
     setIsLoading(true)
@@ -473,6 +475,8 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
     if (!currentCommune || !speciesData) {
       return { totalObs: 0, totalEsp: 0 }
     }
+
+    console.log('📊 Calcul des statistiques avec filtres:', filters)
 
     let totalObservations = 0
     const uniqueSpecies = new Set<string>()
