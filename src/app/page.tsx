@@ -334,17 +334,17 @@ export default function HomePage() {
                             </div>
                             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs sm:text-sm gap-2 sm:gap-4">
                               <div className="flex flex-col min-[400px]:flex-row min-[400px]:items-center gap-2 min-[400px]:gap-4 opacity-80">
-                                <span className="flex items-center gap-2">
-                                  <span className="text-sm sm:text-base">👁️</span>
-                                  <span className="font-medium">{communeData.get(selectedCommune)?.totalObs || 0}</span>
-                                  <span className="hidden min-[400px]:inline">observations</span>
-                                  <span className="min-[400px]:hidden">obs.</span>
+                                <span className="flex items-center gap-1.5">
+                                  <span className="text-xs sm:text-sm">👁️</span>
+                                  <span className="font-medium text-xs sm:text-sm">{communeData.get(selectedCommune)?.totalObs || 0}</span>
+                                  <span className="hidden min-[400px]:inline text-xs">observations</span>
+                                  <span className="min-[400px]:hidden text-xs">obs.</span>
                                 </span>
-                                <span className="flex items-center gap-2">
-                                  <span className="text-sm sm:text-base">🦋</span>
-                                  <span className="font-medium">{communeData.get(selectedCommune)?.totalEsp || 0}</span>
-                                  <span className="hidden min-[400px]:inline">espèces</span>
-                                  <span className="min-[400px]:hidden">esp.</span>
+                                <span className="flex items-center gap-1.5">
+                                  <span className="text-xs sm:text-sm">🦋</span>
+                                  <span className="font-medium text-xs sm:text-sm">{communeData.get(selectedCommune)?.totalEsp || 0}</span>
+                                  <span className="hidden min-[400px]:inline text-xs">espèces</span>
+                                  <span className="min-[400px]:hidden text-xs">esp.</span>
                                 </span>
                               </div>
                             </div>
