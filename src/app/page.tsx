@@ -186,25 +186,19 @@ export default function HomePage() {
             
             {/* Menu mobile en overlay */}
             {isMobileMenuOpen && (
-              <>
-                {/* Backdrop */}
-                <div 
-                  className="absolute inset-0 bg-black/50 z-40"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                />
-                
-                {/* Panel menu */}
-                <div className="absolute top-4 right-4 bottom-4 w-80 bg-white rounded-2xl shadow-2xl z-50 overflow-hidden">
+              <div className="absolute inset-4 z-50">
+                {/* Panel menu glassmorphique pleine largeur */}
+                <div className="modern-card shadow-2xl h-full overflow-hidden">
                   <div className="h-full flex flex-col">
                     {/* Header du menu */}
-                    <div className="flex-shrink-0 p-4 border-b border-gray-200 flex items-center justify-between">
+                    <div className="flex-shrink-0 p-4 border-b border-white/20 flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="text-xl">🏛️</span>
                         <span className="font-bold text-gradient">Communes CCPM</span>
                       </div>
                       <button
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-all duration-200"
+                        className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-all duration-200 text-gray-700"
                       >
                         ✕
                       </button>
@@ -230,7 +224,7 @@ export default function HomePage() {
                       </div>
 
                       {/* Liste des communes */}
-                      <div className="h-full overflow-y-auto space-y-2">
+                      <div className="h-full overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                         {filteredCommunes.length > 0 ? (
                           filteredCommunes.map(([codeInsee, commune]) => {
                             const isSelected = selectedCommune === codeInsee
@@ -245,7 +239,7 @@ export default function HomePage() {
                                 className={`w-full text-left p-3 rounded-xl transition-all duration-200 ${
                                   isSelected 
                                     ? 'bg-gradient-primary text-white shadow-lg' 
-                                    : 'bg-gray-50 hover:bg-gray-100 text-gray-700'
+                                    : 'bg-white/50 hover:bg-white/70 text-gray-700'
                                 }`}
                               >
                                 <div className="font-medium mb-1 truncate flex items-center gap-2">
@@ -276,7 +270,7 @@ export default function HomePage() {
                     </div>
                     
                     {/* Section Couches */}
-                    <div className="flex-shrink-0 p-4 border-t border-gray-200 space-y-4">
+                    <div className="flex-shrink-0 p-4 border-t border-white/20 space-y-4">
                       <div className="flex items-center gap-2 mb-4">
                         <span className="text-xl">🗺️</span>
                         <span className="font-bold text-gradient">Couches</span>
@@ -321,7 +315,7 @@ export default function HomePage() {
                     </div>
                   </div>
                 </div>
-              </>
+              </div>
             )}
           </div>
         </div>
