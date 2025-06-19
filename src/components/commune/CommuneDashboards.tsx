@@ -2,7 +2,7 @@ import GroupBubble from '../dashboards/GroupBubble'
 import PhenoLine from '../dashboards/PhenoLine'
 import RedListBar from '../dashboards/RedListBar'
 import StatusTreemap from '../dashboards/StatusTreemap'
-import AreaBumpChart from '../dashboards/AreaBump'
+import GroupsEvolutionStream from '../dashboards/GroupsEvolutionStream'
 import { useAppStore } from '../../store/useAppStore'
 
 interface CommuneDashboardsProps {
@@ -23,8 +23,7 @@ export default function CommuneDashboards({ codeInsee }: CommuneDashboardsProps)
     visibleStats.groupes,
     visibleStats.phenologie, 
     visibleStats.listesRouges,
-    visibleStats.statutsReglementaires,
-    visibleStats.evolutionEspeces
+    visibleStats.statutsReglementaires
   ].filter(Boolean).length
 
   // Déterminer les classes de grille selon le nombre d'éléments visibles
@@ -111,16 +110,16 @@ export default function CommuneDashboards({ codeInsee }: CommuneDashboardsProps)
             </div>
           )}
 
-          {/* Évolution des espèces - AreaBump */}
-          {visibleStats.evolutionEspeces && (
+          {/* Évolution des groupes - Stream chart */}
+          {visibleStats.evolutionGroupes && (
             <div className="container-hover-safe">
               <div className="modern-card z-middle shadow-xl fade-in-up">
                 <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                  <span className="text-xl">📈</span>
-                  <span className="text-gradient">Évolution des espèces</span>
+                  <span className="text-xl">🌊</span>
+                  <span className="text-gradient">Évolution des groupes</span>
                 </h3>
                 <div className="h-64 sm:h-80 flex-1">
-                  <AreaBumpChart codeInsee={codeInsee} />
+                  <GroupsEvolutionStream codeInsee={codeInsee} />
                 </div>
               </div>
             </div>

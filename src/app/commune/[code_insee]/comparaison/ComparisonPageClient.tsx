@@ -9,6 +9,7 @@ import GroupBubble from '../../../../components/dashboards/GroupBubble'
 import PhenoLine from '../../../../components/dashboards/PhenoLine'
 import RedListBar from '../../../../components/dashboards/RedListBar'
 import StatusTreemap from '../../../../components/dashboards/StatusTreemap'
+import GroupsEvolutionStream from '../../../../components/dashboards/GroupsEvolutionStream'
 import SpeciesTable from '../../../../components/SpeciesTable'
 import NoDataAnimation from '../../../../components/NoDataAnimation'
 import { 
@@ -521,6 +522,19 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
                   </div>
                 )}
 
+                {/* Évolution des groupes */}
+                {visibleStats.evolutionGroupes && (
+                  <div className="modern-card shadow-xl fade-in-up">
+                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                      <span className="text-lg">🌊</span>
+                      <span className="text-gradient">Évolution des groupes</span>
+                    </h3>
+                    <div className="h-80 p-4">
+                      <GroupsEvolutionStream codeInsee={codeInseeBase} />
+                    </div>
+                  </div>
+                )}
+
                 {/* Liste des espèces */}
                 {visibleStats.listeEspeces && (
                   <div className="modern-card shadow-xl fade-in-up">
@@ -619,6 +633,19 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
                     </h3>
                     <div className="h-80 p-4">
                       <StatusTreemap codeInsee={selectedCommune} />
+                    </div>
+                  </div>
+                )}
+
+                {/* Évolution des groupes */}
+                {visibleStats.evolutionGroupes && (
+                  <div className="modern-card shadow-xl fade-in-up">
+                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                      <span className="text-lg">🌊</span>
+                      <span className="text-gradient">Évolution des groupes</span>
+                    </h3>
+                    <div className="h-80 p-4">
+                      <GroupsEvolutionStream codeInsee={selectedCommune} />
                     </div>
                   </div>
                 )}
