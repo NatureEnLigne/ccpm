@@ -795,7 +795,7 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
                       <span className="text-gradient">{currentCommune.nom || `Commune ${codeInsee}`}</span>
                   </h1>
                 <p className="species-count-title text-sm lg:text-base">
-                      INSEE : {codeInsee}
+                      INSEE : <span className="text-gradient">{codeInsee}</span>
                     </p>
                 </div>
               </div>
