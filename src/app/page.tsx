@@ -131,13 +131,13 @@ export default function HomePage() {
           {/* Header moderne avec style cohérent - hauteur réduite */}
           <div className="flex-shrink-0">
             <div className="flex items-center gap-3 fade-in-up">
-              {/* Titre principal - padding réduit */}
+              {/* Titre principal - taille augmentée */}
               <div className="modern-card shadow-xl flex-1">
-                <div className="p-2 text-left">
-                  <h1 className="text-lg font-bold mb-0.5 leading-tight">
-                    <span className="text-gradient whitespace-nowrap">Observations naturalistes : Ponthieu-Marquenterre</span>
+                <div className="p-3 text-left">
+                  <h1 className="text-xl font-bold mb-1 leading-tight">
+                    <span className="text-gradient">Observations naturalistes : Ponthieu-Marquenterre</span>
                   </h1>
-                  <p className="data-label-unified text-sm leading-tight">
+                  <p className="data-label-unified text-base leading-tight">
                     Données OpenOBS (Muséum national d'Histoire naturelle)
                   </p>
                 </div>
@@ -190,11 +190,11 @@ export default function HomePage() {
         <div className="flex-shrink-0 p-4 space-y-4">
           {/* Ligne 1 : Titre et description */}
           <div className="modern-card shadow-xl">
-            <div className="p-3 text-center">
-              <h1 className="text-lg font-bold mb-1">
+            <div className="p-4 text-center">
+              <h1 className="text-xl font-bold mb-2">
                 <span className="text-gradient">Observations naturalistes : Ponthieu-Marquenterre</span>
               </h1>
-              <p className="data-label-unified text-sm">
+              <p className="data-label-unified text-base">
                 Données OpenOBS (Muséum national d'Histoire naturelle)
               </p>
             </div>
