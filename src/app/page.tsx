@@ -204,10 +204,10 @@ export default function HomePage() {
                       </button>
                     </div>
                     
-                    {/* Contenu du menu - Communes */}
-                    <div className="flex-1 min-h-0 p-4">
+                    {/* Contenu du menu - Communes avec scroll */}
+                    <div className="flex-1 min-h-0 p-4 flex flex-col">
                       {/* Champ de recherche */}
-                      <div className="mb-4">
+                      <div className="flex-shrink-0 mb-4">
                         <div className="relative">
                           <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm">🔍</span>
                           <input
@@ -223,8 +223,8 @@ export default function HomePage() {
                         </div>
                       </div>
 
-                      {/* Liste des communes */}
-                      <div className="h-full overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                      {/* Liste des communes avec scroll contrôlé */}
+                      <div className="flex-1 overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 pr-2">
                         {filteredCommunes.length > 0 ? (
                           filteredCommunes.map(([codeInsee, commune]) => {
                             const isSelected = selectedCommune === codeInsee
