@@ -26,6 +26,15 @@ interface AppState {
   showStatsPanel: boolean
   statsPanelCommune: string | null
   
+  // Statistiques visibles
+  visibleStats: {
+    groupes: boolean
+    phenologie: boolean
+    listesRouges: boolean
+    statutsReglementaires: boolean
+    listeEspeces: boolean
+  }
+  
   // Actions
   setSelectedCommune: (insee: string | null) => void
   setCommunes: (communes: CommuneCollection) => void
@@ -52,6 +61,10 @@ interface AppState {
   
   setShowStatsPanel: (show: boolean) => void
   setStatsPanelCommune: (insee: string | null) => void
+  
+  // Actions pour les statistiques visibles
+  toggleStatVisibility: (statKey: keyof AppState['visibleStats']) => void
+  setStatVisibility: (statKey: keyof AppState['visibleStats'], visible: boolean) => void
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -86,6 +99,15 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
   showStatsPanel: false,
   statsPanelCommune: null,
+  
+  // Statistiques visibles
+  visibleStats: {
+    groupes: true,
+    phenologie: true,
+    listesRouges: true,
+    statutsReglementaires: true,
+    listeEspeces: true,
+  },
   
   // Actions
   setSelectedCommune: (insee) => set({ selectedCommune: insee }),
@@ -230,6 +252,21 @@ export const useAppStore = create<AppState>((set, get) => ({
     showStatsPanel: false,
     statsPanelCommune: null
   }),
+  
+  // Actions pour les statistiques visibles
+  toggleStatVisibility: (statKey) => set((state) => ({
+    visibleStats: {
+      ...state.visibleStats,
+      [statKey]: !state.visibleStats[statKey]
+    }
+  })),
+  
+  setStatVisibility: (statKey, visible) => set((state) => ({
+    visibleStats: {
+      ...state.visibleStats,
+      [statKey]: visible
+    }
+  })),
 }))
 
 // Sélecteurs utiles

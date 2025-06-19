@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAppStore } from '../../../../store/useAppStore'
 import FilterBar from '../../../../components/FilterBar'
+import StatsToggle from '../../../../components/StatsToggle'
 import GroupBubble from '../../../../components/dashboards/GroupBubble'
 import PhenoLine from '../../../../components/dashboards/PhenoLine'
 import RedListBar from '../../../../components/dashboards/RedListBar'
@@ -85,7 +86,8 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
     speciesData, 
     setSpeciesData,
     filters,
-    resetMapView
+    resetMapView,
+    visibleStats
   } = useAppStore()
 
   const [selectedCommune, setSelectedCommune] = useState<string>('')
@@ -374,18 +376,17 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
         
         {/* En-tête responsive avec bouton retour et barre de filtres */}
         <div className="mb-6 fade-in-up">
-          {/* Version Desktop : bouton retour et filtres sur la même ligne */}
-          <div className="hidden lg:flex items-start gap-4">
-            {/* Bouton retour - hauteur fixe pour correspondre à la première ligne des filtres */}
+          {/* Version Desktop : bouton retour et filtres sur une ligne */}
+          <div className="hidden lg:flex lg:items-center gap-4 mb-6">
+            {/* Bouton retour */}
             <div className="modern-card shadow-xl">
               <button 
                 onClick={() => router.push(`/commune/${codeInseeBase}`)}
-                className="text-center min-w-[120px] hover:bg-white/10 transition-colors rounded-lg flex flex-col items-center justify-center"
-                style={{ height: '72px' }}
+                className="p-3 text-center min-w-[80px] lg:min-w-[120px] hover:bg-white/10 transition-colors rounded-lg"
                 title="Retour à la commune"
               >
-                <div className="text-3xl font-bold text-gradient mb-1">
-                  ←
+                <div className="text-2xl lg:text-3xl font-bold text-gradient mb-1">
+                  ← 
                 </div>
                 <div className="nav-button-label">
                   Retour
@@ -398,9 +399,14 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
               <FilterBar noBottomMargin={true} />
             </div>
           </div>
+          
+          {/* Barre de statistiques - ligne séparée */}
+          <div className="hidden lg:block mb-6">
+            <StatsToggle noBottomMargin={true} />
+          </div>
 
           {/* Version Mobile : bouton retour et filtres sur deux lignes séparées */}
-          <div className="lg:hidden space-y-4">
+          <div className="lg:hidden space-y-4 mb-6">
             {/* Première ligne : Bouton retour seul */}
             <div className="modern-card shadow-xl">
               <button 
@@ -420,6 +426,11 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
             {/* Deuxième ligne : Barre de filtres seule */}
             <div>
               <FilterBar noBottomMargin={true} />
+            </div>
+            
+            {/* Troisième ligne : Barre de statistiques */}
+            <div>
+              <StatsToggle noBottomMargin={true} />
             </div>
           </div>
         </div>
@@ -459,59 +470,69 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
             {selectedCommune && (
               <>
                 {/* Groupes taxonomiques */}
-                <div className="modern-card shadow-xl fade-in-up">
-                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
-                    <span className="text-lg">🦋</span>
-                    <span className="text-gradient">Groupes taxonomiques</span>
-                  </h3>
-                  <div className="h-80 p-4">
-                    <GroupBubble codeInsee={codeInseeBase} />
+                {visibleStats.groupes && (
+                  <div className="modern-card shadow-xl fade-in-up">
+                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                      <span className="text-lg">🦋</span>
+                      <span className="text-gradient">Groupes taxonomiques</span>
+                    </h3>
+                    <div className="h-80 p-4">
+                      <GroupBubble codeInsee={codeInseeBase} />
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Phénologie mensuelle */}
-                <div className="modern-card shadow-xl fade-in-up">
-                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
-                    <span className="text-lg">📅</span>
-                    <span className="text-gradient">Phénologie mensuelle</span>
-                  </h3>
-                  <div className="h-80 p-4">
-                    <PhenoLine codeInsee={codeInseeBase} />
+                {visibleStats.phenologie && (
+                  <div className="modern-card shadow-xl fade-in-up">
+                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                      <span className="text-lg">📅</span>
+                      <span className="text-gradient">Phénologie mensuelle</span>
+                    </h3>
+                    <div className="h-80 p-4">
+                      <PhenoLine codeInsee={codeInseeBase} />
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Statuts listes rouges */}
-                <div className="modern-card shadow-xl fade-in-up">
-                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
-                    <span className="text-lg">🚨</span>
-                    <span className="text-gradient">Statuts listes rouges</span>
-                  </h3>
-                  <div className="h-80 p-4">
-                    <RedListBar codeInsee={codeInseeBase} />
+                {visibleStats.listesRouges && (
+                  <div className="modern-card shadow-xl fade-in-up">
+                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                      <span className="text-lg">🚨</span>
+                      <span className="text-gradient">Statuts listes rouges</span>
+                    </h3>
+                    <div className="h-80 p-4">
+                      <RedListBar codeInsee={codeInseeBase} />
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Statuts réglementaires */}
-                <div className="modern-card shadow-xl fade-in-up">
-                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
-                    <span className="text-lg">⚖️</span>
-                    <span className="text-gradient">Statuts réglementaires</span>
-                  </h3>
-                  <div className="h-80 p-4">
-                    <StatusTreemap codeInsee={codeInseeBase} />
+                {visibleStats.statutsReglementaires && (
+                  <div className="modern-card shadow-xl fade-in-up">
+                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                      <span className="text-lg">⚖️</span>
+                      <span className="text-gradient">Statuts réglementaires</span>
+                    </h3>
+                    <div className="h-80 p-4">
+                      <StatusTreemap codeInsee={codeInseeBase} />
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Liste des espèces */}
-                <div className="modern-card shadow-xl fade-in-up">
-                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
-                    <span className="text-lg">📋</span>
-                    <span className="text-gradient">Liste des espèces</span>
-                  </h3>
-                  <div className="p-4">
-                    <SpeciesTable codeInsee={codeInseeBase} noCard={true} />
+                {visibleStats.listeEspeces && (
+                  <div className="modern-card shadow-xl fade-in-up">
+                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                      <span className="text-lg">📋</span>
+                      <span className="text-gradient">Liste des espèces</span>
+                    </h3>
+                    <div className="p-4">
+                      <SpeciesTable codeInsee={codeInseeBase} noCard={true} />
+                    </div>
                   </div>
-                </div>
+                )}
               </>
             )}
           </div>
@@ -551,59 +572,69 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
 
                 {/* Graphiques commune de comparaison - en miroir */}
                 {/* Groupes taxonomiques */}
-                <div className="modern-card shadow-xl fade-in-up">
-                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
-                    <span className="text-lg">🦋</span>
-                    <span className="text-gradient">Groupes taxonomiques</span>
-                  </h3>
-                  <div className="h-80 p-4">
-                    <GroupBubble codeInsee={selectedCommune} />
+                {visibleStats.groupes && (
+                  <div className="modern-card shadow-xl fade-in-up">
+                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                      <span className="text-lg">🦋</span>
+                      <span className="text-gradient">Groupes taxonomiques</span>
+                    </h3>
+                    <div className="h-80 p-4">
+                      <GroupBubble codeInsee={selectedCommune} />
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Phénologie mensuelle */}
-                <div className="modern-card shadow-xl fade-in-up">
-                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
-                    <span className="text-lg">📅</span>
-                    <span className="text-gradient">Phénologie mensuelle</span>
-                  </h3>
-                  <div className="h-80 p-4">
-                    <PhenoLine codeInsee={selectedCommune} />
+                {visibleStats.phenologie && (
+                  <div className="modern-card shadow-xl fade-in-up">
+                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                      <span className="text-lg">📅</span>
+                      <span className="text-gradient">Phénologie mensuelle</span>
+                    </h3>
+                    <div className="h-80 p-4">
+                      <PhenoLine codeInsee={selectedCommune} />
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Statuts listes rouges */}
-                <div className="modern-card shadow-xl fade-in-up">
-                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
-                    <span className="text-lg">🚨</span>
-                    <span className="text-gradient">Statuts listes rouges</span>
-                  </h3>
-                  <div className="h-80 p-4">
-                    <RedListBar codeInsee={selectedCommune} />
+                {visibleStats.listesRouges && (
+                  <div className="modern-card shadow-xl fade-in-up">
+                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                      <span className="text-lg">🚨</span>
+                      <span className="text-gradient">Statuts listes rouges</span>
+                    </h3>
+                    <div className="h-80 p-4">
+                      <RedListBar codeInsee={selectedCommune} />
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Statuts réglementaires */}
-                <div className="modern-card shadow-xl fade-in-up">
-                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
-                    <span className="text-lg">⚖️</span>
-                    <span className="text-gradient">Statuts réglementaires</span>
-                  </h3>
-                  <div className="h-80 p-4">
-                    <StatusTreemap codeInsee={selectedCommune} />
+                {visibleStats.statutsReglementaires && (
+                  <div className="modern-card shadow-xl fade-in-up">
+                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                      <span className="text-lg">⚖️</span>
+                      <span className="text-gradient">Statuts réglementaires</span>
+                    </h3>
+                    <div className="h-80 p-4">
+                      <StatusTreemap codeInsee={selectedCommune} />
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Liste des espèces */}
-                <div className="modern-card shadow-xl fade-in-up">
-                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
-                    <span className="text-lg">📋</span>
-                    <span className="text-gradient">Liste des espèces</span>
-                  </h3>
-                  <div className="p-4">
-                    <SpeciesTable codeInsee={selectedCommune} noCard={true} />
+                {visibleStats.listeEspeces && (
+                  <div className="modern-card shadow-xl fade-in-up">
+                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                      <span className="text-lg">📋</span>
+                      <span className="text-gradient">Liste des espèces</span>
+                    </h3>
+                    <div className="p-4">
+                      <SpeciesTable codeInsee={selectedCommune} noCard={true} />
+                    </div>
                   </div>
-                </div>
+                )}
               </>
             ) : (
               /* Panneau de sélection de commune - reprend exactement le contenu de 🏛️ Communes CCPM */
@@ -859,18 +890,20 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
           {selectedCommune && (
             <div className="space-y-6">
               {/* 🦋 Groupes taxonomiques - Commune de base */}
-              <div className="modern-card shadow-xl fade-in-up">
-                <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
-                  <span className="text-lg">🦋</span>
-                  <span className="text-gradient">Groupes taxonomiques - {communeBase.properties.nom}</span>
-                </h3>
-                <div className="h-80 p-4">
-                  <GroupBubble codeInsee={codeInseeBase} />
+              {visibleStats.groupes && (
+                <div className="modern-card shadow-xl fade-in-up">
+                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                    <span className="text-lg">🦋</span>
+                    <span className="text-gradient">Groupes taxonomiques - {communeBase.properties.nom}</span>
+                  </h3>
+                  <div className="h-80 p-4">
+                    <GroupBubble codeInsee={codeInseeBase} />
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* 🦋 Groupes taxonomiques - Commune de comparaison */}
-              {communeComparison && (
+              {visibleStats.groupes && communeComparison && (
                 <div className="modern-card shadow-xl fade-in-up">
                   <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
                     <span className="text-lg">🦋</span>
@@ -883,18 +916,20 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
               )}
 
               {/* 📅 Phénologie mensuelle - Commune de base */}
-              <div className="modern-card shadow-xl fade-in-up">
-                <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
-                  <span className="text-lg">📅</span>
-                  <span className="text-gradient">Phénologie mensuelle - {communeBase.properties.nom}</span>
-                </h3>
-                <div className="h-80 p-4">
-                  <PhenoLine codeInsee={codeInseeBase} />
+              {visibleStats.phenologie && (
+                <div className="modern-card shadow-xl fade-in-up">
+                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                    <span className="text-lg">📅</span>
+                    <span className="text-gradient">Phénologie mensuelle - {communeBase.properties.nom}</span>
+                  </h3>
+                  <div className="h-80 p-4">
+                    <PhenoLine codeInsee={codeInseeBase} />
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* 📅 Phénologie mensuelle - Commune de comparaison */}
-              {communeComparison && (
+              {visibleStats.phenologie && communeComparison && (
                 <div className="modern-card shadow-xl fade-in-up">
                   <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
                     <span className="text-lg">📅</span>
@@ -907,18 +942,20 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
               )}
 
               {/* 🚨 Statuts listes rouges - Commune de base */}
-              <div className="modern-card shadow-xl fade-in-up">
-                <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
-                  <span className="text-lg">🚨</span>
-                  <span className="text-gradient">Statuts listes rouges - {communeBase.properties.nom}</span>
-                </h3>
-                <div className="h-80 p-4">
-                  <RedListBar codeInsee={codeInseeBase} />
+              {visibleStats.listesRouges && (
+                <div className="modern-card shadow-xl fade-in-up">
+                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                    <span className="text-lg">🚨</span>
+                    <span className="text-gradient">Statuts listes rouges - {communeBase.properties.nom}</span>
+                  </h3>
+                  <div className="h-80 p-4">
+                    <RedListBar codeInsee={codeInseeBase} />
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* 🚨 Statuts listes rouges - Commune de comparaison */}
-              {communeComparison && (
+              {visibleStats.listesRouges && communeComparison && (
                 <div className="modern-card shadow-xl fade-in-up">
                   <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
                     <span className="text-lg">🚨</span>
@@ -931,18 +968,20 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
               )}
 
               {/* ⚖️ Statuts réglementaires - Commune de base */}
-              <div className="modern-card shadow-xl fade-in-up">
-                <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
-                  <span className="text-lg">⚖️</span>
-                  <span className="text-gradient">Statuts réglementaires - {communeBase.properties.nom}</span>
-                </h3>
-                <div className="h-80 p-4">
-                  <StatusTreemap codeInsee={codeInseeBase} />
+              {visibleStats.statutsReglementaires && (
+                <div className="modern-card shadow-xl fade-in-up">
+                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                    <span className="text-lg">⚖️</span>
+                    <span className="text-gradient">Statuts réglementaires - {communeBase.properties.nom}</span>
+                  </h3>
+                  <div className="h-80 p-4">
+                    <StatusTreemap codeInsee={codeInseeBase} />
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* ⚖️ Statuts réglementaires - Commune de comparaison */}
-              {communeComparison && (
+              {visibleStats.statutsReglementaires && communeComparison && (
                 <div className="modern-card shadow-xl fade-in-up">
                   <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
                     <span className="text-lg">⚖️</span>
@@ -955,18 +994,20 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
               )}
 
               {/* 📋 Liste des espèces - Commune de base */}
-              <div className="modern-card shadow-xl fade-in-up">
-                <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
-                  <span className="text-lg">📋</span>
-                  <span className="text-gradient">Liste des espèces - {communeBase.properties.nom}</span>
-                </h3>
-                <div className="p-4">
-                  <SpeciesTable codeInsee={codeInseeBase} noCard={true} />
+              {visibleStats.listeEspeces && (
+                <div className="modern-card shadow-xl fade-in-up">
+                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                    <span className="text-lg">📋</span>
+                    <span className="text-gradient">Liste des espèces - {communeBase.properties.nom}</span>
+                  </h3>
+                  <div className="p-4">
+                    <SpeciesTable codeInsee={codeInseeBase} noCard={true} />
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* 📋 Liste des espèces - Commune de comparaison */}
-              {communeComparison && (
+              {visibleStats.listeEspeces && communeComparison && (
                 <div className="modern-card shadow-xl fade-in-up">
                   <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
                     <span className="text-lg">📋</span>

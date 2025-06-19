@@ -8,6 +8,7 @@ import CommuneHeader from '../../../components/commune/CommuneHeader'
 import CommuneActions from '../../../components/commune/CommuneActions'
 import CommuneDashboards from '../../../components/commune/CommuneDashboards'
 import FilterBar from '../../../components/FilterBar'
+import StatsToggle from '../../../components/StatsToggle'
 import SpeciesTable from '../../../components/SpeciesTable'
 import NoDataAnimation from '../../../components/NoDataAnimation'
 
@@ -17,7 +18,7 @@ interface CommunePageClientProps {
 
 export default function CommunePageClient({ codeInsee }: CommunePageClientProps) {
   const router = useRouter()
-  const { resetMapView, communes } = useAppStore()
+  const { resetMapView, communes, visibleStats } = useAppStore()
   const [linkCopied, setLinkCopied] = useState(false)
   
   // Utiliser le hook personnalisé pour gérer toutes les données
@@ -117,15 +118,22 @@ export default function CommunePageClient({ codeInsee }: CommunePageClientProps)
         {/* Barre de filtres */}
         <FilterBar compactPadding={true} noBottomMargin={true} />
 
+        {/* Stats Toggle */}
+        <div className="mt-6">
+          <StatsToggle compactPadding={true} noBottomMargin={true} />
+        </div>
+
         {/* Dashboards */}
         <div className="mt-6">
           <CommuneDashboards codeInsee={codeInsee} />
         </div>
         
         {/* Tableau des espèces */}
-        <div className="mt-6 w-full">
-          <SpeciesTable codeInsee={codeInsee} />
-        </div>
+        {visibleStats.listeEspeces && (
+          <div className="mt-6 w-full">
+            <SpeciesTable codeInsee={codeInsee} />
+          </div>
+        )}
       </main>
     </div>
   )

@@ -33,8 +33,15 @@ interface FilterBarProps {
   compactPadding?: boolean
 }
 
-export default function FilterBar({ noBottomMargin = false, compactPadding = false }: FilterBarProps) {
-  const { speciesData, setFilter, filters, removeFilter, clearFilters } = useAppStore()
+export default function FilterBar({ compactPadding = false, noBottomMargin = false }: FilterBarProps) {
+  const { 
+    filters, 
+    setFilter, 
+    removeFilter,
+    clearFilters,
+    communeData, 
+    speciesData
+  } = useAppStore()
   const [availableRegnes, setAvailableRegnes] = useState<string[]>([])
   const [availableRedListCategories, setAvailableRedListCategories] = useState<string[]>([])
   const [availableStatutsReglementaires, setAvailableStatutsReglementaires] = useState<string[]>([])
