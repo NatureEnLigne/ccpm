@@ -424,8 +424,8 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
           </div>
         </div>
 
-        {/* Comparaison côte à côte */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Version Desktop : Comparaison côte à côte */}
+        <div className="hidden lg:grid lg:grid-cols-2 gap-6">
           
           {/* Commune de base (gauche) */}
           <div className="space-y-6">
@@ -699,6 +699,286 @@ export default function ComparisonPageClient({ codeInseeBase }: ComparisonPageCl
               </div>
             )}
           </div>
+        </div>
+
+        {/* Version Mobile : Statistiques à la suite */}
+        <div className="lg:hidden space-y-6">
+          {/* En-têtes des communes */}
+          <div className="space-y-4">
+            {/* En-tête commune de base */}
+            <div className="modern-card shadow-xl fade-in-up">
+              <div className="p-4 text-center">
+                <h2 className="text-3xl font-bold mb-1">
+                  <span className="text-gradient">{communeBase.properties.nom}</span>
+                </h2>
+                <p className="species-count-title mb-3">
+                  Code INSEE: {codeInseeBase}
+                </p>
+                <div className="flex justify-center gap-4">
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-gradient">
+                      {formatNumberFull(filteredStatsBase.totalObs)}
+                    </div>
+                    <div className="data-label-unified">Observations</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-gradient">
+                      {formatNumberFull(filteredStatsBase.totalEsp)}
+                    </div>
+                    <div className="data-label-unified">Espèces</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* En-tête commune de comparaison */}
+            {selectedCommune && communeComparison && filteredStatsComparison ? (
+              <div className="modern-card shadow-xl fade-in-up">
+                <div className="p-4 text-center">
+                  <h2 className="text-3xl font-bold mb-1">
+                    <span className="text-gradient">{communeComparison.properties.nom}</span>
+                  </h2>
+                  <p className="species-count-title mb-3">
+                    Code INSEE: {selectedCommune}
+                  </p>
+                  <div className="flex justify-center gap-4">
+                    <div className="text-center">
+                      <div className="text-lg font-bold text-gradient">
+                        {formatNumberFull(filteredStatsComparison.totalObs)}
+                      </div>
+                      <div className="data-label-unified">Observations</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-lg font-bold text-gradient">
+                        {formatNumberFull(filteredStatsComparison.totalEsp)}
+                      </div>
+                      <div className="data-label-unified">Espèces</div>
+                    </div>
+                    <div className="flex items-center">
+                      <FicheIcon codeInsee={selectedCommune} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* Panneau de sélection de commune mobile */
+              <div className="modern-card shadow-xl fade-in-up flex flex-col" style={{ height: 'calc(50vh)' }}>
+                {/* Titre avec icône */}
+                <h3 className="text-xl font-bold mb-6 flex items-center gap-3 flex-shrink-0">
+                  <span className="text-2xl">🏛️</span>
+                  <span className="text-gradient">Communes CCPM</span>
+                </h3>
+
+                {/* Message d'instruction */}
+                <div className="mb-6 p-4 rounded-xl border border-amber-200/50 flex-shrink-0" style={{
+                  background: 'linear-gradient(135deg, rgba(205, 133, 63, 0.1), rgba(45, 80, 22, 0.1))'
+                }}>
+                  <p className="text-center font-medium" style={{
+                    background: 'linear-gradient(135deg, #cd853f, #2d5016)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text'
+                  }}>
+                    Sélectionner une commune pour commencer la comparaison
+                  </p>
+                </div>
+
+                {/* Contenu scrollable avec hauteur contrainte */}
+                <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                  {/* Champ de recherche moderne */}
+                  <div className="mb-6 flex-shrink-0">
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg">🔍</span>
+                      <input
+                        type="text"
+                        placeholder="Nom de la commune"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="input-modern w-full pl-10 pr-4"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Indicateur de chargement */}
+                  {isLoading && (
+                    <div className="modern-card shadow-lg p-6 text-center mb-6">
+                      <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-amber-600 mx-auto mb-4"></div>
+                      <p className="data-label-unified font-medium">Chargement des communes...</p>
+                    </div>
+                  )}
+
+                  {/* Liste des communes */}
+                  {!isLoading && filteredCommuneNames.length > 0 && (
+                    <div className="space-y-2">
+                      {filteredCommuneNames.map(([codeInsee, name]) => {
+                        const commune = communeData?.get(codeInsee)
+                        const isSelected = selectedCommune === codeInsee
+                        
+                        // Ne pas afficher la commune de base
+                        if (codeInsee === codeInseeBase) return null
+                        
+                        return (
+                          <button
+                            key={codeInsee}
+                            onClick={() => setSelectedCommune(codeInsee)}
+                            className={`w-full text-left p-3 rounded-xl transition-all duration-200 overflow-hidden ${
+                              isSelected 
+                                ? 'bg-gradient-primary text-white shadow-lg' 
+                                : 'bg-white/50 hover:bg-white/70 text-gray-700'
+                            }`}
+                          >
+                            <div className="font-medium mb-1 truncate pr-2 flex items-center gap-2">
+                              <span className="text-sm">🏘️</span>
+                              {name}
+                            </div>
+                            {commune && (
+                              <div className="text-xs opacity-80 flex items-center justify-between gap-2 min-w-0">
+                                <div className="flex items-center gap-3 min-w-0 flex-shrink">
+                                  <span className="whitespace-nowrap flex items-center gap-1">
+                                    <span className="text-xs">👁️</span>
+                                    {formatNumber(commune.totalObs)} obs.
+                                  </span>
+                                  <span className="whitespace-nowrap flex items-center gap-1">
+                                    <span className="text-xs">🦋</span>
+                                    {formatNumber(commune.totalEsp)} esp.
+                                  </span>
+                                </div>
+                              </div>
+                            )}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Statistiques à la suite en version mobile */}
+          {selectedCommune && (
+            <div className="space-y-6">
+              {/* 🦋 Groupes taxonomiques - Commune de base */}
+              <div className="modern-card shadow-xl fade-in-up">
+                <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                  <span className="text-lg">🦋</span>
+                  <span className="text-gradient">Groupes taxonomiques - {communeBase.properties.nom}</span>
+                </h3>
+                <div className="h-80 p-4">
+                  <GroupBubble codeInsee={codeInseeBase} />
+                </div>
+              </div>
+
+              {/* 🦋 Groupes taxonomiques - Commune de comparaison */}
+              {communeComparison && (
+                <div className="modern-card shadow-xl fade-in-up">
+                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                    <span className="text-lg">🦋</span>
+                    <span className="text-gradient">Groupes taxonomiques - {communeComparison.properties.nom}</span>
+                  </h3>
+                  <div className="h-80 p-4">
+                    <GroupBubble codeInsee={selectedCommune} />
+                  </div>
+                </div>
+              )}
+
+              {/* 📅 Phénologie mensuelle - Commune de base */}
+              <div className="modern-card shadow-xl fade-in-up">
+                <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                  <span className="text-lg">📅</span>
+                  <span className="text-gradient">Phénologie mensuelle - {communeBase.properties.nom}</span>
+                </h3>
+                <div className="h-80 p-4">
+                  <PhenoLine codeInsee={codeInseeBase} />
+                </div>
+              </div>
+
+              {/* 📅 Phénologie mensuelle - Commune de comparaison */}
+              {communeComparison && (
+                <div className="modern-card shadow-xl fade-in-up">
+                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                    <span className="text-lg">📅</span>
+                    <span className="text-gradient">Phénologie mensuelle - {communeComparison.properties.nom}</span>
+                  </h3>
+                  <div className="h-80 p-4">
+                    <PhenoLine codeInsee={selectedCommune} />
+                  </div>
+                </div>
+              )}
+
+              {/* 🚨 Statuts listes rouges - Commune de base */}
+              <div className="modern-card shadow-xl fade-in-up">
+                <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                  <span className="text-lg">🚨</span>
+                  <span className="text-gradient">Statuts listes rouges - {communeBase.properties.nom}</span>
+                </h3>
+                <div className="h-80 p-4">
+                  <RedListBar codeInsee={codeInseeBase} />
+                </div>
+              </div>
+
+              {/* 🚨 Statuts listes rouges - Commune de comparaison */}
+              {communeComparison && (
+                <div className="modern-card shadow-xl fade-in-up">
+                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                    <span className="text-lg">🚨</span>
+                    <span className="text-gradient">Statuts listes rouges - {communeComparison.properties.nom}</span>
+                  </h3>
+                  <div className="h-80 p-4">
+                    <RedListBar codeInsee={selectedCommune} />
+                  </div>
+                </div>
+              )}
+
+              {/* ⚖️ Statuts réglementaires - Commune de base */}
+              <div className="modern-card shadow-xl fade-in-up">
+                <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                  <span className="text-lg">⚖️</span>
+                  <span className="text-gradient">Statuts réglementaires - {communeBase.properties.nom}</span>
+                </h3>
+                <div className="h-80 p-4">
+                  <StatusTreemap codeInsee={codeInseeBase} />
+                </div>
+              </div>
+
+              {/* ⚖️ Statuts réglementaires - Commune de comparaison */}
+              {communeComparison && (
+                <div className="modern-card shadow-xl fade-in-up">
+                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                    <span className="text-lg">⚖️</span>
+                    <span className="text-gradient">Statuts réglementaires - {communeComparison.properties.nom}</span>
+                  </h3>
+                  <div className="h-80 p-4">
+                    <StatusTreemap codeInsee={selectedCommune} />
+                  </div>
+                </div>
+              )}
+
+              {/* 📋 Liste des espèces - Commune de base */}
+              <div className="modern-card shadow-xl fade-in-up">
+                <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                  <span className="text-lg">📋</span>
+                  <span className="text-gradient">Liste des espèces - {communeBase.properties.nom}</span>
+                </h3>
+                <div className="p-4">
+                  <SpeciesTable codeInsee={codeInseeBase} noCard={true} />
+                </div>
+              </div>
+
+              {/* 📋 Liste des espèces - Commune de comparaison */}
+              {communeComparison && (
+                <div className="modern-card shadow-xl fade-in-up">
+                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2 p-4 pb-0">
+                    <span className="text-lg">📋</span>
+                    <span className="text-gradient">Liste des espèces - {communeComparison.properties.nom}</span>
+                  </h3>
+                  <div className="p-4">
+                    <SpeciesTable codeInsee={selectedCommune} noCard={true} />
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </main>
     </div>
