@@ -445,7 +445,7 @@ export default function SpeciesTable({ codeInsee, noCard = false }: SpeciesTable
                   <td className="py-3 px-2 text-sm">
                     <div>
                       <div className="font-medium text-gray-800 italic">
-                        {row.nomComplet || '-'}
+                      {row.nomComplet || '-'}
                       </div>
                       {/* Afficher le groupe sur mobile */}
                       <div className="text-xs text-gray-500 mt-1 sm:hidden">
