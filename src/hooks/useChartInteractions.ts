@@ -67,6 +67,30 @@ export function useChartInteractions() {
             value: value as string,
             source: 'RedListBar'
           }
+        } else if (dataKey === 'group') {
+          filterEvent = {
+            filterKey: 'selectedGroupe',
+            value: value as string,
+            source: 'ObservationsAnnuellesBar'
+          }
+        } else if (dataKey === 'group2') {
+          filterEvent = {
+            filterKey: 'selectedGroup2',
+            value: value as string,
+            source: 'ObservationsAnnuellesBar'
+          }
+        } else if (dataKey === 'ordre') {
+          filterEvent = {
+            filterKey: 'selectedOrdre',
+            value: value as string,
+            source: 'ObservationsAnnuellesBar'
+          }
+        } else if (dataKey === 'famille') {
+          filterEvent = {
+            filterKey: 'selectedFamille',
+            value: value as string,
+            source: 'ObservationsAnnuellesBar'
+          }
         }
         break
         
@@ -126,6 +150,14 @@ export function useChartInteractions() {
         return isValueInFilter(filters.selectedMois, value as number)
       case 'bar-status':
         return isValueInFilter(filters.selectedRedListCategory, value as string)
+      case 'bar-group':
+        return filters.selectedGroupe === value
+      case 'bar-group2':
+        return filters.selectedGroup2 === value
+      case 'bar-ordre':
+        return filters.selectedOrdre === value
+      case 'bar-famille':
+        return filters.selectedFamille === value
       case 'treemap-status':
         return isValueInFilter(filters.selectedStatutReglementaire, value as string)
       case 'treemap-ordre':

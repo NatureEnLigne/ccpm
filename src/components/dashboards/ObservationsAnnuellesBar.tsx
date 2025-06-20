@@ -19,7 +19,7 @@ interface BarData {
 
 export default function ObservationsAnnuellesBar({ codeInsee }: ObservationsAnnuellesBarProps) {
   const { communeData, speciesData, filters, setFilter } = useAppStore()
-  const { isFiltered } = useChartInteractions()
+  const { isFiltered, handleChartClick } = useChartInteractions()
   const [data, setData] = useState<BarData[]>([])
   const [groupKeys, setGroupKeys] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
@@ -197,6 +197,48 @@ export default function ObservationsAnnuellesBar({ codeInsee }: ObservationsAnnu
     }
   }
 
+  // Gérer le clic sur la légende pour filtrer par groupe
+  const handleLegendClick = (legendData: any) => {
+    const groupValue = legendData.id
+    
+    // Déterminer le niveau taxonomique actuel (même logique que dans le useEffect)
+    const taxonomicLevel = getTaxonomicLevel()
+    
+    // Utiliser handleChartClick avec le bon dataKey selon le niveau taxonomique
+    handleChartClick({
+      chartType: 'bar',
+      dataKey: taxonomicLevel.field === 'groupe' ? 'group' : taxonomicLevel.field,
+      value: groupValue,
+      action: 'click'
+    })
+  }
+
+  // Fonction pour déterminer le niveau taxonomique (dupliquée pour la réutiliser)
+  const getTaxonomicLevel = () => {
+    // Si aucun filtre de groupe, afficher Group1 Inpn
+    if (!filters.selectedGroupe) {
+      return { level: 'group1', title: 'Groupes taxonomiques', field: 'groupe' }
+    }
+    
+    // Si Group1 est filtré mais pas Group2, afficher Group2 Inpn  
+    if (filters.selectedGroupe && !filters.selectedGroup2) {
+      return { level: 'group2', title: 'Sous-groupes taxonomiques', field: 'group2' }
+    }
+    
+    // Si Group1 et Group2 sont filtrés, afficher Group3 Inpn (ou Ordre/Famille)
+    if (filters.selectedGroupe && filters.selectedGroup2 && !filters.selectedOrdre) {
+      return { level: 'ordre', title: 'Ordres', field: 'ordre' }
+    }
+    
+    // Si Ordre est filtré, afficher Famille
+    if (filters.selectedOrdre && !filters.selectedFamille) {
+      return { level: 'famille', title: 'Familles', field: 'famille' }
+    }
+    
+    // Dernier niveau : revenir aux espèces individuelles ou Group1 par défaut
+    return { level: 'group1', title: 'Groupes taxonomiques', field: 'groupe' }
+  }
+
   if (loading) {
     return (
       <div className="h-full flex items-center justify-center">
@@ -285,6 +327,7 @@ export default function ObservationsAnnuellesBar({ codeInsee }: ObservationsAnnu
             itemDirection: 'left-to-right',
             itemOpacity: 0.85,
             symbolSize: 20,
+            onClick: handleLegendClick,
             effects: [
               {
                 on: 'hover',
@@ -296,32 +339,37 @@ export default function ObservationsAnnuellesBar({ codeInsee }: ObservationsAnnu
           }
         ]}
         onClick={handleBarClick}
-        tooltip={({ id, value, color, data }) => (
-          <div className="bg-white/90 backdrop-blur-md rounded-lg p-4 text-sm shadow-xl border border-green-800/30">
-            <div className="font-semibold text-green-800 flex items-center gap-2 mb-2">
-              <div 
-                className="w-3 h-3 rounded-full border border-green-800/30" 
-                style={{ backgroundColor: color }}
-              />
-              <span>{id}</span>
-              {isFiltered('bar', 'groupe', id as string) && (
-                <span className="bg-green-700/20 text-green-700 px-2 py-1 rounded-full text-xs">Filtré</span>
-              )}
+        tooltip={({ id, value, color, data }) => {
+          const taxonomicLevel = getTaxonomicLevel()
+          const dataKey = taxonomicLevel.field === 'groupe' ? 'group' : taxonomicLevel.field
+          
+          return (
+            <div className="bg-white/90 backdrop-blur-md rounded-lg p-4 text-sm shadow-xl border border-green-800/30">
+              <div className="font-semibold text-green-800 flex items-center gap-2 mb-2">
+                <div 
+                  className="w-3 h-3 rounded-full border border-green-800/30" 
+                  style={{ backgroundColor: color }}
+                />
+                <span>{id}</span>
+                {isFiltered('bar', dataKey, id as string) && (
+                  <span className="bg-green-700/20 text-green-700 px-2 py-1 rounded-full text-xs">Filtré</span>
+                )}
+              </div>
+              <div className="text-green-700 mb-2">
+                <span className="font-medium text-green-800">{value}</span> observations
+              </div>
+              <div className="text-green-700 mb-2">
+                <span className="font-medium text-green-800">Année:</span> {data.year}
+                {filters.selectedAnnee && filters.selectedAnnee.toString() === data.year && (
+                  <span className="bg-green-700/20 text-green-700 px-2 py-1 rounded-full text-xs ml-2">Filtrée</span>
+                )}
+              </div>
+              <div className="text-xs text-green-600 border-t border-green-800/20 pt-2">
+                Cliquez sur la barre pour filtrer par année • Cliquez sur la légende pour filtrer par groupe
+              </div>
             </div>
-            <div className="text-green-700 mb-2">
-              <span className="font-medium text-green-800">{value}</span> observations
-            </div>
-            <div className="text-green-700 mb-2">
-              <span className="font-medium text-green-800">Année:</span> {data.year}
-              {filters.selectedAnnee && filters.selectedAnnee.toString() === data.year && (
-                <span className="bg-green-700/20 text-green-700 px-2 py-1 rounded-full text-xs ml-2">Filtrée</span>
-              )}
-            </div>
-            <div className="text-xs text-green-600 border-t border-green-800/20 pt-2">
-              Cliquez pour filtrer par année
-            </div>
-          </div>
-        )}
+          )
+        }}
         animate={true}
         motionConfig="gentle"
       />
