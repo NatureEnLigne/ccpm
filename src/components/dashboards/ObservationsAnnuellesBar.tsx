@@ -218,7 +218,7 @@ export default function ObservationsAnnuellesBar({ codeInsee }: ObservationsAnnu
         data={data}
         keys={groupKeys}
         indexBy="year"
-        margin={{ top: 20, right: 80, bottom: 60, left: 80 }}
+        margin={{ top: 20, right: 180, bottom: 40, left: 80 }}
         padding={0.3}
         valueScale={{ type: 'linear' }}
         indexScale={{ type: 'band', round: true }}
@@ -253,7 +253,7 @@ export default function ObservationsAnnuellesBar({ codeInsee }: ObservationsAnnu
           tickSize: 5,
           tickPadding: 5,
           tickRotation: -45,
-          legend: 'Années',
+          legend: null,
           legendPosition: 'middle',
           legendOffset: 50
         }}
@@ -277,10 +277,10 @@ export default function ObservationsAnnuellesBar({ codeInsee }: ObservationsAnnu
             anchor: 'bottom-right',
             direction: 'column',
             justify: false,
-            translateX: 120,
+            translateX: 160,
             translateY: 0,
             itemsSpacing: 2,
-            itemWidth: 100,
+            itemWidth: 140,
             itemHeight: 20,
             itemDirection: 'left-to-right',
             itemOpacity: 0.85,
