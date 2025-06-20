@@ -258,14 +258,48 @@ export function generateSpeciesCSV(
     }
   }
   
-  // Ajouter le filtre par groupe taxonomique (🦋 Groupes taxonomiques)
+  // Ajouter les filtres par groupes taxonomiques (🦋 Groupes taxonomiques) - tous les niveaux
+  const taxonomicParts: string[] = []
+  
+  // Niveau 1 : Groupe principal
   if (filters.selectedGroupe) {
     if (Array.isArray(filters.selectedGroupe)) {
-      const groupNames = filters.selectedGroupe.map(sanitizeString).join('-')
-      filterParts.push(`groupe:${groupNames}`)
+      taxonomicParts.push(...filters.selectedGroupe.map(sanitizeString))
     } else {
-      filterParts.push(`groupe:${sanitizeString(filters.selectedGroupe)}`)
+      taxonomicParts.push(sanitizeString(filters.selectedGroupe))
     }
+  }
+  
+  // Niveau 2 : Sous-groupe
+  if (filters.selectedGroup2) {
+    if (Array.isArray(filters.selectedGroup2)) {
+      taxonomicParts.push(...filters.selectedGroup2.map(sanitizeString))
+    } else {
+      taxonomicParts.push(sanitizeString(filters.selectedGroup2))
+    }
+  }
+  
+  // Niveau 3 : Ordre
+  if (filters.selectedOrdre) {
+    if (Array.isArray(filters.selectedOrdre)) {
+      taxonomicParts.push(...filters.selectedOrdre.map(sanitizeString))
+    } else {
+      taxonomicParts.push(sanitizeString(filters.selectedOrdre))
+    }
+  }
+  
+  // Niveau 4 : Famille
+  if (filters.selectedFamille) {
+    if (Array.isArray(filters.selectedFamille)) {
+      taxonomicParts.push(...filters.selectedFamille.map(sanitizeString))
+    } else {
+      taxonomicParts.push(sanitizeString(filters.selectedFamille))
+    }
+  }
+  
+  // Si des filtres taxonomiques sont actifs, les ajouter au nom de fichier
+  if (taxonomicParts.length > 0) {
+    filterParts.push(`groupe_${taxonomicParts.join('_')}`)
   }
   
   // Ajouter le filtre par mois (📅 Phénologie mensuelle)
