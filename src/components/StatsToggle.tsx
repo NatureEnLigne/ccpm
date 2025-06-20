@@ -26,20 +26,20 @@ export default function StatsToggle({ compactPadding = false, noBottomMargin = f
 
   return (
     <div className={`modern-card z-filters shadow-xl fade-in-up ${noBottomMargin ? '' : 'mb-8'} ${compactPadding ? 'p-3' : ''}`}>
-      {/* Première ligne : Titre et statistiques inactives */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 min-h-[72px]">
+      {/* Première ligne : Titre et statistiques inactives - forcer l'alignement */}
+      <div className="flex items-center justify-between gap-4 min-h-[72px]">
         <div className="flex items-center gap-2 flex-shrink-0">
           <span className="text-xl">📊</span>
           <span className="text-xl font-bold text-gradient">Statistiques</span>
         </div>
         
-        {/* Statistiques inactives en face du titre */}
-        <div className="flex flex-wrap gap-2">
+        {/* Statistiques inactives directement à droite du titre */}
+        <div className="flex flex-wrap gap-2 justify-end">
           {inactiveStats.map((stat) => (
             <button
               key={stat.key}
               onClick={() => toggleStatVisibility(stat.key)}
-              className="inline-flex items-center gap-1 backdrop-blur-sm border border-white/30 rounded-lg px-2 py-1 text-xs text-white transition-all hover:shadow-md hover:scale-105"
+              className="inline-flex items-center gap-1 backdrop-blur-sm border border-white/30 rounded-lg px-2 py-1 text-xs text-white transition-all hover:shadow-md hover:scale-105 flex-shrink-0"
               style={{ 
                 backgroundColor: 'rgba(139, 69, 19, 0.6)', // Couleur uniforme marron
                 opacity: 0.7 
@@ -51,9 +51,9 @@ export default function StatsToggle({ compactPadding = false, noBottomMargin = f
         </div>
       </div>
 
-      {/* Deuxième ligne : Statistiques actives (comme les filtres actifs) */}
+      {/* Deuxième ligne : Statistiques actives - même espacement que FilterBar */}
       {activeStats.length > 0 && (
-        <div className="mt-4 pt-4 border-t border-white/20">
+        <div className="mt-4">
           <div className="flex flex-wrap gap-2">
             {activeStats.map((stat, index) => {
               // Calculer la couleur basée sur l'index pour variation

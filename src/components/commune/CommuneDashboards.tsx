@@ -24,7 +24,8 @@ export default function CommuneDashboards({ codeInsee }: CommuneDashboardsProps)
     visibleStats.groupes,
     visibleStats.phenologie, 
     visibleStats.listesRouges,
-    visibleStats.statutsReglementaires
+    visibleStats.statutsReglementaires,
+    visibleStats.evolutionGroupes
   ].filter(Boolean).length
 
   // Déterminer les classes de grille selon le nombre d'éléments visibles
@@ -126,21 +127,21 @@ export default function CommuneDashboards({ codeInsee }: CommuneDashboardsProps)
             </div>
           )}
 
-          {/* Observations annuelles - Bar chart */}
-          {visibleStats.observationsAnnuelles && (
-            <div className="container-hover-safe">
-              <div className="modern-card z-middle shadow-xl fade-in-up">
-                <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                  <span className="text-xl">📊</span>
-                  <span className="text-gradient">Observations par année</span>
-                </h3>
-                <div className="h-64 sm:h-80 flex-1">
-                  <ObservationsAnnuellesBar codeInsee={codeInsee} />
-                </div>
-              </div>
-            </div>
-          )}
+        </div>
+      )}
 
+      {/* Observations annuelles - Bar chart - 100% largeur */}
+      {visibleStats.observationsAnnuelles && (
+        <div className="container-hover-safe w-full">
+          <div className="modern-card z-middle shadow-xl fade-in-up">
+            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+              <span className="text-xl">📊</span>
+              <span className="text-gradient">Observations par année</span>
+            </h3>
+            <div className="h-64 sm:h-80 flex-1">
+              <ObservationsAnnuellesBar codeInsee={codeInsee} />
+            </div>
+          </div>
         </div>
       )}
 
