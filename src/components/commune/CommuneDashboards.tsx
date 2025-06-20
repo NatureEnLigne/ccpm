@@ -22,16 +22,27 @@ export default function CommuneDashboards({ codeInsee }: CommuneDashboardsProps)
     visibleStats.evolutionGroupes
   ].filter(Boolean).length
 
-  // Définir les tailles de chaque statistique
-  const getStatSize = (statKey: string): string => {
+  // Compter les statistiques de 1/2 largeur
+  const halfWidthStats = [
+    visibleStats.groupes ? 'groupes' : null,
+    visibleStats.phenologie ? 'phenologie' : null,
+    visibleStats.listesRouges ? 'listesRouges' : null,
+    visibleStats.statutsReglementaires ? 'statutsReglementaires' : null
+  ].filter(Boolean)
+
+  const halfWidthCount = halfWidthStats.length
+
+  // Définir les tailles de chaque statistique avec logique de centrage
+  const getStatSize = (statKey: string, index: number): string => {
     switch (statKey) {
       case 'groupes':
-        return 'w-full lg:w-1/2' // 1/2 largeur sur grand écran
       case 'phenologie':
-        return 'w-full lg:w-1/2' // 1/2 largeur sur grand écran
       case 'listesRouges':
-        return 'w-full lg:w-1/2' // 1/2 largeur sur grand écran
       case 'statutsReglementaires':
+        // Si nombre impair de stats 1/2 largeur et c'est la dernière, prendre toute la largeur
+        if (halfWidthCount % 2 === 1 && index === halfWidthCount - 1) {
+          return 'w-full'
+        }
         return 'w-full lg:w-1/2' // 1/2 largeur sur grand écran
       case 'evolutionGroupes':
         return 'w-full' // Largeur complète
@@ -49,7 +60,7 @@ export default function CommuneDashboards({ codeInsee }: CommuneDashboardsProps)
           
           {/* Groupes taxonomiques - Bubble chart */}
           {visibleStats.groupes && (
-            <div className={`${getStatSize('groupes')} container-hover-safe`}>
+            <div className={`${getStatSize('groupes', halfWidthStats.indexOf('groupes'))} container-hover-safe`}>
               <div className="modern-card z-middle shadow-xl fade-in-up">
                 <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                   <span className="text-xl">🦋</span>
@@ -64,7 +75,7 @@ export default function CommuneDashboards({ codeInsee }: CommuneDashboardsProps)
 
           {/* Phénologie mensuelle - Line chart */}
           {visibleStats.phenologie && (
-            <div className={`${getStatSize('phenologie')} container-hover-safe`}>
+            <div className={`${getStatSize('phenologie', halfWidthStats.indexOf('phenologie'))} container-hover-safe`}>
               <div className="modern-card z-middle shadow-xl fade-in-up">
                 <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                   <span className="text-xl">📅</span>
@@ -79,7 +90,7 @@ export default function CommuneDashboards({ codeInsee }: CommuneDashboardsProps)
 
           {/* Listes rouges - Bar chart */}
           {visibleStats.listesRouges && (
-            <div className={`${getStatSize('listesRouges')} container-hover-safe`}>
+            <div className={`${getStatSize('listesRouges', halfWidthStats.indexOf('listesRouges'))} container-hover-safe`}>
               <div className="modern-card z-middle shadow-xl fade-in-up">
                 <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                   <span className="text-xl">🚨</span>
@@ -94,7 +105,7 @@ export default function CommuneDashboards({ codeInsee }: CommuneDashboardsProps)
 
           {/* Statuts réglementaires - Treemap */}
           {visibleStats.statutsReglementaires && (
-            <div className={`${getStatSize('statutsReglementaires')} container-hover-safe`}>
+            <div className={`${getStatSize('statutsReglementaires', halfWidthStats.indexOf('statutsReglementaires'))} container-hover-safe`}>
               <div className="modern-card z-middle shadow-xl fade-in-up">
                 <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                   <span className="text-xl">⚖️</span>
@@ -109,7 +120,7 @@ export default function CommuneDashboards({ codeInsee }: CommuneDashboardsProps)
 
           {/* Évolution des groupes - Stream chart */}
           {visibleStats.evolutionGroupes && (
-            <div className={`${getStatSize('evolutionGroupes')} container-hover-safe`}>
+            <div className={`${getStatSize('evolutionGroupes', -1)} container-hover-safe`}>
               <div className="modern-card z-middle shadow-xl fade-in-up">
                 <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                   <span className="text-xl">🌊</span>
