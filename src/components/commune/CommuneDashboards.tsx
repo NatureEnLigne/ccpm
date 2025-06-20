@@ -13,13 +13,7 @@ interface CommuneDashboardsProps {
 export default function CommuneDashboards({ codeInsee }: CommuneDashboardsProps) {
   const { visibleStats } = useAppStore()
 
-  // Calculer le nombre de statistiques visibles
-  const visibleStatsCount = Object.values(visibleStats).filter(Boolean).length
-  
-  // Vérifier si la liste des espèces est visible
-  const hasListeEspeces = visibleStats.listeEspeces
-  
-  // Calculer le nombre de graphiques (non-liste) visibles
+  // Calculer le nombre de graphiques (non-liste et non-observations annuelles) visibles
   const chartStatsCount = [
     visibleStats.groupes,
     visibleStats.phenologie, 
@@ -28,33 +22,34 @@ export default function CommuneDashboards({ codeInsee }: CommuneDashboardsProps)
     visibleStats.evolutionGroupes
   ].filter(Boolean).length
 
-  // Déterminer les classes de grille selon le nombre d'éléments visibles
-  const getGridClasses = () => {
-    if (visibleStatsCount === 0) return 'hidden'
-    if (visibleStatsCount === 1) return 'grid grid-cols-1'
-    
-    // Si on a des graphiques + la liste des espèces
-    if (hasListeEspeces && chartStatsCount > 0) {
-      // Les graphiques prennent 1/2 de largeur chacun, la liste prend toute la largeur
-      return 'grid grid-cols-1 lg:grid-cols-2'
+  // Définir les tailles de chaque statistique
+  const getStatSize = (statKey: string): string => {
+    switch (statKey) {
+      case 'groupes':
+        return 'w-full lg:w-1/2' // 1/2 largeur sur grand écran
+      case 'phenologie':
+        return 'w-full lg:w-1/2' // 1/2 largeur sur grand écran
+      case 'listesRouges':
+        return 'w-full lg:w-1/2' // 1/2 largeur sur grand écran
+      case 'statutsReglementaires':
+        return 'w-full lg:w-1/2' // 1/2 largeur sur grand écran
+      case 'evolutionGroupes':
+        return 'w-full' // Largeur complète
+      default:
+        return 'w-full lg:w-1/2'
     }
-    
-    // Sinon, logique normale pour les graphiques seuls
-    if (visibleStatsCount === 2) return 'grid grid-cols-1 lg:grid-cols-2'
-    if (visibleStatsCount === 3) return 'grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3'
-    return 'grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2'
   }
 
   return (
     <div className="w-full space-y-6">
       
-      {/* Graphiques en grille */}
+      {/* Graphiques avec tailles individuelles */}
       {chartStatsCount > 0 && (
-        <div className={`${getGridClasses()} gap-6 overflow-hover-safe w-full`}>
+        <div className="flex flex-wrap gap-6 overflow-hover-safe w-full">
           
           {/* Groupes taxonomiques - Bubble chart */}
           {visibleStats.groupes && (
-            <div className="container-hover-safe">
+            <div className={`${getStatSize('groupes')} container-hover-safe`}>
               <div className="modern-card z-middle shadow-xl fade-in-up">
                 <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                   <span className="text-xl">🦋</span>
@@ -69,7 +64,7 @@ export default function CommuneDashboards({ codeInsee }: CommuneDashboardsProps)
 
           {/* Phénologie mensuelle - Line chart */}
           {visibleStats.phenologie && (
-            <div className="container-hover-safe">
+            <div className={`${getStatSize('phenologie')} container-hover-safe`}>
               <div className="modern-card z-middle shadow-xl fade-in-up">
                 <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                   <span className="text-xl">📅</span>
@@ -84,7 +79,7 @@ export default function CommuneDashboards({ codeInsee }: CommuneDashboardsProps)
 
           {/* Listes rouges - Bar chart */}
           {visibleStats.listesRouges && (
-            <div className="container-hover-safe">
+            <div className={`${getStatSize('listesRouges')} container-hover-safe`}>
               <div className="modern-card z-middle shadow-xl fade-in-up">
                 <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                   <span className="text-xl">🚨</span>
@@ -99,7 +94,7 @@ export default function CommuneDashboards({ codeInsee }: CommuneDashboardsProps)
 
           {/* Statuts réglementaires - Treemap */}
           {visibleStats.statutsReglementaires && (
-            <div className="container-hover-safe">
+            <div className={`${getStatSize('statutsReglementaires')} container-hover-safe`}>
               <div className="modern-card z-middle shadow-xl fade-in-up">
                 <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                   <span className="text-xl">⚖️</span>
@@ -114,7 +109,7 @@ export default function CommuneDashboards({ codeInsee }: CommuneDashboardsProps)
 
           {/* Évolution des groupes - Stream chart */}
           {visibleStats.evolutionGroupes && (
-            <div className="container-hover-safe">
+            <div className={`${getStatSize('evolutionGroupes')} container-hover-safe`}>
               <div className="modern-card z-middle shadow-xl fade-in-up">
                 <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                   <span className="text-xl">🌊</span>
