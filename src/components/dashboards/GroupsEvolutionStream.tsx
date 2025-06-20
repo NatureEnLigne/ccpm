@@ -182,10 +182,7 @@ export default function GroupsEvolutionStream({ codeInsee }: GroupsEvolutionStre
         axisBottom={{
           tickSize: 5,
           tickPadding: 5,
-          tickRotation: -45,
-          legend: 'Années',
-          legendOffset: 50,
-          legendPosition: 'middle'
+          tickRotation: -45
         }}
         axisLeft={{
           tickSize: 5,
@@ -212,9 +209,15 @@ export default function GroupsEvolutionStream({ codeInsee }: GroupsEvolutionStre
                 style={{ backgroundColor: layer.color }}
               />
               <span>{layer.id}</span>
+              {isFiltered('stream', 'groupe', layer.id as string) && (
+                <span className="bg-green-700/20 text-green-700 px-2 py-1 rounded-full text-xs">Filtré</span>
+              )}
             </div>
-            <div className="text-green-700">
-              Évolution des contributions par groupe
+            <div className="text-green-700 mb-2">
+              Évolution temporelle du groupe
+            </div>
+            <div className="text-xs text-green-600 border-t border-green-800/20 pt-2">
+              Survolez pour voir les contributions de ce groupe
             </div>
           </div>
         )}
